@@ -1,0 +1,74 @@
+{
+  "language": "Language",
+  "index": {
+    "email": "Email",
+    "emailError": "Email is invalid!",
+    "password": "Password",
+    "passwordError": "Password must be at least 6 characters!",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordError": "Passwords do not match!",
+    "login": "Login",
+    "createAccount": "Create Account",
+    "emailPasswordEmpty": "Email and password fields are empty!",
+    "emailEmpty": "Email field is mandatory!",
+    "passwordEmpty": "Password field is mandatory!",
+    "passwordNotMatch": "Passwords do not match!",
+    "emailPasswordWrong": "Your supplied credentials are incorrect!"
+  },
+  "drawer": {
+    "home": "Home",
+    "add": "Add",
+    "search": "Search",
+    "importExport": "Import/Export",
+    "darkMode": "Dark Mode",
+    "language": "Language",
+    "checkUpdate": "Check for updates",
+    "signOut": "Sign Out",
+    "checkUpdateDialog": "Check for updates?",
+    "runUpdateDialog": "There is a new version available, do you want to update?",
+    "downloadingDialog": "Downloading...",
+    "signOutDialog": "Sign Out?"
+  },
+  "home": {
+    "add": "Add Menu",
+    "search": "Search Menu",
+    "importExport": "Import/Export"
+  },
+  "add": {
+    "addClient": "Add Client",
+    "addProduct": "Add Product",
+    "addOrder": "Add Order",
+    "client": {
+      "name": "Name",
+      "nameError": "Name is mandatory!",
+      "contact": "Contact",
+      "add": "Add Client",
+      "added": "Client added!"
+    },
+    "product": {
+      "name": "Product name",
+      "nameError": "Product name is mandatory!",
+      "price": "Price",
+      "add": "Add Product",
+      "added": "Product added!"
+    },
+    "order": {
+      "clientName": "Client name",
+      "clientNameError": "Name is mandatory!",
+      "productName": "Product name",
+      "productNameError": "Product name is mandatory!",
+      "productQuantity": "Quantity",
+      "totalPrice": "Total price",
+      "add": "Add Order",
+      "added": "Order added!"
+    }
+  },
+  "importExport": {
+    "importMembers": "Import Members",
+    "importSuccess": "Importing Successfull!",
+    "importExistingMembers": "The members with the following numbers already existed in the database and were not imported",
+    "exportMembers": "Export Members",
+    "exportSuccess": "Exporting successfull!",
+    "storagePermission": "Storage permissions are necessary to import/export data!"
+  }
+}

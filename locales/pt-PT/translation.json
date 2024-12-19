@@ -1,0 +1,74 @@
+{
+  "language": "Idioma",
+  "index": {
+    "email": "Email",
+    "emailError": "Email é inválido!",
+    "password": "Password",
+    "passwordError": "Password tem de conter pelo menos 6 caracteres!",
+    "confirmPassword": "Confirmar Password",
+    "confirmPasswordError": "As passwords não são iguais!",
+    "login": "Login",
+    "createAccount": "Criar Conta",
+    "emailPasswordEmpty": "Os campos de Email e Password estão vazios!",
+    "emailEmpty": "O campo de Email é mandatório!",
+    "passwordEmpty": "O campo de Password é mandatório!",
+    "passwordNotMatch": "As passwords não são iguais!",
+    "emailPasswordWrong": "As credenciais inseridas estão incorretas!"
+  },
+  "drawer": {
+    "home": "Página Principal",
+    "add": "Adicionar",
+    "search": "Procurar",
+    "importExport": "Importar/Exportar",
+    "darkMode": "Modo Escuro",
+    "language": "Idioma",
+    "checkUpdate": "Verificar atualizações",
+    "signOut": "Sair da Conta",
+    "checkUpdateDialog": "Verificar se existem atualizações?",
+    "runUpdateDialog": "Existe uma nova atualização, atualizar?",
+    "downloadingDialog": "A transferir...",
+    "signOutDialog": "Sair da conta?"
+  },
+  "home": {
+    "add": "Menu Adicionar",
+    "search": "Menu Procurar",
+    "importExport": "Importar/Exportar"
+  },
+  "add": {
+    "addClient": "Adicionar Cliente",
+    "addProduct": "Adicionar Produto",
+    "addOrder": "Adicionar Encomenda",
+    "client": {
+      "name": "Nome",
+      "nameError": "Nome é mandatório!",
+      "contact": "Contacto",
+      "add": "Adicionar Cliente",
+      "added": "Cliente adicionado!"
+    },
+    "product": {
+      "name": "Nome do produto",
+      "nameError": "Nome do produto é mandatório!",
+      "price": "Preço",
+      "add": "Adicionar Produto",
+      "added": "Produto adicionado!"
+    },
+    "order": {
+      "clientName": "Nome do cliente",
+      "clientNameError": "Nome é mandatório!",
+      "productName": "Nome do produto",
+      "productNameError": "Nome do produto é mandatório!",
+      "productQuantity": "Quantidade",
+      "totalPrice": "Preço total",
+      "add": "Adicionar Encomenda",
+      "added": "Encomenda adicionada!"
+    }
+  },
+  "importExport": {
+    "importMembers": "Importar Membros",
+    "importSuccess": "Importação com sucesso!",
+    "importExistingMembers": "Os membros com os seguintes números já existem na base de dados e não foram importados",
+    "exportMembers": "Exportar Membros",
+    "exportSuccess": "Exportação com sucesso!",
+    "storagePermission": "Permissões de armazenamento são necessárias para importar/exportar dados!"
+  }
+}
