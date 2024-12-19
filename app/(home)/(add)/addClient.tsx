@@ -44,7 +44,7 @@ export default function AddClient() {
     setLoading(true);
     Keyboard.dismiss();
 
-    if (!name.trim() || Boolean(checkClient())) {
+    if (!name.trim() || Boolean(await checkClient())) {
       showSnackbar(t('add.client.nameError'));
       setNameError(true);
       setLoading(false);
