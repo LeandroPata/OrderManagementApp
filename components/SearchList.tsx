@@ -7,12 +7,11 @@ import React, {
 import {
   Animated,
   FlatList,
+  GestureResponderEvent,
   KeyboardTypeOptions,
   ListRenderItem,
-  NativeSyntheticEvent,
   StyleProp,
   TextInput,
-  TextInputEndEditingEventData,
   TextStyle,
   View,
   ViewStyle,
@@ -26,15 +25,14 @@ type SearchListProps = ComponentPropsWithRef<typeof TextInput> & {
   style?: Animated.WithAnimatedValue<StyleProp<ViewStyle>>;
   value: string;
   onChangeText?: (query: string) => void;
-  onEndEditing?:
-    | ((e: NativeSyntheticEvent<TextInputEndEditingEventData>) => void)
-    | undefined;
+  onEndEditing?: (() => void) | undefined;
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters' | undefined;
   keyboardType?: KeyboardTypeOptions | undefined;
   placeholder?: string;
   loading?: Boolean;
   data: ArrayLike<any> | null | undefined;
   renderItem: ListRenderItem<any> | null | undefined;
+  onClearIconPress?: (e: GestureResponderEvent) => void;
 };
 
 const SearchList = (props: SearchListProps) => {
@@ -73,6 +71,7 @@ const SearchList = (props: SearchListProps) => {
         keyboardType={props.keyboardType}
         placeholder={props.placeholder}
         loading={props.loading}
+        onClearIconPress={props.onClearIconPress}
       />
       {flatlistVisible ? (
         <Animated.View
@@ -97,7 +96,7 @@ const SearchList = (props: SearchListProps) => {
             scrollEnabled={false}
             data={props.data}
             renderItem={props.renderItem}
-            keyExtractor={(item) => item.key}
+            keyExtractor={(item) => item.item.key}
             //extraData={refreshFlatlist}
             numColumns={1}
           />
