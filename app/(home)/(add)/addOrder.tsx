@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView, Keyboard } from 'react-native';
 import {
   Button,
@@ -7,6 +7,7 @@ import {
   Text,
   TextInput,
   useTheme,
+  DataTable,
 } from 'react-native-paper';
 import { FirebaseError } from 'firebase/app';
 import firestore, { Timestamp } from '@react-native-firebase/firestore';
@@ -30,11 +31,12 @@ export default function AddOrder() {
   const [name, setName] = useState('');
   const [productName, setProductName] = useState('');
   const [productQuantity, setProductQuantity] = useState('1');
-  const [productWeight, setProductWeight] = useState('0.00');
+  const [productWeight, setProductWeight] = useState('0.000');
   const [notes, setNotes] = useState('');
 
   const [client, setClient] = useState([]);
   const [product, setProduct] = useState([]);
+  const [productOrderKey, setProductOrderKey] = useState<number>(1);
   const [order, setOrder] = useState([]);
 
   // All the logic to implement the snackbar
@@ -46,6 +48,23 @@ export default function AddOrder() {
     setSnackbarVisible(true);
   };
   const onDismissSnackbar = () => setSnackbarVisible(false);
+
+  // DataTable logic
+  const [page, setPage] = useState<number>(0);
+  const [numberOfItemsPerPageList] = useState([2, 3, 4]);
+  const [itemsPerPage, onItemsPerPageChange] = useState(
+    numberOfItemsPerPageList[0]
+  );
+  const from = page * itemsPerPage;
+  const to = Math.min((page + 1) * itemsPerPage, order.length);
+
+  useEffect(() => {
+    setPage(0);
+  }, [itemsPerPage]);
+
+  useEffect(() => {
+    setProductOrderKey(1);
+  }, [client]);
 
   useFocusEffect(
     useCallback(() => {
@@ -92,7 +111,7 @@ export default function AddOrder() {
           productsName.push({
             key: doc.id,
             name: doc.data().name,
-            price: doc.data().price,
+            price: Number(doc.data().price),
           });
         });
         //console.log(productsName);
@@ -149,7 +168,7 @@ export default function AddOrder() {
     if (client.length) return;
     const currentClient = [];
     clientList.forEach((doc) => {
-      if (doc.name == clientName) {
+      if (doc.name == clientName.trim()) {
         currentClient.push({ key: doc.key, name: doc.name });
       }
     });
@@ -161,7 +180,7 @@ export default function AddOrder() {
     if (product.length) return;
     const currentProduct = [];
     productList.forEach((doc) => {
-      if (doc.name == productName) {
+      if (doc.name == productName.trim()) {
         currentProduct.push({ key: doc.key, name: doc.name, price: doc.price });
       }
     });
@@ -170,6 +189,8 @@ export default function AddOrder() {
   };
 
   const addToOrder = () => {
+    Keyboard.dismiss();
+
     if (!client.length) {
       const currentClient = getClient(name);
       console.log(!currentClient);
@@ -177,54 +198,72 @@ export default function AddOrder() {
         console.log('No client error');
         return;
       }
-    }
-    if (!product.length) {
+    } else if (!product.length) {
       const currentProduct = getProduct(productName);
       if (!currentProduct?.length) {
         console.log('No product error');
         return;
       }
     }
-    console.log(client);
-    console.log(product);
+    //console.log(client);
+    //console.log(product);
 
     const newOrder = order;
     newOrder.push({
+      key: productOrderKey,
       product: product[0],
-      quantity: productQuantity,
-      weight: productWeight,
+      quantity: Number(productQuantity),
+      weight: Number(parseFloat(productWeight).toFixed(3)),
       notes: notes,
     });
-    console.log(newOrder);
+    //console.log(newOrder);
     setOrder(newOrder);
+    setProductOrderKey(productOrderKey + 1);
+    setProductName('');
+    setProductQuantity('1');
+    setProductWeight('0.000');
+    setNotes('');
+    setProduct([]);
   };
 
   const createOrder = async () => {
     setLoading(true);
     Keyboard.dismiss();
-    console.log(productQuantity);
 
-    if (!name.trim() || !Boolean(await checkClient())) {
+    if (!name.trim() || !client.length || !Boolean(await checkClient())) {
       showSnackbar(t('add.order.clientNameError'));
       //setNameError(true);
       setLoading(false);
       return;
+    } else if (!order.length) {
+      console.log('Order empty');
+      return;
     }
+
+    const fullOrder = [];
+    fullOrder.push({ client: client, order: order });
+    console.log(fullOrder[0]);
 
     const docRef = firestore().collection('orders').doc();
 
     try {
       docRef
         .set({
-          name: name.trim(),
+          client: client,
           order: order,
         })
         .then(() => {
           console.log('Added');
           showSnackbar(t('add.order.added'));
           setName('');
-          setOrder([]);
+          setClient([]);
           setHintClientList([]);
+          setProductName('');
+          setProduct([]);
+          setHintProductList([]);
+          setProductQuantity('1');
+          setProductWeight('0.000');
+          setOrder([]);
         });
     } catch (e: any) {
       const err = e as FirebaseError;
@@ -266,7 +305,14 @@ export default function AddOrder() {
         <TouchableRipple
           onPress={() => {
             Keyboard.dismiss();
+            const currentProduct = [];
+            currentProduct.push({
+              key: item.item.key,
+              name: item.item.name,
+              price: item.item.price,
+            });
             setProductName(item.item.name);
+            setProduct(currentProduct);
             setHintProductList([]);
           }}
         >
@@ -308,11 +354,12 @@ export default function AddOrder() {
             onClearIconPress={() => {
               setName('');
               setClient([]);
+              setOrder([]);
               setHintClientList([]);
             }}
           />
           <SearchList
-            icon='account'
+            icon='cake-variant'
             value={productName}
             placeholder='Search Product'
             data={hintProductList}
@@ -437,13 +484,13 @@ export default function AddOrder() {
                 }}
                 onEndEditing={() => {
                   if (!productWeight.trim()) {
-                    setProductWeight('0.00');
+                    setProductWeight('0.000');
                   } else
                     setProductWeight(productWeight.replace(',', '.').trim());
                 }}
                 autoCapitalize='none'
                 keyboardType='decimal-pad'
-                label='Weight'
+                label='Weight(kg)'
               />
             </View>
           </View>
@@ -467,13 +514,45 @@ export default function AddOrder() {
           style={{
             marginHorizontal: 10,
             padding: 10,
-            backgroundColor: theme.colors.elevation.level3,
+            //backgroundColor: theme.colors.elevation.level3,
             borderRadius: 5,
           }}
         >
-          <Text style={[styles.title, { fontSize: 25, textAlign: 'center' }]}>
-            Order
-          </Text>
+          <DataTable>
+            <DataTable.Header>
+              <DataTable.Title textStyle={{ fontWeight: 'bold' }}>
+                Product
+              </DataTable.Title>
+              <DataTable.Title textStyle={{ fontWeight: 'bold' }}>
+                Quantity
+              </DataTable.Title>
+              <DataTable.Title textStyle={{ fontWeight: 'bold' }}>
+                Weight(kg)
+              </DataTable.Title>
+              <DataTable.Title textStyle={{ fontWeight: 'bold' }}>
+                Notes
+              </DataTable.Title>
+            </DataTable.Header>
+            {order.slice(from, to).map((item) => (
+              <DataTable.Row key={item.key}>
+                <DataTable.Cell>{item.product.name}</DataTable.Cell>
+                <DataTable.Cell>{item.quantity}</DataTable.Cell>
+                <DataTable.Cell>{item.weight.toFixed(3)}</DataTable.Cell>
+                <DataTable.Cell>{item.notes}</DataTable.Cell>
+              </DataTable.Row>
+            ))}
+            <DataTable.Pagination
+              page={page}
+              numberOfPages={Math.ceil(order.length / itemsPerPage)}
+              onPageChange={(page) => setPage(page)}
+              label={`${from + 1}-${to} of ${order.length}`}
+              numberOfItemsPerPage={itemsPerPage}
+              numberOfItemsPerPageList={numberOfItemsPerPageList}
+              onItemsPerPageChange={onItemsPerPageChange}
+              //showFastPaginationControls
+              selectPageDropdownLabel={'Rows per page'}
+            />
+          </DataTable>
         </View>
 
         <View style={styles.buttonContainer}>
@@ -484,8 +563,7 @@ export default function AddOrder() {
             icon='account-plus'
             mode='elevated'
             loading={loading}
-            //onPress={createOrder}
-            onPress={() => {}}
+            onPress={createOrder}
           >
             {t('add.order.add')}
           </Button>
