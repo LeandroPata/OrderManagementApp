@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView, Keyboard } from 'react-native';
-import { Button, TextInput, HelperText } from 'react-native-paper';
+import {
+  Button,
+  TextInput,
+  HelperText,
+  Checkbox,
+  Text,
+} from 'react-native-paper';
 import { FirebaseError } from 'firebase/app';
-import firestore, { Timestamp } from '@react-native-firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 import { useTranslation } from 'react-i18next';
 import SnackbarInfo from '@/components/SnackbarInfo';
 
@@ -15,6 +21,7 @@ export default function AddProduct() {
 
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
+  const [priceWeightChecked, setPriceWeightChecked] = useState(false);
 
   // All the logic to implement the snackbar
   const [snackbarVisible, setSnackbarVisible] = useState(false);
@@ -58,13 +65,15 @@ export default function AddProduct() {
       docRef
         .set({
           name: name.trim(),
-          price: Number(price.trim()),
+          price: Number(price.replace(',', '.').trim()).toFixed(2),
+          priceByWeight: priceWeightChecked,
         })
         .then(() => {
           console.log('Added');
           showSnackbar(t('add.product.added'));
           setName('');
           setPrice('');
+          setPriceWeightChecked(false);
         });
     } catch (e: any) {
       const err = e as FirebaseError;
@@ -112,20 +121,36 @@ export default function AddProduct() {
             </HelperText>
           ) : null}
 
-          <TextInput
-            style={styles.input}
-            value={price}
-            onChangeText={(input) => {
-              setPrice(input.replace(/[^0-9.,]/g, ''));
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
             }}
-            onEndEditing={() => {
-              setPrice(price.replace(',', '.').trim());
-            }}
-            autoCapitalize='none'
-            inputMode='decimal'
-            keyboardType='decimal-pad'
-            label={t('add.product.price')}
-          />
+          >
+            <TextInput
+              style={[styles.input, { width: '50%' }]}
+              value={price}
+              onChangeText={(input) => {
+                setPrice(input.replace(/[^0-9.,]/g, ''));
+              }}
+              onEndEditing={() => {
+                console.log('ENd');
+                setPrice(Number(price.replace(',', '.').trim()).toFixed(2));
+              }}
+              autoCapitalize='none'
+              inputMode='decimal'
+              keyboardType='decimal-pad'
+              label={t('add.product.price')}
+            />
+            <View style={{ flexDirection: 'row', marginRight: 10 }}>
+              <Checkbox
+                status={priceWeightChecked ? 'checked' : 'unchecked'}
+                onPress={() => setPriceWeightChecked(!priceWeightChecked)}
+              />
+              <Text style={styles.title}>Price/Weight</Text>
+            </View>
+          </View>
         </KeyboardAvoidingView>
 
         <View style={styles.buttonContainer}>
