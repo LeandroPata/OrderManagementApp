@@ -16,12 +16,14 @@ import SnackbarInfo from '@/components/SnackbarInfo';
 import { useFocusEffect } from 'expo-router';
 import SearchList from '@/components/SearchList';
 import Fuse from 'fuse.js';
+import DatePicker from 'react-native-date-picker';
 
 export default function AddOrder() {
   const theme = useTheme();
   const { t } = useTranslation();
 
   const [loading, setLoading] = useState(false);
+  const [deliveryDateModal, setDeliveryDateModal] = useState(false);
 
   const [clientList, setClientList] = useState([]);
   const [hintClientList, setHintClientList] = useState([]);
@@ -38,6 +40,7 @@ export default function AddOrder() {
   const [product, setProduct] = useState([]);
   const [productOrderKey, setProductOrderKey] = useState<number>(1);
   const [order, setOrder] = useState([]);
+  const [deliveryDate, setDeliveryDate] = useState(new Date());
 
   // All the logic to implement the snackbar
   const [snackbarVisible, setSnackbarVisible] = useState(false);
@@ -240,10 +243,6 @@ export default function AddOrder() {
       return;
     }
 
-    const fullOrder = [];
-    fullOrder.push({ client: client, order: order });
-    console.log(fullOrder[0]);
-
     const docRef = firestore().collection('orders').doc();
 
     try {
@@ -251,6 +250,7 @@ export default function AddOrder() {
         .set({
           client: client,
           order: order,
+          deliveryDate: Timestamp.fromDate(deliveryDate),
         })
         .then(() => {
           console.log('Added');
@@ -553,6 +553,31 @@ export default function AddOrder() {
               selectPageDropdownLabel={'Rows per page'}
             />
           </DataTable>
+          <>
+            <Button
+              style={{ marginVertical: 5 }}
+              labelStyle={styles.dateText}
+              onPress={() => setDeliveryDateModal(true)}
+            >
+              {'Delivery Date' + ': ' + deliveryDate.toLocaleString('pt-pt')}
+            </Button>
+            <DatePicker
+              modal
+              //mode='date'
+              locale='pt-pt'
+              open={deliveryDateModal}
+              date={deliveryDate}
+              minimumDate={new Date()}
+              theme={theme.dark ? 'dark' : 'light'}
+              onConfirm={(date) => {
+                setDeliveryDateModal(false);
+                setDeliveryDate(date);
+              }}
+              onCancel={() => {
+                setDeliveryDateModal(false);
+              }}
+            />
+          </>
         </View>
 
         <View style={styles.buttonContainer}>
