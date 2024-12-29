@@ -17,6 +17,7 @@ import { useFocusEffect } from 'expo-router';
 import SearchList from '@/components/SearchList';
 import Fuse from 'fuse.js';
 import DatePicker from 'react-native-date-picker';
+import DataTableOrder from '@/components/DataTableOrder';
 
 export default function AddOrder() {
   const theme = useTheme();
@@ -117,6 +118,7 @@ export default function AddOrder() {
             key: doc.id,
             name: doc.data().name,
             price: Number(doc.data().price),
+            priceWeight: doc.data().priceByWeight,
           });
         });
         //console.log(productsName);
@@ -186,7 +188,12 @@ export default function AddOrder() {
     const currentProduct = [];
     productList.forEach((doc) => {
       if (doc.name == productName.trim()) {
-        currentProduct.push({ key: doc.key, name: doc.name, price: doc.price });
+        currentProduct.push({
+          key: doc.key,
+          name: doc.name,
+          price: doc.price,
+          priceWeight: doc.priceWeight,
+        });
       }
     });
     if (currentProduct.length == 1) setProduct(currentProduct);
@@ -212,15 +219,24 @@ export default function AddOrder() {
     }
     //console.log(client);
     //console.log(product);
+    const weight = !productWeight
+      ? Number(parseFloat('0.000').toFixed(3))
+      : Number(parseFloat(productWeight).toFixed(3));
+
+    const price =
+      product[0].priceWeight && weight > 0
+        ? Number(productQuantity) * (product[0].price * weight)
+        : Number(productQuantity) * product[0].price;
+
+    console.log(price);
 
     const newOrder = order;
     newOrder.push({
       key: productOrderKey,
       product: product[0],
       quantity: Number(productQuantity),
-      weight: !productWeight
-        ? Number(parseFloat('0.000').toFixed(3))
-        : Number(parseFloat(productWeight).toFixed(3)),
+      weight: weight,
+      price: Number(price.toFixed(2)),
       notes: notes,
     });
     //console.log(newOrder);
@@ -324,6 +340,7 @@ export default function AddOrder() {
               key: item.item.key,
               name: item.item.name,
               price: item.item.price,
+              priceWeight: item.item.priceWeight,
             });
             setProductName(item.item.name);
             setProduct(currentProduct);
@@ -525,46 +542,9 @@ export default function AddOrder() {
         <View
           style={{
             marginHorizontal: 10,
-            padding: 10,
-            //backgroundColor: theme.colors.elevation.level3,
-            borderRadius: 5,
           }}
         >
-          <DataTable>
-            <DataTable.Header>
-              <DataTable.Title textStyle={{ fontWeight: 'bold' }}>
-                Product
-              </DataTable.Title>
-              <DataTable.Title textStyle={{ fontWeight: 'bold' }}>
-                Quantity
-              </DataTable.Title>
-              <DataTable.Title textStyle={{ fontWeight: 'bold' }}>
-                Weight(kg)
-              </DataTable.Title>
-              <DataTable.Title textStyle={{ fontWeight: 'bold' }}>
-                Notes
-              </DataTable.Title>
-            </DataTable.Header>
-            {order.slice(from, to).map((item) => (
-              <DataTable.Row key={item.key}>
-                <DataTable.Cell>{item.product.name}</DataTable.Cell>
-                <DataTable.Cell>{item.quantity}</DataTable.Cell>
-                <DataTable.Cell>{item.weight.toFixed(3)}</DataTable.Cell>
-                <DataTable.Cell>{item.notes}</DataTable.Cell>
-              </DataTable.Row>
-            ))}
-            <DataTable.Pagination
-              page={page}
-              numberOfPages={Math.ceil(order.length / itemsPerPage)}
-              onPageChange={(page) => setPage(page)}
-              label={`${from + 1}-${to} of ${order.length}`}
-              numberOfItemsPerPage={itemsPerPage}
-              numberOfItemsPerPageList={numberOfItemsPerPageList}
-              onItemsPerPageChange={onItemsPerPageChange}
-              //showFastPaginationControls
-              selectPageDropdownLabel={'Rows per page'}
-            />
-          </DataTable>
+          <DataTableOrder data={order} dataType='order' />
           <View
             style={{
               flexDirection: 'row',
