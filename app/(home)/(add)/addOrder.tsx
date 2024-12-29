@@ -55,21 +55,9 @@ export default function AddOrder() {
   };
   const onDismissSnackbar = () => setSnackbarVisible(false);
 
-  // DataTable logic
-  const [page, setPage] = useState<number>(0);
-  const [numberOfItemsPerPageList] = useState([2, 3, 4]);
-  const [itemsPerPage, onItemsPerPageChange] = useState(
-    numberOfItemsPerPageList[0]
-  );
-  const from = page * itemsPerPage;
-  const to = Math.min((page + 1) * itemsPerPage, order.length);
-
-  useEffect(() => {
-    setPage(0);
-  }, [itemsPerPage]);
-
   useEffect(() => {
     setProductOrderKey(1);
+    console.log(productOrderKey);
   }, [client]);
 
   useFocusEffect(
@@ -539,11 +527,7 @@ export default function AddOrder() {
             Add to Order
           </Button>
         </KeyboardAvoidingView>
-        <View
-          style={{
-            marginHorizontal: 10,
-          }}
-        >
+        <View>
           <DataTableOrder data={order} dataType='order' />
           <View
             style={{

@@ -18,6 +18,38 @@ const DataTableOrder = (props: DataTableOrderProps) => {
   const from = page * itemsPerPage;
   const to = Math.min((page + 1) * itemsPerPage, data.length);
 
+  const [sortDirection, setSortDirection] = useState<
+    'ascending' | 'descending'
+  >('ascending');
+  const [sortedColumn, setSortedColumn] = useState('name');
+
+  const handleSort = (column: string) => {
+    const newSortDirection =
+      sortedColumn === column && sortDirection === 'ascending'
+        ? 'descending'
+        : 'ascending';
+    setSortDirection(newSortDirection);
+    setSortedColumn(column);
+
+    const sortedData = [...data].sort((a, b) => {
+      console.log(a.product.name);
+      if (column === 'product.name') {
+        if (newSortDirection === 'ascending') {
+          return a.product.name > b.product.name ? 1 : -1;
+        } else {
+          return a.product.name < b.product.name ? 1 : -1;
+        }
+      } else {
+        if (newSortDirection === 'ascending') {
+          return a[column] > b[column] ? 1 : -1;
+        } else {
+          return a[column] < b[column] ? 1 : -1;
+        }
+      }
+    });
+    setData(sortedData);
+  };
+
   useEffect(() => {
     setPage(0);
   }, [itemsPerPage]);
@@ -28,10 +60,22 @@ const DataTableOrder = (props: DataTableOrderProps) => {
         return (
           <DataTable>
             <DataTable.Header>
-              <DataTable.Title textStyle={{ fontWeight: 'bold' }}>
+              <DataTable.Title
+                textStyle={{ fontWeight: 'bold' }}
+                sortDirection={
+                  sortedColumn === 'product.name' ? sortDirection : undefined
+                }
+                onPress={() => handleSort('product.name')}
+              >
                 Product
               </DataTable.Title>
-              <DataTable.Title textStyle={{ fontWeight: 'bold' }}>
+              <DataTable.Title
+                textStyle={{ fontWeight: 'bold' }}
+                sortDirection={
+                  sortedColumn === 'quantity' ? sortDirection : undefined
+                }
+                onPress={() => handleSort('quantity')}
+              >
                 Quantity
               </DataTable.Title>
               <DataTable.Title textStyle={{ fontWeight: 'bold' }}>
