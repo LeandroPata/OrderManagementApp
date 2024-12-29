@@ -24,6 +24,7 @@ export default function AddOrder() {
 
   const [loading, setLoading] = useState(false);
   const [deliveryDateModal, setDeliveryDateModal] = useState(false);
+  const [deliveryTimeModal, setDeliveryTimeModal] = useState(false);
 
   const [clientList, setClientList] = useState([]);
   const [hintClientList, setHintClientList] = useState([]);
@@ -33,7 +34,7 @@ export default function AddOrder() {
   const [name, setName] = useState('');
   const [productName, setProductName] = useState('');
   const [productQuantity, setProductQuantity] = useState('1');
-  const [productWeight, setProductWeight] = useState('0.000');
+  const [productWeight, setProductWeight] = useState('');
   const [notes, setNotes] = useState('');
 
   const [client, setClient] = useState([]);
@@ -41,6 +42,7 @@ export default function AddOrder() {
   const [productOrderKey, setProductOrderKey] = useState<number>(1);
   const [order, setOrder] = useState([]);
   const [deliveryDate, setDeliveryDate] = useState(new Date());
+  const [deliveryTime, setDeliveryTime] = useState(new Date(0, 0, 0));
 
   // All the logic to implement the snackbar
   const [snackbarVisible, setSnackbarVisible] = useState(false);
@@ -216,7 +218,9 @@ export default function AddOrder() {
       key: productOrderKey,
       product: product[0],
       quantity: Number(productQuantity),
-      weight: Number(parseFloat(productWeight).toFixed(3)),
+      weight: !productWeight
+        ? Number(parseFloat('0.000').toFixed(3))
+        : Number(parseFloat(productWeight).toFixed(3)),
       notes: notes,
     });
     //console.log(newOrder);
@@ -224,7 +228,7 @@ export default function AddOrder() {
     setProductOrderKey(productOrderKey + 1);
     setProductName('');
     setProductQuantity('1');
-    setProductWeight('0.000');
+    setProductWeight('');
     setNotes('');
     setProduct([]);
   };
@@ -240,6 +244,7 @@ export default function AddOrder() {
       return;
     } else if (!order.length) {
       console.log('Order empty');
+      setLoading(false);
       return;
     }
 
@@ -250,7 +255,16 @@ export default function AddOrder() {
         .set({
           client: client,
           order: order,
-          deliveryDate: Timestamp.fromDate(deliveryDate),
+          deliveryDateTime: Timestamp.fromDate(
+            new Date(
+              deliveryDate.getFullYear(),
+              deliveryDate.getMonth(),
+              deliveryDate.getDate(),
+              deliveryTime.getHours(),
+              deliveryTime.getMinutes(),
+              deliveryTime.getSeconds()
+            )
+          ),
         })
         .then(() => {
           console.log('Added');
@@ -262,7 +276,7 @@ export default function AddOrder() {
           setProduct([]);
           setHintProductList([]);
           setProductQuantity('1');
-          setProductWeight('0.000');
+          setProductWeight('');
           setOrder([]);
         });
     } catch (e: any) {
@@ -426,6 +440,7 @@ export default function AddOrder() {
                 </Text>
               </TouchableRipple>
               <TextInput
+                style={{ width: '45%' }}
                 mode='outlined'
                 value={productQuantity}
                 onChangeText={(input) => {
@@ -483,10 +498,7 @@ export default function AddOrder() {
                   setProductWeight(input.replace(/[^0-9.,]/g, ''));
                 }}
                 onEndEditing={() => {
-                  if (!productWeight.trim()) {
-                    setProductWeight('0.000');
-                  } else
-                    setProductWeight(productWeight.replace(',', '.').trim());
+                  setProductWeight(productWeight.replace(',', '.').trim());
                 }}
                 autoCapitalize='none'
                 keyboardType='decimal-pad'
@@ -553,18 +565,30 @@ export default function AddOrder() {
               selectPageDropdownLabel={'Rows per page'}
             />
           </DataTable>
-          <>
+          <View
+            style={{
+              flexDirection: 'row',
+              //alignItems: 'center',
+              justifyContent: 'center',
+              alignContent: 'center',
+              marginTop: 10,
+            }}
+          >
+            <Text style={[styles.title, { color: theme.colors.primary }]}>
+              Delivery Date:
+            </Text>
+
             <Button
-              style={{ marginVertical: 5 }}
               labelStyle={styles.dateText}
               onPress={() => setDeliveryDateModal(true)}
             >
-              {'Delivery Date' + ': ' + deliveryDate.toLocaleString('pt-pt')}
+              {deliveryDate.toLocaleDateString('pt-pt')}
             </Button>
             <DatePicker
               modal
-              //mode='date'
+              mode='date'
               locale='pt-pt'
+              is24hourSource='locale'
               open={deliveryDateModal}
               date={deliveryDate}
               minimumDate={new Date()}
@@ -577,7 +601,31 @@ export default function AddOrder() {
                 setDeliveryDateModal(false);
               }}
             />
-          </>
+
+            <Button
+              labelStyle={styles.dateText}
+              onPress={() => setDeliveryTimeModal(true)}
+            >
+              {deliveryTime.toLocaleTimeString('pt-pt')}
+            </Button>
+            <DatePicker
+              modal
+              mode='time'
+              locale='pt-pt'
+              is24hourSource='locale'
+              open={deliveryTimeModal}
+              date={deliveryTime}
+              //minimumDate={new Date()}
+              theme={theme.dark ? 'dark' : 'light'}
+              onConfirm={(date) => {
+                setDeliveryTimeModal(false);
+                setDeliveryTime(date);
+              }}
+              onCancel={() => {
+                setDeliveryTimeModal(false);
+              }}
+            />
+          </View>
         </View>
 
         <View style={styles.buttonContainer}>
@@ -642,12 +690,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginVertical: 3,
   },
   dateText: {
     fontWeight: 'bold',
-    textAlignVertical: 'center',
     fontSize: 20,
+    marginVertical: 6,
   },
   errorHelper: {
     fontWeight: 'bold',
