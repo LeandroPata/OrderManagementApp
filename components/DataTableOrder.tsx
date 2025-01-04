@@ -1,19 +1,33 @@
 import React, { useEffect, useState } from 'react';
-import { DataTable, Text } from 'react-native-paper';
+import { useTranslation } from 'react-i18next';
+import { StyleSheet } from 'react-native';
+import { DataTable, Modal, Portal, Text, useTheme } from 'react-native-paper';
 
 type DataTableOrderProps = {
   data: ArrayLike<any> | null | undefined;
-  dataType: 'order' | 'other';
+  dataType: 'newOrder' | 'clientOrder' | 'other';
+  numberofItemsPerPageList: Array<number>;
 };
 
 const DataTableOrder = (props: DataTableOrderProps) => {
+  const theme = useTheme();
+  const { t } = useTranslation();
+
   const [page, setPage] = useState<number>(0);
-  const [numberOfItemsPerPageList] = useState([2, 3, 4]);
+  const [numberOfItemsPerPageList] = useState(props.numberofItemsPerPageList);
+
+  const [itemModal, setItemModal] = useState('');
+  const [itemModalVisible, setItemModalVisible] = useState(false);
+
   const [itemsPerPage, onItemsPerPageChange] = useState(
     numberOfItemsPerPageList[0]
   );
 
   const [data, setData] = useState(props.data);
+  //console.log('Props');
+  //console.log(props.data);
+  //console.log('Data');
+  //console.log(data);
 
   const from = page * itemsPerPage;
   const to = Math.min((page + 1) * itemsPerPage, data.length);
@@ -32,7 +46,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
     setSortedColumn(column);
 
     const sortedData = [...data].sort((a, b) => {
-      console.log(a.product.name);
+      //console.log(a.product.name);
       if (column === 'product.name') {
         if (newSortDirection === 'ascending') {
           return a.product.name > b.product.name ? 1 : -1;
@@ -54,13 +68,21 @@ const DataTableOrder = (props: DataTableOrderProps) => {
     setPage(0);
   }, [itemsPerPage]);
 
+  useEffect(() => {
+    if (props.data) setData(props.data);
+  }, [props.data]);
+
   const renderDataTable = () => {
+    //console.log(data);
     switch (props.dataType) {
-      case 'order':
+      case 'newOrder': {
         return (
-          <DataTable>
+          <DataTable style={{ zIndex: 0, elevation: 0 }}>
             <DataTable.Header>
               <DataTable.Title
+                style={{
+                  justifyContent: 'center',
+                }}
                 textStyle={{ fontWeight: 'bold' }}
                 sortDirection={
                   sortedColumn === 'product.name' ? sortDirection : undefined
@@ -70,6 +92,9 @@ const DataTableOrder = (props: DataTableOrderProps) => {
                 Product
               </DataTable.Title>
               <DataTable.Title
+                style={{
+                  justifyContent: 'center',
+                }}
                 textStyle={{ fontWeight: 'bold' }}
                 sortDirection={
                   sortedColumn === 'quantity' ? sortDirection : undefined
@@ -78,23 +103,65 @@ const DataTableOrder = (props: DataTableOrderProps) => {
               >
                 Quantity
               </DataTable.Title>
-              <DataTable.Title textStyle={{ fontWeight: 'bold' }}>
+              <DataTable.Title
+                style={{
+                  justifyContent: 'center',
+                }}
+                textStyle={{ fontWeight: 'bold' }}
+              >
                 Weight(kg)
               </DataTable.Title>
-              <DataTable.Title textStyle={{ fontWeight: 'bold' }}>
+              <DataTable.Title
+                style={{
+                  justifyContent: 'center',
+                }}
+                textStyle={{ fontWeight: 'bold' }}
+              >
                 Price
               </DataTable.Title>
-              <DataTable.Title textStyle={{ fontWeight: 'bold' }}>
+              <DataTable.Title
+                style={{
+                  justifyContent: 'center',
+                }}
+                textStyle={{ fontWeight: 'bold' }}
+              >
                 Notes
               </DataTable.Title>
             </DataTable.Header>
+
             {data.slice(from, to).map((item) => (
               <DataTable.Row key={item.key}>
-                <DataTable.Cell>{item.product.name}</DataTable.Cell>
-                <DataTable.Cell>{item.quantity}</DataTable.Cell>
-                <DataTable.Cell>{item.weight.toFixed(3)}</DataTable.Cell>
-                <DataTable.Cell>{item.price.toFixed(2)}</DataTable.Cell>
-                <DataTable.Cell>{item.notes}</DataTable.Cell>
+                <DataTable.Cell style={{ justifyContent: 'center' }}>
+                  {item.product.name}
+                </DataTable.Cell>
+                <DataTable.Cell
+                  style={{
+                    justifyContent: 'center',
+                  }}
+                >
+                  {item.quantity}
+                </DataTable.Cell>
+                <DataTable.Cell
+                  style={{
+                    justifyContent: 'center',
+                  }}
+                >
+                  {item.weight.toFixed(3)}
+                </DataTable.Cell>
+                <DataTable.Cell
+                  style={{
+                    justifyContent: 'center',
+                  }}
+                >
+                  {item.price.toFixed(2)}
+                </DataTable.Cell>
+                <DataTable.Cell
+                  style={{
+                    justifyContent: 'center',
+                  }}
+                >
+                  {item.notes}
+                </DataTable.Cell>
               </DataTable.Row>
             ))}
             <DataTable.Pagination
@@ -110,6 +177,123 @@ const DataTableOrder = (props: DataTableOrderProps) => {
             />
           </DataTable>
         );
+      }
+      case 'clientOrder': {
+        return (
+          <DataTable>
+            <DataTable.Header>
+              <DataTable.Title
+                style={{
+                  justifyContent: 'center',
+                }}
+                textStyle={{ fontWeight: 'bold' }}
+                sortDirection={
+                  sortedColumn === 'product.name' ? sortDirection : undefined
+                }
+                onPress={() => handleSort('product.name')}
+              >
+                Product
+              </DataTable.Title>
+              <DataTable.Title
+                style={{ justifyContent: 'center' }}
+                textStyle={{ fontWeight: 'bold' }}
+                sortDirection={
+                  sortedColumn === 'quantity' ? sortDirection : undefined
+                }
+                onPress={() => handleSort('quantity')}
+              >
+                Quantity
+              </DataTable.Title>
+              <DataTable.Title
+                style={{ justifyContent: 'center' }}
+                textStyle={{ fontWeight: 'bold' }}
+                sortDirection={
+                  sortedColumn === 'weight' ? sortDirection : undefined
+                }
+                onPress={() => handleSort('weight')}
+              >
+                Weight(kg)
+              </DataTable.Title>
+              <DataTable.Title
+                style={{ justifyContent: 'center' }}
+                textStyle={{ fontWeight: 'bold' }}
+                sortDirection={
+                  sortedColumn === 'price' ? sortDirection : undefined
+                }
+                onPress={() => handleSort('price')}
+              >
+                Price
+              </DataTable.Title>
+              <DataTable.Title
+                style={{ justifyContent: 'center' }}
+                textStyle={{ fontWeight: 'bold' }}
+              >
+                Note
+              </DataTable.Title>
+            </DataTable.Header>
+            {data.slice(from, to).map((item) => (
+              <DataTable.Row key={item.key}>
+                <DataTable.Cell
+                  style={{ justifyContent: 'center' }}
+                  onPress={() => {
+                    setItemModal(item.product.name);
+                    setItemModalVisible(true);
+                  }}
+                >
+                  {item.product.name}
+                </DataTable.Cell>
+                <DataTable.Cell
+                  style={{ justifyContent: 'center' }}
+                  onPress={() => {
+                    setItemModal(item.quantity);
+                    setItemModalVisible(true);
+                  }}
+                >
+                  {item.quantity}
+                </DataTable.Cell>
+                <DataTable.Cell
+                  style={{ justifyContent: 'center' }}
+                  onPress={() => {
+                    setItemModal(item.weight.toFixed(3));
+                    setItemModalVisible(true);
+                  }}
+                >
+                  {item.weight.toFixed(3)}
+                </DataTable.Cell>
+                <DataTable.Cell
+                  style={{ justifyContent: 'center' }}
+                  onPress={() => {
+                    setItemModal(item.price.toFixed(2));
+                    setItemModalVisible(true);
+                  }}
+                >
+                  {item.price.toFixed(2)}
+                </DataTable.Cell>
+                <DataTable.Cell
+                  style={{ justifyContent: 'center' }}
+                  onPress={() => {
+                    setItemModalVisible(true);
+                    setItemModal(item.notes);
+                  }}
+                >
+                  {item.notes}
+                </DataTable.Cell>
+              </DataTable.Row>
+            ))}
+            <DataTable.Pagination
+              page={page}
+              numberOfPages={Math.ceil(data.length / itemsPerPage)}
+              onPageChange={(page) => setPage(page)}
+              label={`${from + 1}-${to} of ${data.length}`}
+              numberOfItemsPerPage={itemsPerPage}
+              numberOfItemsPerPageList={numberOfItemsPerPageList}
+              onItemsPerPageChange={onItemsPerPageChange}
+              //showFastPaginationControls
+              selectPageDropdownLabel={'Rows per page'}
+            />
+          </DataTable>
+        );
+      }
       case 'other':
         return <Text>Goodbye</Text>;
       default:
@@ -117,7 +301,38 @@ const DataTableOrder = (props: DataTableOrderProps) => {
     }
   };
 
-  return <>{renderDataTable()}</>;
+  return (
+    <>
+      <Portal>
+        <Modal
+          visible={itemModalVisible}
+          onDismiss={() => {
+            setItemModalVisible(false);
+          }}
+          style={styles.modalContainer}
+          contentContainerStyle={[
+            styles.modalContentContainer,
+            { backgroundColor: theme.colors.primaryContainer },
+          ]}
+        >
+          <Text>{itemModal}</Text>
+        </Modal>
+      </Portal>
+      {renderDataTable()}
+    </>
+  );
 };
 
 export default DataTableOrder;
+
+const styles = StyleSheet.create({
+  modalContainer: {
+    marginHorizontal: 30,
+    alignItems: 'center',
+  },
+  modalContentContainer: {
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 20,
+  },
+});
