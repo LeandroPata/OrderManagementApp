@@ -6,29 +6,29 @@ import translationEnUS from './en-US/translation.json';
 import translationPtPT from './pt-PT/translation.json';
 
 const resources = {
-  'en-US': { translation: translationEnUS },
-  'en-GB': { translation: translationEnUS },
-  'pt-PT': { translation: translationPtPT },
-  'pt-BR': { translation: translationPtPT },
+	'en-US': { translation: translationEnUS },
+	'en-GB': { translation: translationEnUS },
+	'pt-PT': { translation: translationPtPT },
+	'pt-BR': { translation: translationPtPT },
 };
 
 const initI18n = async () => {
-  let savedLanguage = await AsyncStorage.getItem('language');
-  //console.log(savedLanguage);
+	let savedLanguage = await AsyncStorage.getItem('language');
+	//console.log(savedLanguage);
 
-  if (!savedLanguage) {
-    savedLanguage = Localization.getLocales()[0].languageTag;
-    await AsyncStorage.setItem('language', savedLanguage);
-  }
+	if (!savedLanguage) {
+		savedLanguage = Localization.getLocales()[0].languageTag;
+		await AsyncStorage.setItem('language', savedLanguage);
+	}
 
-  i18n.use(initReactI18next).init({
-    //debug: true,
-    compatibilityJSON: 'v3',
-    resources,
-    lng: savedLanguage,
-    fallbackLng: 'en-US',
-    interpolation: { escapeValue: false },
-  });
+	i18n.use(initReactI18next).init({
+		//debug: true,
+		compatibilityJSON: 'v3',
+		resources,
+		lng: savedLanguage,
+		fallbackLng: 'en-US',
+		interpolation: { escapeValue: false },
+	});
 };
 
 initI18n();

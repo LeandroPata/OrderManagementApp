@@ -19,24 +19,24 @@ const onDismissSnackbar = () => setSnackbarVisible(false);
 /> */
 
 type SnackbarInfoProps = {
-  text: string;
-  visible: boolean;
-  onDismiss: () => void;
+	text: string;
+	visible: boolean;
+	onDismiss: () => void;
 };
 
 const SnackbarInfo = (props: SnackbarInfoProps) => {
-  return (
-    <Portal>
-      <Snackbar
-        visible={props.visible}
-        onDismiss={props.onDismiss}
-        onIconPress={props.onDismiss}
-        duration={5000}
-      >
-        <Text style={{ fontSize: 15 }}>{props.text}</Text>
-      </Snackbar>
-    </Portal>
-  );
+	return (
+		<Portal>
+			<Snackbar
+				visible={props.visible}
+				onDismiss={props.onDismiss}
+				onIconPress={props.onDismiss}
+				duration={5000}
+			>
+				<Text style={{ fontSize: 15 }}>{props.text}</Text>
+			</Snackbar>
+		</Portal>
+	);
 };
 
 export default SnackbarInfo;
