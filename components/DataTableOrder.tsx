@@ -5,7 +5,7 @@ import { DataTable, Modal, Portal, Text, useTheme } from 'react-native-paper';
 
 type DataTableOrderProps = {
   data: ArrayLike<any> | null | undefined;
-  dataType: 'newOrder' | 'clientOrder' | 'other';
+  dataType: 'newOrder' | 'clientOrder' | 'productOrder';
   numberofItemsPerPageList: Array<number>;
 };
 
@@ -51,6 +51,12 @@ const DataTableOrder = (props: DataTableOrderProps) => {
           return a.product.name > b.product.name ? 1 : -1;
         } else {
           return a.product.name < b.product.name ? 1 : -1;
+        }
+      } else if (column === 'client.name') {
+        if (newSortDirection === 'ascending') {
+          return a.client.name > b.client.name ? 1 : -1;
+        } else {
+          return a.client.name < b.client.name ? 1 : -1;
         }
       } else {
         if (newSortDirection === 'ascending') {
@@ -318,8 +324,147 @@ const DataTableOrder = (props: DataTableOrderProps) => {
           </DataTable>
         );
       }
-      case 'other':
-        return <Text>Goodbye</Text>;
+      case 'productOrder': {
+        return (
+          <DataTable>
+            <DataTable.Header>
+              <DataTable.Title
+                style={{
+                  justifyContent: 'center',
+                  flex: 2,
+                }}
+                textStyle={{ fontWeight: 'bold' }}
+                sortDirection={
+                  sortedColumn === 'client.name' ? sortDirection : undefined
+                }
+                onPress={() => handleSort('client.name')}
+              >
+                Client
+              </DataTable.Title>
+              <DataTable.Title
+                style={{ justifyContent: 'center' }}
+                textStyle={{ fontWeight: 'bold' }}
+                sortDirection={
+                  sortedColumn === 'quantity' ? sortDirection : undefined
+                }
+                onPress={() => handleSort('quantity')}
+              >
+                Quantity
+              </DataTable.Title>
+              <DataTable.Title
+                style={{ justifyContent: 'center' }}
+                textStyle={{ fontWeight: 'bold' }}
+                sortDirection={
+                  sortedColumn === 'weight' ? sortDirection : undefined
+                }
+                onPress={() => handleSort('weight')}
+              >
+                Weight
+              </DataTable.Title>
+              <DataTable.Title
+                style={{ justifyContent: 'center' }}
+                textStyle={{ fontWeight: 'bold' }}
+                sortDirection={
+                  sortedColumn === 'price' ? sortDirection : undefined
+                }
+                onPress={() => handleSort('price')}
+              >
+                Price
+              </DataTable.Title>
+              <DataTable.Title
+                style={{
+                  justifyContent: 'center',
+                  flex: 2,
+                }}
+                textStyle={{ fontWeight: 'bold' }}
+                sortDirection={
+                  sortedColumn === 'deliveryDateTime'
+                    ? sortDirection
+                    : undefined
+                }
+                onPress={() => handleSort('deliveryDateTime')}
+              >
+                Delivery
+              </DataTable.Title>
+              <DataTable.Title
+                style={{ justifyContent: 'center' }}
+                textStyle={{ fontWeight: 'bold' }}
+              >
+                Note
+              </DataTable.Title>
+            </DataTable.Header>
+            {data.slice(from, to).map((item) => (
+              <DataTable.Row key={item.key}>
+                <DataTable.Cell
+                  style={{ justifyContent: 'center', flex: 2 }}
+                  onPress={() => {
+                    setItemModal(item.client.name);
+                    setItemModalVisible(true);
+                  }}
+                >
+                  {item.client.name}
+                </DataTable.Cell>
+                <DataTable.Cell
+                  style={{ justifyContent: 'center' }}
+                  onPress={() => {
+                    setItemModal(item.quantity);
+                    setItemModalVisible(true);
+                  }}
+                >
+                  {item.quantity}
+                </DataTable.Cell>
+                <DataTable.Cell
+                  style={{ justifyContent: 'center' }}
+                  onPress={() => {
+                    setItemModal(item.weight.toFixed(3));
+                    setItemModalVisible(true);
+                  }}
+                >
+                  {item.weight.toFixed(2)}
+                </DataTable.Cell>
+                <DataTable.Cell
+                  style={{ justifyContent: 'center' }}
+                  onPress={() => {
+                    setItemModal(item.price.toFixed(2));
+                    setItemModalVisible(true);
+                  }}
+                >
+                  {item.price.toFixed(2)}
+                </DataTable.Cell>
+                <DataTable.Cell
+                  style={{ justifyContent: 'center', flex: 2 }}
+                  onPress={() => {
+                    setItemModalVisible(true);
+                    setItemModal(item.deliveryDateTime.toLocaleString('pt-pt'));
+                  }}
+                >
+                  {item.deliveryDateTime.toLocaleString('pt-pt')}
+                </DataTable.Cell>
+                <DataTable.Cell
+                  style={{ justifyContent: 'center' }}
+                  onPress={() => {
+                    setItemModalVisible(true);
+                    setItemModal(item.notes);
+                  }}
+                >
+                  {item.notes}
+                </DataTable.Cell>
+              </DataTable.Row>
+            ))}
+            <DataTable.Pagination
+              page={page}
+              numberOfPages={Math.ceil(data.length / itemsPerPage)}
+              onPageChange={(page) => setPage(page)}
+              label={`${from + 1}-${to} of ${data.length}`}
+              numberOfItemsPerPage={itemsPerPage}
+              numberOfItemsPerPageList={numberOfItemsPerPageList}
+              onItemsPerPageChange={onItemsPerPageChange}
+              //showFastPaginationControls
+              selectPageDropdownLabel={'Rows per page'}
+            />
+          </DataTable>
+        );
+      }
       default:
         return <Text>Default</Text>;
     }
