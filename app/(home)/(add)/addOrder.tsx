@@ -7,7 +7,6 @@ import {
   Text,
   TextInput,
   useTheme,
-  DataTable,
 } from 'react-native-paper';
 import { FirebaseError } from 'firebase/app';
 import firestore, { Timestamp } from '@react-native-firebase/firestore';
@@ -40,7 +39,6 @@ export default function AddOrder() {
 
   const [client, setClient] = useState([]);
   const [product, setProduct] = useState([]);
-  const [productOrderKey, setProductOrderKey] = useState<number>(1);
   const [order, setOrder] = useState([]);
   const [deliveryDate, setDeliveryDate] = useState(new Date());
   const [deliveryTime, setDeliveryTime] = useState(new Date(0, 0, 0));
@@ -54,11 +52,6 @@ export default function AddOrder() {
     setSnackbarVisible(true);
   };
   const onDismissSnackbar = () => setSnackbarVisible(false);
-
-  useEffect(() => {
-    setProductOrderKey(1);
-    console.log(productOrderKey);
-  }, [client]);
 
   useFocusEffect(
     useCallback(() => {
@@ -160,19 +153,20 @@ export default function AddOrder() {
   };
 
   const getClient = (clientName: string) => {
-    if (client.length) return;
+    if (client) return;
     const currentClient = [];
     clientList.forEach((doc) => {
       if (doc.name == clientName.trim()) {
         currentClient.push({ key: doc.key, name: doc.name });
       }
     });
-    if (currentClient.length == 1) setClient(currentClient);
-    return currentClient;
+    console.log(currentClient[0]);
+    if (currentClient.length == 1) setClient(currentClient[0]);
+    return currentClient[0];
   };
 
   const getProduct = (productName: string) => {
-    if (product.length) return;
+    if (product) return;
     const currentProduct = [];
     productList.forEach((doc) => {
       if (doc.name == productName.trim()) {
@@ -184,23 +178,24 @@ export default function AddOrder() {
         });
       }
     });
-    if (currentProduct.length == 1) setProduct(currentProduct);
-    return currentProduct;
+    console.log(currentProduct[0]);
+    if (currentProduct.length == 1) setProduct(currentProduct[0]);
+    return currentProduct[0];
   };
 
   const addToOrder = () => {
     Keyboard.dismiss();
 
-    if (!client.length) {
+    if (!client) {
       const currentClient = getClient(name);
       console.log(!currentClient);
-      if (!currentClient?.length) {
+      if (!currentClient) {
         console.log('No client error');
         return;
       }
-    } else if (!product.length) {
+    } else if (!product) {
       const currentProduct = getProduct(productName);
-      if (!currentProduct?.length) {
+      if (!currentProduct) {
         console.log('No product error');
         return;
       }
@@ -212,16 +207,16 @@ export default function AddOrder() {
       : Number(parseFloat(productWeight).toFixed(3));
 
     const price =
-      product[0].priceWeight && weight > 0
-        ? Number(productQuantity) * (product[0].price * weight)
-        : Number(productQuantity) * product[0].price;
-
-    console.log(price);
+      product.priceWeight && weight > 0
+        ? Number(productQuantity) * (product.price * weight)
+        : Number(productQuantity) * product.price;
+    //console.log(price);
 
     const newOrder = order;
+    console.log(newOrder.length);
     newOrder.push({
-      key: productOrderKey,
-      product: product[0],
+      key: newOrder.length,
+      product: product,
       quantity: Number(productQuantity),
       weight: weight,
       price: Number(price.toFixed(2)),
@@ -229,7 +224,6 @@ export default function AddOrder() {
     });
     //console.log(newOrder);
     setOrder(newOrder);
-    setProductOrderKey(productOrderKey + 1);
     setProductName('');
     setProductQuantity('1');
     setProductWeight('');
@@ -241,7 +235,7 @@ export default function AddOrder() {
     setLoading(true);
     Keyboard.dismiss();
 
-    if (!name.trim() || !client.length || !Boolean(await checkClient())) {
+    if (!name.trim() || !client || !Boolean(await checkClient())) {
       showSnackbar(t('add.order.clientNameError'));
       //setNameError(true);
       setLoading(false);
@@ -304,7 +298,8 @@ export default function AddOrder() {
             const currentClient = [];
             currentClient.push({ key: item.item.key, name: item.item.name });
             setName(item.item.name);
-            setClient(currentClient);
+            //console.log(currentClient[0]);
+            setClient(currentClient[0]);
             setHintClientList([]);
           }}
         >
@@ -331,7 +326,8 @@ export default function AddOrder() {
               priceWeight: item.item.priceWeight,
             });
             setProductName(item.item.name);
-            setProduct(currentProduct);
+            //console.log(currentProduct[0]);
+            setProduct(currentProduct[0]);
             setHintProductList([]);
           }}
         >
@@ -365,7 +361,7 @@ export default function AddOrder() {
             }}
             onEndEditing={() => {
               setHintClientList([]);
-              if (!client.length) {
+              if (!client) {
                 getClient(name);
               }
             }}
@@ -389,7 +385,7 @@ export default function AddOrder() {
             }}
             onEndEditing={() => {
               setHintProductList([]);
-              if (!product.length) {
+              if (!product) {
                 getProduct(productName);
               }
             }}
@@ -528,7 +524,11 @@ export default function AddOrder() {
           </Button>
         </KeyboardAvoidingView>
         <View>
-          <DataTableOrder data={order} dataType='order' />
+          <DataTableOrder
+            data={order}
+            dataType='newOrder'
+            numberofItemsPerPageList={[2, 3, 4]}
+          />
           <View
             style={{
               flexDirection: 'row',
