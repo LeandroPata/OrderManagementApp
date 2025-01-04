@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { Keyboard, TouchableOpacity, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Drawer } from 'expo-router/drawer';
@@ -29,7 +29,10 @@ const HomeLayout = () => {
             }}
           >
             <TouchableOpacity
-              onPress={() => navigation.toggleDrawer()}
+              onPress={() => {
+                Keyboard.dismiss();
+                navigation.toggleDrawer();
+              }}
               style={{ maxWidth: 36 }}
             >
               <Ionicons
