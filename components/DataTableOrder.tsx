@@ -46,7 +46,6 @@ const DataTableOrder = (props: DataTableOrderProps) => {
     setSortedColumn(column);
 
     const sortedData = [...data].sort((a, b) => {
-      //console.log(a.product.name);
       if (column === 'product.name') {
         if (newSortDirection === 'ascending') {
           return a.product.name > b.product.name ? 1 : -1;
@@ -77,7 +76,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
     switch (props.dataType) {
       case 'newOrder': {
         return (
-          <DataTable style={{ zIndex: 0, elevation: 0 }}>
+          <DataTable>
             <DataTable.Header>
               <DataTable.Title
                 style={{
@@ -109,7 +108,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
                 }}
                 textStyle={{ fontWeight: 'bold' }}
               >
-                Weight(kg)
+                Weight
               </DataTable.Title>
               <DataTable.Title
                 style={{
@@ -185,6 +184,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
               <DataTable.Title
                 style={{
                   justifyContent: 'center',
+                  flex: 2,
                 }}
                 textStyle={{ fontWeight: 'bold' }}
                 sortDirection={
@@ -212,7 +212,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
                 }
                 onPress={() => handleSort('weight')}
               >
-                Weight(kg)
+                Weight
               </DataTable.Title>
               <DataTable.Title
                 style={{ justifyContent: 'center' }}
@@ -225,6 +225,21 @@ const DataTableOrder = (props: DataTableOrderProps) => {
                 Price
               </DataTable.Title>
               <DataTable.Title
+                style={{
+                  justifyContent: 'center',
+                  flex: 2,
+                }}
+                textStyle={{ fontWeight: 'bold' }}
+                sortDirection={
+                  sortedColumn === 'deliveryDateTime'
+                    ? sortDirection
+                    : undefined
+                }
+                onPress={() => handleSort('deliveryDateTime')}
+              >
+                Delivery
+              </DataTable.Title>
+              <DataTable.Title
                 style={{ justifyContent: 'center' }}
                 textStyle={{ fontWeight: 'bold' }}
               >
@@ -234,7 +249,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
             {data.slice(from, to).map((item) => (
               <DataTable.Row key={item.key}>
                 <DataTable.Cell
-                  style={{ justifyContent: 'center' }}
+                  style={{ justifyContent: 'center', flex: 2 }}
                   onPress={() => {
                     setItemModal(item.product.name);
                     setItemModalVisible(true);
@@ -258,7 +273,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
                     setItemModalVisible(true);
                   }}
                 >
-                  {item.weight.toFixed(3)}
+                  {item.weight.toFixed(2)}
                 </DataTable.Cell>
                 <DataTable.Cell
                   style={{ justifyContent: 'center' }}
@@ -268,6 +283,15 @@ const DataTableOrder = (props: DataTableOrderProps) => {
                   }}
                 >
                   {item.price.toFixed(2)}
+                </DataTable.Cell>
+                <DataTable.Cell
+                  style={{ justifyContent: 'center', flex: 2 }}
+                  onPress={() => {
+                    setItemModalVisible(true);
+                    setItemModal(item.deliveryDateTime.toLocaleString('pt-pt'));
+                  }}
+                >
+                  {item.deliveryDateTime.toLocaleString('pt-pt')}
                 </DataTable.Cell>
                 <DataTable.Cell
                   style={{ justifyContent: 'center' }}

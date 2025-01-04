@@ -163,7 +163,9 @@ export default function SearchClient() {
       />
 
       <View style={styles.container}>
-        <KeyboardAvoidingView style={{ paddingHorizontal: 10 }}>
+        <KeyboardAvoidingView
+          style={{ paddingHorizontal: 10, marginBottom: 120 }}
+        >
           <SearchList
             style={{ marginBottom: 10 }}
             icon='account'
@@ -190,7 +192,7 @@ export default function SearchClient() {
             }}
           />
         </KeyboardAvoidingView>
-        <View style={{ position: 'relative' }}>
+        <View>
           <DataTableOrder
             data={clientOrders}
             dataType='clientOrder'
