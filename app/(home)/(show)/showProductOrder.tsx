@@ -4,13 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { View, StyleSheet, KeyboardAvoidingView, Keyboard } from 'react-native';
 import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import SnackbarInfo from '@/components/SnackbarInfo';
-import firestore, { Timestamp } from '@react-native-firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 import { FirebaseError } from 'firebase/app';
 import SearchList from '@/components/SearchList';
 import Fuse from 'fuse.js';
 import DataTableOrder from '@/components/DataTableOrder';
 
-export default function SearchProduct() {
+export default function ShowProduct() {
   const theme = useTheme();
   const { t } = useTranslation();
 

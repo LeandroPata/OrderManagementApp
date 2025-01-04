@@ -83,10 +83,10 @@ const HomeLayout = () => {
         }}
       />
       <Drawer.Screen
-        name='(search)'
+        name='(show)'
         options={{
-          drawerLabel: t('drawer.search'),
-          title: t('drawer.searchMember'),
+          drawerLabel: t('drawer.show'),
+          title: t('drawer.show'),
           drawerIcon: ({ focused, size, color }) => (
             <Ionicons
               name={focused ? 'search' : 'search-outline'}

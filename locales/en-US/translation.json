@@ -18,7 +18,7 @@
   "drawer": {
     "home": "Home",
     "add": "Add",
-    "search": "Search",
+    "show": "Show",
     "importExport": "Import/Export",
     "darkMode": "Dark Mode",
     "language": "Language",
@@ -31,7 +31,7 @@
   },
   "home": {
     "add": "Add Menu",
-    "search": "Search Menu",
+    "show": "Show Menu",
     "importExport": "Import/Export"
   },
   "add": {

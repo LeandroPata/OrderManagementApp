@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView, Keyboard } from 'react-native';
 import { Button, TextInput, HelperText } from 'react-native-paper';
 import { FirebaseError } from 'firebase/app';
-import firestore, { Timestamp } from '@react-native-firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 import { useTranslation } from 'react-i18next';
 import SnackbarInfo from '@/components/SnackbarInfo';
 

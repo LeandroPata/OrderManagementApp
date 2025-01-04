@@ -2,7 +2,7 @@ import React from 'react';
 import { Stack } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 
-const SearchLayout = () => {
+const ShowLayout = () => {
   const theme = useTheme();
   return (
     <Stack
@@ -10,11 +10,11 @@ const SearchLayout = () => {
         contentStyle: { backgroundColor: theme.colors.background },
       }}
     >
-      <Stack.Screen name='searchHome' options={{ headerShown: false }} />
-      <Stack.Screen name='searchClient' options={{ headerShown: false }} />
-      <Stack.Screen name='searchProduct' options={{ headerShown: false }} />
+      <Stack.Screen name='showHome' options={{ headerShown: false }} />
+      <Stack.Screen name='showClientOrder' options={{ headerShown: false }} />
+      <Stack.Screen name='showProductOrder' options={{ headerShown: false }} />
     </Stack>
   );
 };
 
-export default SearchLayout;
+export default ShowLayout;

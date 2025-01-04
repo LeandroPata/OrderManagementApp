@@ -28,9 +28,9 @@ export default function Home() {
           icon='account-search'
           mode='elevated'
           //loading={loginLoading}
-          onPress={() => router.push('/(home)/(search)/searchHome')}
+          onPress={() => router.push('/(home)/(show)/showHome')}
         >
-          {t('home.search')}
+          {t('home.show')}
         </Button>
         <Button
           style={styles.button}

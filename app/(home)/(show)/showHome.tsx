@@ -17,9 +17,9 @@ export default function Home() {
           icon='account-plus'
           mode='elevated'
           //loading={loginLoading}
-          onPress={() => router.push('/(home)/(search)/searchClient')}
+          onPress={() => router.push('/(home)/(show)/showClientOrder')}
         >
-          {t('search.searchClient')}
+          {t('show.showClientOrder')}
         </Button>
         <Button
           style={styles.button}
@@ -28,9 +28,9 @@ export default function Home() {
           icon='account-search'
           mode='elevated'
           //loading={loginLoading}
-          onPress={() => router.push('/(home)/(search)/searchProduct')}
+          onPress={() => router.push('/(home)/(show)/showProductOrder')}
         >
-          {t('search.searchProduct')}
+          {t('show.showProductOrder')}
         </Button>
       </View>
     </View>
