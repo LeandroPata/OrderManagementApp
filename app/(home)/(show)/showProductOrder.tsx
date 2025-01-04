@@ -10,7 +10,7 @@ import SearchList from '@/components/SearchList';
 import Fuse from 'fuse.js';
 import DataTableOrder from '@/components/DataTableOrder';
 
-export default function ShowProduct() {
+export default function ShowProductOrder() {
   const theme = useTheme();
   const { t } = useTranslation();
 

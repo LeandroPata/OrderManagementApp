@@ -4,7 +4,7 @@ import { Button } from 'react-native-paper';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
-export default function Home() {
+export default function AddHome() {
   const { t } = useTranslation();
 
   return (
