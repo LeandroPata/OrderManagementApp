@@ -32,6 +32,17 @@ export default function ShowHome() {
 				>
 					{t('show.showProductOrder')}
 				</Button>
+				<Button
+					style={styles.button}
+					contentStyle={styles.buttonContent}
+					labelStyle={styles.buttonText}
+					icon='account-search'
+					mode='elevated'
+					//loading={loginLoading}
+					onPress={() => router.push('/(home)/(show)/showProductQuantity')}
+				>
+					{t('show.showProductQuantity')}
+				</Button>
 			</View>
 		</View>
 	);
