@@ -214,6 +214,7 @@ export default function ShowProductOrder() {
 					<DataTableOrder
 						data={productOrders}
 						dataType='productOrder'
+						defaultSort='client.name'
 						numberofItemsPerPageList={[6, 7, 8]}
 					/>
 				</View>

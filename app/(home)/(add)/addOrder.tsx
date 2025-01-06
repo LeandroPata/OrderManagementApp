@@ -202,9 +202,11 @@ export default function AddOrder() {
 		}
 		//console.log(client);
 		//console.log(product);
-		const weight = !productWeight
-			? Number(parseFloat('0.000').toFixed(3))
-			: Number(parseFloat(productWeight).toFixed(3));
+
+		const weight =
+			product.priceWeight && productWeight.trim()
+				? Number(parseFloat(productWeight).toFixed(2))
+				: Number(parseFloat('0.00').toFixed(2));
 
 		const price =
 			product.priceWeight && weight > 0
@@ -527,6 +529,7 @@ export default function AddOrder() {
 					<DataTableOrder
 						data={order}
 						dataType='newOrder'
+						defaultSort='product.name'
 						numberofItemsPerPageList={[2, 3, 4]}
 					/>
 					<View
