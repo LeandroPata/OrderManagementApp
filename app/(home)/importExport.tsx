@@ -5,9 +5,9 @@ import { FirebaseError } from 'firebase/app';
 import firestore, { Timestamp } from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import * as DocumentPicker from 'expo-document-picker';
-import RNFS from 'react-native-fs';
 import { useTranslation } from 'react-i18next';
 import SnackbarInfo from '@/components/SnackbarInfo';
+import RNFetchBlob from 'rn-fetch-blob';
 
 export default function importExport() {
 	const { t } = useTranslation();
@@ -213,11 +213,11 @@ export default function importExport() {
 
 	const readFile = async (fileUri) => {
 		try {
-			const fileContent = await RNFS.readFile(fileUri, 'utf8');
+			const fileContent = await RNFetchBlob.fs.readFile(fileUri, 'utf8');
 			return fileContent;
 		} catch (e: any) {
 			//showSnackbar("Couldn't read file: " + e.message);
-			console.log("Couldn't read file: " + e.message);
+			console.log(`Couldn't read file: ${e.message}`);
 			setImportLoading(false);
 			return null;
 		}
@@ -395,22 +395,23 @@ export default function importExport() {
 			const file = convertJSONToCSV(membersData);
 			//console.log(file);
 
-			const filePath = RNFS.CachesDirectoryPath + '/membersData.csv';
+			const filePath = `${RNFetchBlob.fs.dirs.CacheDir}/membersData.csv`;
 
 			//console.log(filePath);
 
-			await RNFS.writeFile(filePath, file);
+			await RNFetchBlob.fs.writeFile(filePath, file);
 
 			await uploadFile(filePath);
 
-			let docPath = RNFS.DownloadDirectoryPath + '/membersData.csv';
+			let docPath = `${RNFetchBlob.fs.dirs.DownloadDir}/membersData.csv`;
 			//console.log(docPath);
 
 			let i = 1;
 
-			while (await RNFS.exists(docPath)) {
-				docPath =
-					RNFS.DownloadDirectoryPath + '/membersData' + i.toString() + '.csv';
+			while (await RNFetchBlob.fs.exists(docPath)) {
+				docPath = `${
+					RNFetchBlob.fs.dirs.DownloadDir
+				}/membersData${i.toString()}.csv`;
 				console.log(docPath);
 				i++;
 			}
