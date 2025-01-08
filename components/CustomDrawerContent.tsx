@@ -7,11 +7,6 @@ import {
 	TouchableOpacity,
 } from 'react-native';
 import {
-	DrawerContentScrollView,
-	DrawerItem,
-	DrawerItemList,
-} from '@react-navigation/drawer';
-import {
 	Dialog,
 	List,
 	Portal,
@@ -19,6 +14,11 @@ import {
 	Switch,
 	useTheme,
 } from 'react-native-paper';
+import {
+	DrawerContentScrollView,
+	DrawerItem,
+	DrawerItemList,
+} from '@react-navigation/drawer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import auth from '@react-native-firebase/auth';
@@ -30,14 +30,14 @@ import Animated, {
 } from 'react-native-reanimated';
 import { EventRegister } from 'react-native-event-listeners';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import i18next from 'i18next';
-import DialogConfirmation from './DialogConfirmation';
-import { FirebaseError } from 'firebase/app';
+import type { FirebaseError } from 'firebase/app';
 import storage from '@react-native-firebase/storage';
-import RNFS from 'react-native-fs';
+import i18next from 'i18next';
 import RNFetchBlob from 'rn-fetch-blob';
 import Constants from 'expo-constants';
 import getFlagEmoji from './GetCountryFlag';
+import SnackbarInfo from './SnackbarInfo';
+import DialogConfirmation from './DialogConfirmation';
 
 export default function CustomDrawerContent(props: any) {
 	const theme = useTheme();
@@ -51,6 +51,16 @@ export default function CustomDrawerContent(props: any) {
 	const [updateDownloadProgressVisible, setUpdateDownloadProgressVisible] =
 		useState(false);
 	const [updateDownloadProgress, setUpdateDownloadProgress] = useState(1);
+
+	// All the logic to implement the snackbar
+	const [snackbarVisible, setSnackbarVisible] = useState(false);
+	const [snackbarText, setSnackbarText] = useState('');
+
+	const showSnackbar = (text: string) => {
+		setSnackbarText(text);
+		setSnackbarVisible(true);
+	};
+	const onDismissSnackbar = () => setSnackbarVisible(false);
 
 	// All the logic to implemet DialogConfirmation
 	const [checkUpdateConfirmationVisible, setCheckUpdateConfirmationVisible] =
@@ -66,15 +76,14 @@ export default function CustomDrawerContent(props: any) {
 	};
 
 	AsyncStorage.getItem('colorScheme').then((token) => {
-		token == 'dark' ? setDarkModeSwitch(true) : setDarkModeSwitch(false);
+		token === 'dark' ? setDarkModeSwitch(true) : setDarkModeSwitch(false);
 	});
 
 	const height = useSharedValue(0); // Animated height value
 
 	if (Platform.OS === 'android') {
 		// Enable LayoutAnimation for Android
-		UIManager.setLayoutAnimationEnabledExperimental &&
-			UIManager.setLayoutAnimationEnabledExperimental(true);
+		UIManager.setLayoutAnimationEnabledExperimental?.(true);
 	}
 
 	const toggleAccordion = () => {
@@ -135,17 +144,17 @@ export default function CustomDrawerContent(props: any) {
 		await updatesStorageRef
 			.listAll()
 			.then((result) => {
-				result.prefixes.forEach((ref) => {
+				for (const ref of result.prefixes) {
 					if (compareVersions(ref.name)) {
 						update = true;
 						setUpdateVersion(ref.name);
 						console.log(ref.name);
 					}
-				});
+				}
 			})
 			.catch((e: any) => {
 				const err = e as FirebaseError;
-				console.log('Update checking error: ' + err.message);
+				console.log(`Update checking error: ${err.message}`);
 			})
 			.finally(() => {
 				if (update) {
@@ -159,28 +168,28 @@ export default function CustomDrawerContent(props: any) {
 	const downloadUpdate = async (updateFolderName: string) => {
 		setRunUpdateConfirmationVisible(false);
 
-		console.log('Downloading update: ' + updateFolderName);
+		console.log(`Downloading update: ${updateFolderName}`);
 
 		let updateFileName = '';
 
 		await storage()
-			.ref('updates/' + updateFolderName)
+			.ref(`updates/${updateFolderName}`)
 			.listAll()
 			.then((result) => {
-				result.items.forEach((ref) => {
+				for (const ref of result.items) {
 					if (ref.name.endsWith('.apk')) {
 						updateFileName = ref.name;
 					}
-				});
+				}
 			});
 
 		const updateStorageRef = storage().ref(
-			'updates/' + updateFolderName + '/' + updateFileName
+			`updates/${updateFolderName}/${updateFileName}`
 		);
 
-		console.log('updates/' + updateFolderName + '/' + updateFileName);
+		console.log(`updates/${updateFolderName}/${updateFileName}`);
 
-		const apkPath = RNFS.DownloadDirectoryPath + '/' + updateFolderName;
+		const apkPath = `${RNFetchBlob.fs.dirs.DownloadDir}/${updateFolderName}`;
 
 		const task = updateStorageRef.writeToFile(apkPath);
 		setUpdateDownloadProgressVisible(true);
@@ -200,179 +209,186 @@ export default function CustomDrawerContent(props: any) {
 			})
 			.catch((e: any) => {
 				const err = e as FirebaseError;
-				console.log('Update download failed: ' + err.message);
+				console.log(`Update download failed: ${err.message}`);
 				setUpdateDownloadProgressVisible(false);
 			});
 	};
 
 	const installUpdate = async (apkPath: string) => {
 		setUpdateDownloadProgressVisible(false);
-		console.log('Installing: ' + apkPath);
+		console.log(`Installing: ${apkPath}`);
 		try {
 			await RNFetchBlob.android.actionViewIntent(
 				apkPath,
 				'application/vnd.android.package-archive'
 			);
 		} catch (e: any) {
-			console.log('Installing apk failed: ' + e);
+			console.log(`Installing apk failed: ${e}`);
 		} finally {
 			console.log('Finished');
 		}
 	};
 
 	return (
-		<View style={{ flex: 1 }}>
-			<DialogConfirmation
-				text={t('drawer.checkUpdateDialog')}
-				visible={checkUpdateConfirmationVisible}
-				onDismiss={onDismissDialogConfirmation}
-				onConfirmation={checkUpdates}
+		<>
+			<SnackbarInfo
+				text={snackbarText}
+				visible={snackbarVisible}
+				onDismiss={onDismissSnackbar}
 			/>
+			<View style={{ flex: 1 }}>
+				<DialogConfirmation
+					text={t('drawer.checkUpdateDialog')}
+					visible={checkUpdateConfirmationVisible}
+					onDismiss={onDismissDialogConfirmation}
+					onConfirmation={checkUpdates}
+				/>
 
-			<DialogConfirmation
-				text={t('drawer.runUpdateDialog')}
-				visible={runUpdateConfirmationVisible}
-				onDismiss={onDismissDialogConfirmation}
-				onConfirmation={() => downloadUpdate(updateVersion)}
-			/>
+				<DialogConfirmation
+					text={t('drawer.runUpdateDialog')}
+					visible={runUpdateConfirmationVisible}
+					onDismiss={onDismissDialogConfirmation}
+					onConfirmation={() => downloadUpdate(updateVersion)}
+				/>
 
-			<DialogConfirmation
-				text={t('drawer.signOutDialog')}
-				visible={signOutConfirmationVisible}
-				onDismiss={onDismissDialogConfirmation}
-				onConfirmation={() => {
-					setSignOutConfirmationVisible(false);
-					auth().signOut();
-				}}
-			/>
-
-			<Portal>
-				<Dialog visible={updateDownloadProgressVisible}>
-					<Dialog.Title style={{ textAlign: 'center' }}>
-						{t('drawer.downloadingDialog')}
-					</Dialog.Title>
-					<Dialog.Content>
-						<ProgressBar
-							progress={updateDownloadProgress}
-							color={theme.colors.primary}
-						/>
-					</Dialog.Content>
-				</Dialog>
-			</Portal>
-
-			<DrawerContentScrollView
-				{...props}
-				scrollEnabled={false}
-			>
-				<DrawerItemList {...props} />
-			</DrawerContentScrollView>
-
-			<View style={{ paddingBottom: 20 + insets.bottom }}>
-				<View
-					style={{
-						flexDirection: 'row',
-						justifyContent: 'space-between',
-						width: '95%',
+				<DialogConfirmation
+					text={t('drawer.signOutDialog')}
+					visible={signOutConfirmationVisible}
+					onDismiss={onDismissDialogConfirmation}
+					onConfirmation={() => {
+						setSignOutConfirmationVisible(false);
+						auth().signOut();
 					}}
+				/>
+
+				<Portal>
+					<Dialog visible={updateDownloadProgressVisible}>
+						<Dialog.Title style={{ textAlign: 'center' }}>
+							{t('drawer.downloadingDialog')}
+						</Dialog.Title>
+						<Dialog.Content>
+							<ProgressBar
+								progress={updateDownloadProgress}
+								color={theme.colors.primary}
+							/>
+						</Dialog.Content>
+					</Dialog>
+				</Portal>
+
+				<DrawerContentScrollView
+					{...props}
+					scrollEnabled={false}
 				>
-					<List.Item
-						title={t('drawer.darkMode')}
-						titleStyle={{ fontSize: 15, fontWeight: 'bold' }}
-						left={(props) => (
-							<Ionicons
-								{...props}
-								name='moon-sharp'
-								size={25}
-							/>
-						)}
-					/>
-					<Switch
-						value={darkModeSwitch}
-						onValueChange={changeColorScheme}
-					/>
-				</View>
-				<TouchableOpacity
-					style={{ marginLeft: -4 }}
-					onPress={toggleAccordion}
-				>
-					<List.Item
-						title={t('drawer.language')}
-						titleStyle={{ fontSize: 15, fontWeight: 'bold' }}
-						left={(props) => (
-							<Ionicons
-								{...props}
-								name='language-sharp'
-								size={32}
-							/>
-						)}
-						right={(props) => (
-							<Ionicons
-								{...props}
-								name={expanded ? 'arrow-up' : 'arrow-down'}
-								size={25}
-							/>
-						)}
-					/>
-				</TouchableOpacity>
-				<Animated.View style={[styles.content, animatedStyle]}>
+					<DrawerItemList {...props} />
+				</DrawerContentScrollView>
+
+				<View style={{ paddingBottom: 20 + insets.bottom }}>
 					<View
 						style={{
-							width: '80%',
-							justifyContent: 'center',
-
-							alignSelf: 'center',
+							flexDirection: 'row',
+							justifyContent: 'space-between',
+							width: '95%',
 						}}
 					>
 						<List.Item
-							title={getFlagEmoji('GB') + '     English'}
-							onPress={() => {
-								i18next.changeLanguage('en-US');
-								AsyncStorage.setItem('language', 'en-US');
-							}}
+							title={t('drawer.darkMode')}
+							titleStyle={{ fontSize: 15, fontWeight: 'bold' }}
+							left={(props) => (
+								<Ionicons
+									{...props}
+									name='moon-sharp'
+									size={25}
+								/>
+							)}
 						/>
-						<List.Item
-							title={getFlagEmoji('PT') + '     Português'}
-							onPress={() => {
-								i18next.changeLanguage('pt-PT');
-								AsyncStorage.setItem('language', 'pt-PT');
-							}}
+						<Switch
+							value={darkModeSwitch}
+							onValueChange={changeColorScheme}
 						/>
 					</View>
-				</Animated.View>
-
-				<DrawerItem
-					labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
-					label={t('drawer.checkUpdate')}
-					icon={({ color }) => (
-						<Ionicons
-							name={'cloud-download-outline'}
-							color={color}
-							size={32}
+					<TouchableOpacity
+						style={{ marginLeft: -4 }}
+						onPress={toggleAccordion}
+					>
+						<List.Item
+							title={t('drawer.language')}
+							titleStyle={{ fontSize: 15, fontWeight: 'bold' }}
+							left={(props) => (
+								<Ionicons
+									{...props}
+									name='language-sharp'
+									size={32}
+								/>
+							)}
+							right={(props) => (
+								<Ionicons
+									{...props}
+									name={expanded ? 'arrow-up' : 'arrow-down'}
+									size={25}
+								/>
+							)}
 						/>
-					)}
-					inactiveTintColor={theme.colors.onBackground}
-					activeTintColor={theme.colors.primary}
-					inactiveBackgroundColor='transparent'
-					onPress={() => setCheckUpdateConfirmationVisible(true)}
-				/>
+					</TouchableOpacity>
+					<Animated.View style={[styles.content, animatedStyle]}>
+						<View
+							style={{
+								width: '80%',
+								justifyContent: 'center',
 
-				<DrawerItem
-					labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
-					label={t('drawer.signOut')}
-					icon={({ focused, color }) => (
-						<Ionicons
-							name={'log-out-outline'}
-							color={color}
-							size={32}
-						/>
-					)}
-					inactiveTintColor={theme.colors.onBackground}
-					activeTintColor={theme.colors.primary}
-					inactiveBackgroundColor='transparent'
-					onPress={() => setSignOutConfirmationVisible(true)}
-				/>
+								alignSelf: 'center',
+							}}
+						>
+							<List.Item
+								title={`${getFlagEmoji('GB')}     English`}
+								onPress={() => {
+									i18next.changeLanguage('en-US');
+									AsyncStorage.setItem('language', 'en-US');
+								}}
+							/>
+							<List.Item
+								title={`${getFlagEmoji('PT')}     Português`}
+								onPress={() => {
+									i18next.changeLanguage('pt-PT');
+									AsyncStorage.setItem('language', 'pt-PT');
+								}}
+							/>
+						</View>
+					</Animated.View>
+
+					<DrawerItem
+						labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
+						label={t('drawer.checkUpdate')}
+						icon={({ color }) => (
+							<Ionicons
+								name={'cloud-download-outline'}
+								color={color}
+								size={32}
+							/>
+						)}
+						inactiveTintColor={theme.colors.onBackground}
+						activeTintColor={theme.colors.primary}
+						inactiveBackgroundColor='transparent'
+						onPress={() => setCheckUpdateConfirmationVisible(true)}
+					/>
+
+					<DrawerItem
+						labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
+						label={t('drawer.signOut')}
+						icon={({ focused, color }) => (
+							<Ionicons
+								name={'log-out-outline'}
+								color={color}
+								size={32}
+							/>
+						)}
+						inactiveTintColor={theme.colors.onBackground}
+						activeTintColor={theme.colors.primary}
+						inactiveBackgroundColor='transparent'
+						onPress={() => setSignOutConfirmationVisible(true)}
+					/>
+				</View>
 			</View>
-		</View>
+		</>
 	);
 }
 

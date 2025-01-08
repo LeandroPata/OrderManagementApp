@@ -57,13 +57,6 @@ const styles = StyleSheet.create({
 		marginHorizontal: 20,
 		alignItems: 'center',
 	},
-	input: {
-		marginVertical: 4,
-		height: 50,
-		borderWidth: 1,
-		borderRadius: 1,
-		padding: 5,
-	},
 	button: {
 		marginVertical: 8,
 		justifyContent: 'center',

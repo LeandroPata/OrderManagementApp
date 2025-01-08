@@ -4,8 +4,8 @@ import { useTheme } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Drawer } from 'expo-router/drawer';
 import { Ionicons } from '@expo/vector-icons';
-import CustomDrawerContent from '@/components/CustomDrawerContent';
 import { useTranslation } from 'react-i18next';
+import CustomDrawerContent from '@/components/CustomDrawerContent';
 
 const HomeLayout = () => {
 	const theme = useTheme();

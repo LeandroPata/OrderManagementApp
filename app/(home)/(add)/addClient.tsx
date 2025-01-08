@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView, Keyboard } from 'react-native';
 import { Button, TextInput, HelperText } from 'react-native-paper';
-import { FirebaseError } from 'firebase/app';
+import type { FirebaseError } from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
 import { useTranslation } from 'react-i18next';
 import SnackbarInfo from '@/components/SnackbarInfo';
@@ -33,8 +33,9 @@ export default function AddClient() {
 			.orderBy('name', 'asc')
 			.get()
 			.then((querySnapshot) => {
+				// biome-ignore lint/complexity/noForEach:<Method that returns iterator necessary>
 				querySnapshot.forEach((doc) => {
-					if (name.trim() == doc.data().name) clientExists = true;
+					if (name.trim() === doc.data().name) clientExists = true;
 				});
 			});
 		return clientExists;
@@ -67,7 +68,7 @@ export default function AddClient() {
 				});
 		} catch (e: any) {
 			const err = e as FirebaseError;
-			console.log('Adding member failed: ' + err.message);
+			console.log(`Adding member failed: ${err.message}`);
 			//showSnackbar('Adding member failed: ' + err.message);
 			setLoading(false);
 		} finally {
@@ -149,15 +150,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: 'center',
 	},
-	modalContainer: {
-		marginHorizontal: 30,
-		alignItems: 'center',
-	},
-	modalContentContainer: {
-		paddingVertical: 10,
-		paddingHorizontal: 15,
-		borderRadius: 20,
-	},
 	buttonContainer: {
 		marginHorizontal: 20,
 		alignItems: 'center',
@@ -178,20 +170,6 @@ const styles = StyleSheet.create({
 	},
 	input: {
 		marginVertical: 2,
-	},
-	pictureButton: {
-		padding: 15,
-		alignSelf: 'center',
-	},
-	title: {
-		fontSize: 20,
-		fontWeight: 'bold',
-		marginVertical: 3,
-	},
-	dateText: {
-		fontWeight: 'bold',
-		textAlignVertical: 'center',
-		fontSize: 20,
 	},
 	errorHelper: {
 		fontWeight: 'bold',

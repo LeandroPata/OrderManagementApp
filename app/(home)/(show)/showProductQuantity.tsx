@@ -1,19 +1,13 @@
-import { useFocusEffect } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { View, StyleSheet, KeyboardAvoidingView, Keyboard } from 'react-native';
-import {
-	Button,
-	Divider,
-	Text,
-	TouchableRipple,
-	useTheme,
-} from 'react-native-paper';
-import SnackbarInfo from '@/components/SnackbarInfo';
+import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
+import type { FirebaseError } from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
-import { FirebaseError } from 'firebase/app';
-import SearchList from '@/components/SearchList';
+import { useFocusEffect } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import Fuse from 'fuse.js';
+import SnackbarInfo from '@/components/SnackbarInfo';
+import SearchList from '@/components/SearchList';
 import DataTableOrder from '@/components/DataTableOrder';
 
 export default function ShowProductQuantity() {
@@ -47,7 +41,6 @@ export default function ShowProductQuantity() {
 			// Screen unfocused in return
 			return () => {
 				//console.log('This route is now unfocused.');
-				//setProfile(null);
 				setName('');
 				setProduct([]);
 			};
@@ -61,6 +54,7 @@ export default function ShowProductQuantity() {
 			.get()
 			.then((querySnapshot) => {
 				const productsName = [];
+				// biome-ignore lint/complexity/noForEach:<Method that returns iterator necessary>
 				querySnapshot.forEach((doc) => {
 					productsName.push({
 						key: doc.id,
@@ -96,8 +90,9 @@ export default function ShowProductQuantity() {
 	const getProduct = (productName: string) => {
 		if (product) return;
 		const currentProduct = [];
-		productList.forEach((doc) => {
-			if (doc.name == productName.trim()) {
+
+		for (const doc of productList) {
+			if (doc.name === productName.trim()) {
 				currentProduct.push({
 					key: doc.key,
 					name: doc.name,
@@ -105,12 +100,14 @@ export default function ShowProductQuantity() {
 					priceWeight: doc.priceWeight,
 				});
 			}
-		});
+		}
+
 		//console.log(currentProduct[0]);
-		if (currentProduct.length == 1) {
+		if (currentProduct.length === 1) {
 			setProduct(currentProduct[0]);
 			getProductCount(currentProduct[0].key);
 		}
+
 		return currentProduct[0];
 	};
 
@@ -122,6 +119,7 @@ export default function ShowProductQuantity() {
 				filteredCount.push(count);
 			}
 		}
+
 		setProductQuantity(filteredCount);
 		//console.log(filteredCount);
 	};
@@ -185,7 +183,7 @@ export default function ShowProductQuantity() {
 			})
 			.catch((e: any) => {
 				const err = e as FirebaseError;
-				console.log('Error getting product list: ' + err.message);
+				console.log(`Error getting product list: ${err.message}`);
 			});
 	};
 
@@ -272,52 +270,9 @@ export default function ShowProductQuantity() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		//justifyContent: 'center',
-	},
-	modalContainer: {
-		marginHorizontal: 30,
-		alignItems: 'center',
-	},
-	modalContentContainer: {
-		paddingVertical: 10,
-		paddingHorizontal: 15,
-		borderRadius: 20,
-	},
-	buttonContainer: {
-		flex: 1,
-		justifyContent: 'flex-end',
-		marginHorizontal: 20,
-		alignItems: 'center',
-	},
-	button: {
-		marginVertical: 8,
-		justifyContent: 'center',
-	},
-	buttonContent: {
-		minWidth: 280,
-		minHeight: 80,
-	},
-	buttonText: {
-		fontSize: 25,
-		fontWeight: 'bold',
-		overflow: 'visible',
-		paddingTop: 10,
 	},
 	input: {
 		marginVertical: 2,
-	},
-	pictureButton: {
-		padding: 15,
-		alignSelf: 'center',
-	},
-	title: {
-		fontSize: 20,
-		fontWeight: 'bold',
-	},
-	dateText: {
-		fontWeight: 'bold',
-		fontSize: 20,
-		marginVertical: 6,
 	},
 	errorHelper: {
 		fontWeight: 'bold',

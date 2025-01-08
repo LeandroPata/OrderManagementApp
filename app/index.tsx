@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, KeyboardAvoidingView, View, Keyboard } from 'react-native';
 import {
 	Portal,
@@ -9,7 +9,7 @@ import {
 	HelperText,
 } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { FirebaseError } from 'firebase/app';
+import type { FirebaseError } from 'firebase/app';
 import auth from '@react-native-firebase/auth';
 import { useTranslation } from 'react-i18next';
 import SnackbarInfo from '@/components/SnackbarInfo';
@@ -101,7 +101,7 @@ export default function Index() {
 		} catch (e: any) {
 			const err = e as FirebaseError;
 			//showSnackbar('Registration failed: ' + err.message);
-			console.log('Registration failed: ' + err.message);
+			console.log(`Registration failed: ${err.message}`);
 		} finally {
 			setSignupLoading(false);
 			setConfirmSignupLoading(false);
@@ -151,13 +151,13 @@ export default function Index() {
 			await auth().signInWithEmailAndPassword(email, password);
 		} catch (e: any) {
 			const err = e as FirebaseError;
-			if (err.code == 'auth/invalid-credential') {
+			if (err.code === 'auth/invalid-credential') {
 				showSnackbar(t('index.emailPasswordWrong'));
 				setLoginLoading(false);
 				setPassword('');
 			} else {
 				//showSnackbar('Sign in failed: ' + err.message);
-				console.log('Sign in failed: ' + err.message);
+				console.log(`Sign in failed: ${err.message}`);
 			}
 		} finally {
 			setLoginLoading(false);
@@ -190,7 +190,7 @@ export default function Index() {
 						value={confirmPassword}
 						onChangeText={setConfirmPassword}
 						onEndEditing={() => {
-							if (password != confirmPassword) {
+							if (password !== confirmPassword) {
 								setConfirmPasswordError(true);
 							} else setConfirmPasswordError(false);
 							setConfirmPassword(confirmPassword.trim());
@@ -320,11 +320,6 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		justifyContent: 'center',
-		//alignItems: 'center',
-	},
-	buttonContainer: {
-		marginHorizontal: 20,
-		alignItems: 'center',
 	},
 	modalContainer: {
 		marginHorizontal: 30,
@@ -334,15 +329,9 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 15,
 		borderRadius: 20,
 	},
-	inputModal: {
-		width: '75%',
-		height: 50,
-		borderWidth: 1,
-		borderRadius: 10,
-		padding: 10,
-	},
-	input: {
-		marginVertical: 2,
+	buttonContainer: {
+		marginHorizontal: 20,
+		alignItems: 'center',
 	},
 	button: {
 		marginVertical: 8,
@@ -354,6 +343,9 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		overflow: 'visible',
 		paddingTop: 10,
+	},
+	input: {
+		marginVertical: 2,
 	},
 	errorHelper: {
 		fontWeight: 'bold',

@@ -1,5 +1,5 @@
 import React, {
-	ComponentPropsWithRef,
+	type ComponentPropsWithRef,
 	useEffect,
 	useRef,
 	useState,
@@ -7,17 +7,17 @@ import React, {
 import {
 	Animated,
 	FlatList,
-	GestureResponderEvent,
-	KeyboardTypeOptions,
-	ListRenderItem,
-	StyleProp,
-	TextInput,
-	TextStyle,
+	type GestureResponderEvent,
+	type KeyboardTypeOptions,
+	type ListRenderItem,
+	type StyleProp,
+	type TextInput,
+	type TextStyle,
 	View,
-	ViewStyle,
+	type ViewStyle,
 } from 'react-native';
 import { Searchbar, useTheme } from 'react-native-paper';
-import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
+import type { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
 
 type SearchListProps = ComponentPropsWithRef<typeof TextInput> & {
 	icon?: IconSource;
@@ -29,7 +29,7 @@ type SearchListProps = ComponentPropsWithRef<typeof TextInput> & {
 	autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters' | undefined;
 	keyboardType?: KeyboardTypeOptions | undefined;
 	placeholder?: string;
-	loading?: Boolean;
+	loading?: boolean;
 	data: ArrayLike<any> | null | undefined;
 	renderItem: ListRenderItem<any> | null | undefined;
 	onClearIconPress?: (e: GestureResponderEvent) => void;

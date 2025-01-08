@@ -1,13 +1,13 @@
-import { useFocusEffect } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { View, StyleSheet, KeyboardAvoidingView, Keyboard } from 'react-native';
 import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
-import SnackbarInfo from '@/components/SnackbarInfo';
+import type { FirebaseError } from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
-import { FirebaseError } from 'firebase/app';
-import SearchList from '@/components/SearchList';
+import { useFocusEffect } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import Fuse from 'fuse.js';
+import SnackbarInfo from '@/components/SnackbarInfo';
+import SearchList from '@/components/SearchList';
 import DataTableOrder from '@/components/DataTableOrder';
 
 export default function ShowProductOrder() {
@@ -55,6 +55,7 @@ export default function ShowProductOrder() {
 			.get()
 			.then((querySnapshot) => {
 				const productsName = [];
+				// biome-ignore lint/complexity/noForEach:<Method that returns iterator necessary>
 				querySnapshot.forEach((doc) => {
 					productsName.push({
 						key: doc.id,
@@ -68,7 +69,7 @@ export default function ShowProductOrder() {
 			})
 			.catch((e: any) => {
 				const err = e as FirebaseError;
-				console.log('Error getting product list: ' + err.message);
+				console.log(`Error getting product list: ${err.message}`);
 			});
 	};
 
@@ -90,8 +91,9 @@ export default function ShowProductOrder() {
 	const getProduct = (productName: string) => {
 		if (product) return;
 		const currentProduct = [];
-		productList.forEach((doc) => {
-			if (doc.name == productName.trim()) {
+
+		for (const doc of productList) {
+			if (doc.name === productName.trim()) {
 				currentProduct.push({
 					key: doc.key,
 					name: doc.name,
@@ -99,12 +101,14 @@ export default function ShowProductOrder() {
 					priceWeight: doc.priceWeight,
 				});
 			}
-		});
+		}
 		console.log(currentProduct[0]);
-		if (currentProduct.length == 1) {
+
+		if (currentProduct.length === 1) {
 			setProduct(currentProduct[0]);
 			getProductOrders(currentProduct[0].key);
 		}
+
 		return currentProduct[0];
 	};
 
@@ -117,9 +121,10 @@ export default function ShowProductOrder() {
 			.then((snapshot) => {
 				const orders = [];
 				let i = 0;
+				// biome-ignore lint/complexity/noForEach:<Method that returns iterator necessary>
 				snapshot.forEach((doc) => {
 					console.log(doc.data());
-					doc.data().order.forEach((order) => {
+					/* doc.data().order.forEach((order) => {
 						console.log(order.product.key + ' : ' + productKey);
 						if (order.product.key == productKey) {
 							console.log(order);
@@ -136,8 +141,28 @@ export default function ShowProductOrder() {
 							});
 							i++;
 						}
-					});
+					}); */
+					for (const order of doc.data().order) {
+						//console.log(`${order.product.key} : ${productKey}`);
+
+						if (order.product.key === productKey) {
+							console.log(order);
+							orders.push({
+								key: i,
+								client: doc.data().client,
+								quantity: order.quantity,
+								weight: order.weight,
+								price: order.price,
+								notes: order.notes,
+								deliveryDateTime: new Date(
+									doc.data().deliveryDateTime.toDate()
+								),
+							});
+							i++;
+						}
+					}
 				});
+
 				setProductOrders(orders);
 				//console.log(orders);
 			});
@@ -226,52 +251,9 @@ export default function ShowProductOrder() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		//justifyContent: 'center',
-	},
-	modalContainer: {
-		marginHorizontal: 30,
-		alignItems: 'center',
-	},
-	modalContentContainer: {
-		paddingVertical: 10,
-		paddingHorizontal: 15,
-		borderRadius: 20,
-	},
-	buttonContainer: {
-		flex: 1,
-		justifyContent: 'flex-end',
-		marginHorizontal: 20,
-		alignItems: 'center',
-	},
-	button: {
-		marginVertical: 8,
-		justifyContent: 'center',
-	},
-	buttonContent: {
-		minWidth: 280,
-		minHeight: 80,
-	},
-	buttonText: {
-		fontSize: 25,
-		fontWeight: 'bold',
-		overflow: 'visible',
-		paddingTop: 10,
 	},
 	input: {
 		marginVertical: 2,
-	},
-	pictureButton: {
-		padding: 15,
-		alignSelf: 'center',
-	},
-	title: {
-		fontSize: 20,
-		fontWeight: 'bold',
-	},
-	dateText: {
-		fontWeight: 'bold',
-		fontSize: 20,
-		marginVertical: 6,
 	},
 	errorHelper: {
 		fontWeight: 'bold',

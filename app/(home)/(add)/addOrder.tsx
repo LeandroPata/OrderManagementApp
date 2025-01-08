@@ -8,14 +8,14 @@ import {
 	TextInput,
 	useTheme,
 } from 'react-native-paper';
-import { FirebaseError } from 'firebase/app';
+import type { FirebaseError } from 'firebase/app';
 import firestore, { Timestamp } from '@react-native-firebase/firestore';
-import { useTranslation } from 'react-i18next';
-import SnackbarInfo from '@/components/SnackbarInfo';
 import { useFocusEffect } from 'expo-router';
-import SearchList from '@/components/SearchList';
+import { useTranslation } from 'react-i18next';
 import Fuse from 'fuse.js';
 import DatePicker from 'react-native-date-picker';
+import SnackbarInfo from '@/components/SnackbarInfo';
+import SearchList from '@/components/SearchList';
 import DataTableOrder from '@/components/DataTableOrder';
 
 export default function AddOrder() {
@@ -37,8 +37,8 @@ export default function AddOrder() {
 	const [productWeight, setProductWeight] = useState('');
 	const [notes, setNotes] = useState('');
 
-	const [client, setClient] = useState([]);
-	const [product, setProduct] = useState([]);
+	const [client, setClient] = useState({});
+	const [product, setProduct] = useState({});
 	const [order, setOrder] = useState([]);
 	const [deliveryDate, setDeliveryDate] = useState(new Date());
 	const [deliveryTime, setDeliveryTime] = useState(new Date(0, 0, 0));
@@ -63,7 +63,6 @@ export default function AddOrder() {
 			// Screen unfocused in return
 			return () => {
 				//console.log('This route is now unfocused.');
-				//setProfile(null);
 			};
 		}, [])
 	);
@@ -75,6 +74,7 @@ export default function AddOrder() {
 			.get()
 			.then((querySnapshot) => {
 				const clientsName = [];
+				// biome-ignore lint/complexity/noForEach:<Method that returns iterator necessary>
 				querySnapshot.forEach((doc) => {
 					clientsName.push({ key: doc.id, name: doc.data().name });
 				});
@@ -83,7 +83,7 @@ export default function AddOrder() {
 			})
 			.catch((e: any) => {
 				const err = e as FirebaseError;
-				console.log('Error getting client list: ' + err.message);
+				console.log(`Error getting client list: ${err.message}`);
 			});
 	};
 
@@ -94,6 +94,7 @@ export default function AddOrder() {
 			.get()
 			.then((querySnapshot) => {
 				const productsName = [];
+				// biome-ignore lint/complexity/noForEach:<Method that returns iterator necessary>
 				querySnapshot.forEach((doc) => {
 					productsName.push({
 						key: doc.id,
@@ -107,7 +108,7 @@ export default function AddOrder() {
 			})
 			.catch((e: any) => {
 				const err = e as FirebaseError;
-				console.log('Error getting product list: ' + err.message);
+				console.log(`Error getting product list: ${err.message}`);
 			});
 	};
 
@@ -143,33 +144,37 @@ export default function AddOrder() {
 
 	const checkClient = () => {
 		let clientExists = false;
-		clientList.forEach((client) => {
-			//console.log(client.name + ' : ' + name + ' : ' + (client.name == name));
-			if (client.name == name) clientExists = true;
-		});
+
+		for (const client of clientList) {
+			//console.log(client.name + ' : ' + name + ' : ' + (client.name === name));
+			if (client.name === name) clientExists = true;
+		}
 
 		//console.log(clientExists);
 		return clientExists;
 	};
 
 	const getClient = (clientName: string) => {
-		if (client) return;
+		if (Object.keys(client).length !== 0) return;
 		const currentClient = [];
-		clientList.forEach((doc) => {
-			if (doc.name == clientName.trim()) {
+
+		for (const doc of clientList) {
+			if (doc.name === clientName.trim()) {
 				currentClient.push({ key: doc.key, name: doc.name });
 			}
-		});
+		}
 		console.log(currentClient[0]);
-		if (currentClient.length == 1) setClient(currentClient[0]);
+
+		if (currentClient.length === 1) setClient(currentClient[0]);
 		return currentClient[0];
 	};
 
 	const getProduct = (productName: string) => {
-		if (product) return;
+		if (Object.keys(product).length !== 0) return;
 		const currentProduct = [];
-		productList.forEach((doc) => {
-			if (doc.name == productName.trim()) {
+
+		for (const doc of productList) {
+			if (doc.name === productName.trim()) {
 				currentProduct.push({
 					key: doc.key,
 					name: doc.name,
@@ -177,36 +182,46 @@ export default function AddOrder() {
 					priceWeight: doc.priceWeight,
 				});
 			}
-		});
+		}
 		console.log(currentProduct[0]);
-		if (currentProduct.length == 1) setProduct(currentProduct[0]);
+
+		if (currentProduct.length === 1) setProduct(currentProduct[0]);
 		return currentProduct[0];
 	};
 
 	const addToOrder = () => {
 		Keyboard.dismiss();
 
-		if (!client) {
+		if (Object.keys(client).length === 0) {
 			const currentClient = getClient(name);
 			console.log(!currentClient);
 			if (!currentClient) {
+				showSnackbar('No valid client selected!');
 				console.log('No client error');
 				return;
 			}
-		} else if (!product) {
+		} else if (Object.keys(product).length === 0) {
 			const currentProduct = getProduct(productName);
 			if (!currentProduct) {
+				showSnackbar('No valid product selected!');
 				console.log('No product error');
 				return;
 			}
 		}
-		//console.log(client);
-		//console.log(product);
+		console.log(client);
+		console.log(product);
+
+		if (product.priceByWeight && !productWeight.trim()) {
+			showSnackbar('Weight is mandatory for this product!');
+			console.log('No weight for priceByWeight product');
+			return;
+		}
 
 		const weight =
 			product.priceWeight && productWeight.trim()
-				? Number(parseFloat(productWeight).toFixed(2))
-				: Number(parseFloat('0.00').toFixed(2));
+				? Number(Number.parseFloat(productWeight).toFixed(2))
+				: Number(Number.parseFloat('0.00').toFixed(2));
+		//console.log(weight)
 
 		const price =
 			product.priceWeight && weight > 0
@@ -214,35 +229,47 @@ export default function AddOrder() {
 				: Number(productQuantity) * product.price;
 		//console.log(price);
 
-		const newOrder = order;
-		console.log(newOrder.length);
-		newOrder.push({
-			key: newOrder.length,
-			product: product,
-			quantity: Number(productQuantity),
-			weight: weight,
-			price: Number(price.toFixed(2)),
-			notes: notes,
-		});
-		//console.log(newOrder);
-		setOrder(newOrder);
-		setProductName('');
-		setProductQuantity('1');
-		setProductWeight('');
-		setNotes('');
-		setProduct([]);
+		try {
+			const newOrder = order;
+			//console.log(newOrder.length);
+			newOrder.push({
+				key: newOrder.length,
+				product: product,
+				quantity: Number(productQuantity),
+				weight: weight,
+				price: Number(price.toFixed(2)),
+				notes: notes,
+			});
+			console.log(newOrder);
+			setOrder(newOrder);
+		} catch {
+			(e: any) => {
+				const err = e as FirebaseError;
+				console.log(`Error adding to order: ${err.message}`);
+			};
+		} finally {
+			setProductName('');
+			setProductQuantity('1');
+			setProductWeight('');
+			setNotes('');
+			setProduct([]);
+
+			showSnackbar('Added to current order!');
+			console.log('Added to order');
+		}
 	};
 
 	const createOrder = async () => {
 		setLoading(true);
 		Keyboard.dismiss();
 
-		if (!name.trim() || !client || !Boolean(await checkClient())) {
+		if (!name.trim() || !client || !checkClient()) {
 			showSnackbar(t('add.order.clientNameError'));
 			//setNameError(true);
 			setLoading(false);
 			return;
 		} else if (!order.length) {
+			showSnackbar('Order is empty!');
 			console.log('Order empty');
 			setLoading(false);
 			return;
@@ -281,7 +308,7 @@ export default function AddOrder() {
 				});
 		} catch (e: any) {
 			const err = e as FirebaseError;
-			console.log('Adding member failed: ' + err.message);
+			console.log(`Adding member failed: ${err.message}`);
 			//showSnackbar('Adding member failed: ' + err.message);
 			setLoading(false);
 		} finally {
@@ -489,12 +516,9 @@ export default function AddOrder() {
 						<View
 							style={{
 								width: '49%',
-								//justifyContent: 'center',
-								//alignItems: 'center',
 							}}
 						>
 							<TextInput
-								//style={{ maxWidth: '50%' }}
 								mode='outlined'
 								value={productWeight}
 								onChangeText={(input) => {
@@ -616,16 +640,6 @@ export default function AddOrder() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		//justifyContent: 'center',
-	},
-	modalContainer: {
-		marginHorizontal: 30,
-		alignItems: 'center',
-	},
-	modalContentContainer: {
-		paddingVertical: 10,
-		paddingHorizontal: 15,
-		borderRadius: 20,
 	},
 	buttonContainer: {
 		flex: 1,
@@ -649,10 +663,6 @@ const styles = StyleSheet.create({
 	},
 	input: {
 		marginVertical: 2,
-	},
-	pictureButton: {
-		padding: 15,
-		alignSelf: 'center',
 	},
 	title: {
 		fontSize: 20,

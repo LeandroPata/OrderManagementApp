@@ -1,4 +1,4 @@
-const getFlagEmoji = (countryCode: String) => {
+const getFlagEmoji = (countryCode: string) => {
 	const codePoints = countryCode
 		.toUpperCase()
 		.split('')

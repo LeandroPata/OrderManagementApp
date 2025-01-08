@@ -1,13 +1,13 @@
-import { useFocusEffect } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { View, StyleSheet, KeyboardAvoidingView, Keyboard } from 'react-native';
 import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
-import SnackbarInfo from '@/components/SnackbarInfo';
+import type { FirebaseError } from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
-import { FirebaseError } from 'firebase/app';
-import SearchList from '@/components/SearchList';
+import { useFocusEffect } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import Fuse from 'fuse.js';
+import SnackbarInfo from '@/components/SnackbarInfo';
+import SearchList from '@/components/SearchList';
 import DataTableOrder from '@/components/DataTableOrder';
 
 export default function ShowClientOrder() {
@@ -40,7 +40,6 @@ export default function ShowClientOrder() {
 			// Screen unfocused in return
 			return () => {
 				//console.log('This route is now unfocused.');
-				//setProfile(null);
 				setName('');
 				setClient([]);
 				setClientOrders([]);
@@ -55,6 +54,7 @@ export default function ShowClientOrder() {
 			.get()
 			.then((querySnapshot) => {
 				const clientsName = [];
+				// biome-ignore lint/complexity/noForEach:<Method that returns iterator necessary>
 				querySnapshot.forEach((doc) => {
 					clientsName.push({ key: doc.id, name: doc.data().name });
 				});
@@ -63,7 +63,7 @@ export default function ShowClientOrder() {
 			})
 			.catch((e: any) => {
 				const err = e as FirebaseError;
-				console.log('Error getting client list: ' + err.message);
+				console.log(`Error getting client list: ${err.message}`);
 			});
 	};
 
@@ -85,15 +85,18 @@ export default function ShowClientOrder() {
 	const getClient = (clientName: string) => {
 		if (client) return;
 		const currentClient = [];
-		clientList.forEach((doc) => {
-			if (doc.name == clientName.trim()) {
+
+		for (const doc of clientList) {
+			if (doc.name === clientName.trim()) {
 				currentClient.push({ key: doc.key, name: doc.name });
 			}
-		});
-		if (currentClient.length == 1) {
+		}
+
+		if (currentClient.length === 1) {
 			setClient(currentClient[0]);
 			getClientOrders(currentClient[0].key);
 		}
+
 		return currentClient[0];
 	};
 
@@ -103,13 +106,15 @@ export default function ShowClientOrder() {
 			.collection('orders')
 			.orderBy('client.name', 'asc')
 			.get()
-			.then((snapshot) => {
+			.then((querySnapshot) => {
 				const orders = [];
 				let i = 0;
-				snapshot.forEach((doc) => {
+
+				// biome-ignore lint/complexity/noForEach:<Method that returns iterator necessary>
+				querySnapshot.forEach((doc) => {
 					//console.log(doc.data());
-					if (doc.data().client.key == clientKey) {
-						doc.data().order.forEach((order) => {
+					if (doc.data().client.key === clientKey) {
+						for (const order of doc.data().order) {
 							//console.log(order);
 							orders.push({
 								key: i,
@@ -123,7 +128,7 @@ export default function ShowClientOrder() {
 								),
 							});
 							i++;
-						});
+						}
 					}
 				});
 				setClientOrders(orders);
@@ -208,52 +213,9 @@ export default function ShowClientOrder() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		//justifyContent: 'center',
-	},
-	modalContainer: {
-		marginHorizontal: 30,
-		alignItems: 'center',
-	},
-	modalContentContainer: {
-		paddingVertical: 10,
-		paddingHorizontal: 15,
-		borderRadius: 20,
-	},
-	buttonContainer: {
-		flex: 1,
-		justifyContent: 'flex-end',
-		marginHorizontal: 20,
-		alignItems: 'center',
-	},
-	button: {
-		marginVertical: 8,
-		justifyContent: 'center',
-	},
-	buttonContent: {
-		minWidth: 280,
-		minHeight: 80,
-	},
-	buttonText: {
-		fontSize: 25,
-		fontWeight: 'bold',
-		overflow: 'visible',
-		paddingTop: 10,
 	},
 	input: {
 		marginVertical: 2,
-	},
-	pictureButton: {
-		padding: 15,
-		alignSelf: 'center',
-	},
-	title: {
-		fontSize: 20,
-		fontWeight: 'bold',
-	},
-	dateText: {
-		fontWeight: 'bold',
-		fontSize: 20,
-		marginVertical: 6,
 	},
 	errorHelper: {
 		fontWeight: 'bold',
