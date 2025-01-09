@@ -87,8 +87,8 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 	}, [itemsPerPage]);
 
 	useEffect(() => {
-		handleSort(sortedColumn, props.data, false);
-	}, [props.data]);
+		if (props.data?.length !== 0) handleSort(sortedColumn, props.data, false);
+	}, [props.data?.length]);
 
 	const renderDataTable = () => {
 		//console.log(data);
