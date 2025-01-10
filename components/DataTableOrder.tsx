@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet } from 'react-native';
-import { DataTable, Modal, Portal, Text, useTheme } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import {
+	DataTable,
+	Divider,
+	Modal,
+	Portal,
+	Text,
+	useTheme,
+} from 'react-native-paper';
 
 type DataTableOrderProps = {
 	data: ArrayLike<any> | null | undefined;
@@ -17,7 +24,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 	const [page, setPage] = useState<number>(0);
 	const [numberOfItemsPerPageList] = useState(props.numberofItemsPerPageList);
 
-	const [itemModal, setItemModal] = useState('');
+	const [itemModal, setItemModal] = useState({});
 	const [itemModalVisible, setItemModalVisible] = useState(false);
 
 	const [itemsPerPage, onItemsPerPageChange] = useState(
@@ -158,7 +165,17 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 						</DataTable.Header>
 
 						{data.slice(from, to).map((item) => (
-							<DataTable.Row key={item.key}>
+							<DataTable.Row
+								key={item.key}
+								onLongPress={() => {
+									console.log('Long clicked');
+								}}
+								onPress={() => {
+									setItemModal(item);
+									setItemModalVisible(true);
+									console.log(item);
+								}}
+							>
 								<DataTable.Cell style={{ justifyContent: 'center', flex: 2 }}>
 									{item.product.name}
 								</DataTable.Cell>
@@ -284,59 +301,33 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 							</DataTable.Title>
 						</DataTable.Header>
 						{data.slice(from, to).map((item) => (
-							<DataTable.Row key={item.key}>
-								<DataTable.Cell
-									style={{ justifyContent: 'center', flex: 2 }}
-									onPress={() => {
-										setItemModal(item.product.name);
-										setItemModalVisible(true);
-									}}
-								>
+							<DataTable.Row
+								key={item.key}
+								onLongPress={() => {
+									console.log('Long clicked');
+								}}
+								onPress={() => {
+									setItemModal(item);
+									setItemModalVisible(true);
+									console.log(item);
+								}}
+							>
+								<DataTable.Cell style={{ justifyContent: 'center', flex: 2 }}>
 									{item.product.name}
 								</DataTable.Cell>
-								<DataTable.Cell
-									style={{ justifyContent: 'center' }}
-									onPress={() => {
-										setItemModal(item.quantity);
-										setItemModalVisible(true);
-									}}
-								>
+								<DataTable.Cell style={{ justifyContent: 'center' }}>
 									{item.quantity}
 								</DataTable.Cell>
-								<DataTable.Cell
-									style={{ justifyContent: 'center' }}
-									onPress={() => {
-										setItemModal(item.weight.toFixed(2));
-										setItemModalVisible(true);
-									}}
-								>
+								<DataTable.Cell style={{ justifyContent: 'center' }}>
 									{item.weight.toFixed(2)}
 								</DataTable.Cell>
-								<DataTable.Cell
-									style={{ justifyContent: 'center' }}
-									onPress={() => {
-										setItemModal(item.price.toFixed(2));
-										setItemModalVisible(true);
-									}}
-								>
+								<DataTable.Cell style={{ justifyContent: 'center' }}>
 									{item.price.toFixed(2)}
 								</DataTable.Cell>
-								<DataTable.Cell
-									style={{ justifyContent: 'center', flex: 2 }}
-									onPress={() => {
-										setItemModalVisible(true);
-										setItemModal(item.deliveryDateTime.toLocaleString('pt-pt'));
-									}}
-								>
+								<DataTable.Cell style={{ justifyContent: 'center', flex: 2 }}>
 									{item.deliveryDateTime.toLocaleString('pt-pt')}
 								</DataTable.Cell>
-								<DataTable.Cell
-									style={{ justifyContent: 'center' }}
-									onPress={() => {
-										setItemModalVisible(true);
-										setItemModal(item.notes);
-									}}
-								>
+								<DataTable.Cell style={{ justifyContent: 'center' }}>
 									{item.notes}
 								</DataTable.Cell>
 							</DataTable.Row>
@@ -425,59 +416,33 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 							</DataTable.Title>
 						</DataTable.Header>
 						{data.slice(from, to).map((item) => (
-							<DataTable.Row key={item.key}>
-								<DataTable.Cell
-									style={{ justifyContent: 'center', flex: 2 }}
-									onPress={() => {
-										setItemModal(item.client.name);
-										setItemModalVisible(true);
-									}}
-								>
+							<DataTable.Row
+								key={item.key}
+								onLongPress={() => {
+									console.log('Long clicked');
+								}}
+								onPress={() => {
+									setItemModal(item);
+									setItemModalVisible(true);
+									console.log(item);
+								}}
+							>
+								<DataTable.Cell style={{ justifyContent: 'center', flex: 2 }}>
 									{item.client.name}
 								</DataTable.Cell>
-								<DataTable.Cell
-									style={{ justifyContent: 'center' }}
-									onPress={() => {
-										setItemModal(item.quantity);
-										setItemModalVisible(true);
-									}}
-								>
+								<DataTable.Cell style={{ justifyContent: 'center' }}>
 									{item.quantity}
 								</DataTable.Cell>
-								<DataTable.Cell
-									style={{ justifyContent: 'center' }}
-									onPress={() => {
-										setItemModal(item.weight.toFixed(2));
-										setItemModalVisible(true);
-									}}
-								>
+								<DataTable.Cell style={{ justifyContent: 'center' }}>
 									{item.weight.toFixed(2)}
 								</DataTable.Cell>
-								<DataTable.Cell
-									style={{ justifyContent: 'center' }}
-									onPress={() => {
-										setItemModal(item.price.toFixed(2));
-										setItemModalVisible(true);
-									}}
-								>
+								<DataTable.Cell style={{ justifyContent: 'center' }}>
 									{item.price.toFixed(2)}
 								</DataTable.Cell>
-								<DataTable.Cell
-									style={{ justifyContent: 'center', flex: 2 }}
-									onPress={() => {
-										setItemModalVisible(true);
-										setItemModal(item.deliveryDateTime.toLocaleString('pt-pt'));
-									}}
-								>
+								<DataTable.Cell style={{ justifyContent: 'center', flex: 2 }}>
 									{item.deliveryDateTime.toLocaleString('pt-pt')}
 								</DataTable.Cell>
-								<DataTable.Cell
-									style={{ justifyContent: 'center' }}
-									onPress={() => {
-										setItemModalVisible(true);
-										setItemModal(item.notes);
-									}}
-								>
+								<DataTable.Cell style={{ justifyContent: 'center' }}>
 									{item.notes}
 								</DataTable.Cell>
 							</DataTable.Row>
@@ -539,46 +504,33 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 									sortedColumn === 'weightTotal' ? sortDirection : undefined
 								}
 								onPress={() => handleSort('weightTotal', data, true)}
+								name
 							>
 								Total Weight
 							</DataTable.Title>
 						</DataTable.Header>
 						{data.slice(from, to).map((item) => (
-							<DataTable.Row key={item.key}>
-								<DataTable.Cell
-									style={{ justifyContent: 'center' }}
-									onPress={() => {
-										setItemModal(item.name);
-										setItemModalVisible(true);
-									}}
-								>
+							<DataTable.Row
+								key={item.key}
+								onLongPress={() => {
+									console.log('Long clicked');
+								}}
+								onPress={() => {
+									setItemModal(item);
+									setItemModalVisible(true);
+									console.log(item);
+								}}
+							>
+								<DataTable.Cell style={{ justifyContent: 'center' }}>
 									{item.name}
 								</DataTable.Cell>
-								<DataTable.Cell
-									style={{ justifyContent: 'center' }}
-									onPress={() => {
-										setItemModal(item.quantity);
-										setItemModalVisible(true);
-									}}
-								>
+								<DataTable.Cell style={{ justifyContent: 'center' }}>
 									{item.quantity}
 								</DataTable.Cell>
-								<DataTable.Cell
-									style={{ justifyContent: 'center' }}
-									onPress={() => {
-										setItemModal(item.weight.toFixed(2));
-										setItemModalVisible(true);
-									}}
-								>
+								<DataTable.Cell style={{ justifyContent: 'center' }}>
 									{item.weight.toFixed(2)}
 								</DataTable.Cell>
-								<DataTable.Cell
-									style={{ justifyContent: 'center' }}
-									onPress={() => {
-										setItemModal(item.weightTotal.toFixed(2));
-										setItemModalVisible(true);
-									}}
-								>
+								<DataTable.Cell style={{ justifyContent: 'center' }}>
 									{item.weightTotal.toFixed(2)}
 								</DataTable.Cell>
 							</DataTable.Row>
@@ -602,6 +554,257 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 		}
 	};
 
+	const renderRow = (item: object) => {
+		switch (props.dataType) {
+			case 'newOrder': {
+				console.log(item);
+				return (
+					<>
+						{Object.keys(item).length !== 0 ? (
+							<View style={styles.itemContainer}>
+								<Text style={styles.title}>Name:</Text>
+								<Text style={styles.item}>{item.product.name}</Text>
+								<Divider
+									bold={true}
+									style={{
+										flexBasis: '100%',
+										backgroundColor: theme.colors.outline,
+									}}
+								/>
+								<Text style={styles.title}>Quantity:</Text>
+								<Text style={styles.item}>{item.quantity}</Text>
+								<Divider
+									bold={true}
+									style={{
+										flexBasis: '100%',
+										backgroundColor: theme.colors.outline,
+									}}
+								/>
+								<Text style={styles.title}>Weight:</Text>
+								<Text style={styles.item}>{item.weight.toFixed(3)} kg</Text>
+								<Divider
+									bold={true}
+									style={{
+										flexBasis: '100%',
+										backgroundColor: theme.colors.outline,
+									}}
+								/>
+								<Text style={styles.title}>Total weight:</Text>
+								<Text style={styles.item}>
+									{(item.weight * item.quantity).toFixed(3)} kg
+								</Text>
+								<Divider
+									bold={true}
+									style={{
+										flexBasis: '100%',
+										backgroundColor: theme.colors.outline,
+									}}
+								/>
+								<Text style={styles.title}>Price:</Text>
+								<Text style={styles.item}>{item.price.toFixed(2)}</Text>
+								<Divider
+									bold={true}
+									style={{
+										flexBasis: '100%',
+										backgroundColor: theme.colors.outline,
+									}}
+								/>
+								<Text style={styles.title}>Notes:</Text>
+								<Text style={styles.item}>{item.notes}</Text>
+							</View>
+						) : null}
+					</>
+				);
+			}
+			case 'clientOrder': {
+				console.log(item);
+				return (
+					<>
+						{Object.keys(item).length !== 0 ? (
+							<View style={styles.itemContainer}>
+								<Text style={styles.title}>Name:</Text>
+								<Text style={styles.item}>{item.product.name}</Text>
+								<Divider
+									bold={true}
+									style={{
+										flexBasis: '100%',
+										backgroundColor: theme.colors.outline,
+									}}
+								/>
+								<Text style={styles.title}>Quantity:</Text>
+								<Text style={styles.item}>{item.quantity}</Text>
+								<Divider
+									bold={true}
+									style={{
+										flexBasis: '100%',
+										backgroundColor: theme.colors.outline,
+									}}
+								/>
+								<Text style={styles.title}>Weight:</Text>
+								<Text style={styles.item}>{item.weight.toFixed(3)} kg</Text>
+								<Divider
+									bold={true}
+									style={{
+										flexBasis: '100%',
+										backgroundColor: theme.colors.outline,
+									}}
+								/>
+								<Text style={styles.title}>Total weight:</Text>
+								<Text style={styles.item}>
+									{(item.weight * item.quantity).toFixed(3)} kg
+								</Text>
+								<Divider
+									bold={true}
+									style={{
+										flexBasis: '100%',
+										backgroundColor: theme.colors.outline,
+									}}
+								/>
+								<Text style={styles.title}>Price:</Text>
+								<Text style={styles.item}>{item.price.toFixed(2)}</Text>
+								<Divider
+									bold={true}
+									style={{
+										flexBasis: '100%',
+										backgroundColor: theme.colors.outline,
+									}}
+								/>
+								<Text style={styles.title}>Delivery Date:</Text>
+								<Text style={styles.item}>
+									{item.deliveryDateTime.toLocaleString('pt-pt')}
+								</Text>
+								<Divider
+									bold={true}
+									style={{
+										flexBasis: '100%',
+										backgroundColor: theme.colors.outline,
+									}}
+								/>
+								<Text style={styles.title}>Notes:</Text>
+								<Text style={styles.item}>{item.notes}</Text>
+							</View>
+						) : null}
+					</>
+				);
+			}
+			case 'productOrder': {
+				console.log(item);
+				return (
+					<>
+						{Object.keys(item).length !== 0 ? (
+							<View style={styles.itemContainer}>
+								<Text style={styles.title}>Name:</Text>
+								<Text style={styles.item}>{item.client.name}</Text>
+								<Divider
+									bold={true}
+									style={{
+										flexBasis: '100%',
+										backgroundColor: theme.colors.outline,
+									}}
+								/>
+								<Text style={styles.title}>Quantity:</Text>
+								<Text style={styles.item}>{item.quantity}</Text>
+								<Divider
+									bold={true}
+									style={{
+										flexBasis: '100%',
+										backgroundColor: theme.colors.outline,
+									}}
+								/>
+								<Text style={styles.title}>Weight:</Text>
+								<Text style={styles.item}>{item.weight.toFixed(3)} kg</Text>
+								<Divider
+									bold={true}
+									style={{
+										flexBasis: '100%',
+										backgroundColor: theme.colors.outline,
+									}}
+								/>
+								<Text style={styles.title}>Total weight:</Text>
+								<Text style={styles.item}>
+									{(item.weight * item.quantity).toFixed(3)} kg
+								</Text>
+								<Divider
+									bold={true}
+									style={{
+										flexBasis: '100%',
+										backgroundColor: theme.colors.outline,
+									}}
+								/>
+								<Text style={styles.title}>Price:</Text>
+								<Text style={styles.item}>{item.price.toFixed(2)}</Text>
+								<Divider
+									bold={true}
+									style={{
+										flexBasis: '100%',
+										backgroundColor: theme.colors.outline,
+									}}
+								/>
+								<Text style={styles.title}>Delivery Date:</Text>
+								<Text style={styles.item}>
+									{item.deliveryDateTime.toLocaleString('pt-pt')}
+								</Text>
+								<Divider
+									bold={true}
+									style={{
+										flexBasis: '100%',
+										backgroundColor: theme.colors.outline,
+									}}
+								/>
+								<Text style={styles.title}>Notes:</Text>
+								<Text style={styles.item}>{item.notes}</Text>
+							</View>
+						) : null}
+					</>
+				);
+			}
+			case 'productQuantity': {
+				console.log(item);
+				return (
+					<>
+						{Object.keys(item).length !== 0 ? (
+							<View style={styles.itemContainer}>
+								<Text style={styles.title}>Name:</Text>
+								<Text style={styles.item}>{item.name}</Text>
+								<Divider
+									bold={true}
+									style={{
+										flexBasis: '100%',
+										backgroundColor: theme.colors.outline,
+									}}
+								/>
+								<Text style={styles.title}>Quantity:</Text>
+								<Text style={styles.item}>{item.quantity}</Text>
+								<Divider
+									bold={true}
+									style={{
+										flexBasis: '100%',
+										backgroundColor: theme.colors.outline,
+									}}
+								/>
+								<Text style={styles.title}>Weight:</Text>
+								<Text style={styles.item}>{item.weight.toFixed(3)} kg</Text>
+								<Divider
+									bold={true}
+									style={{
+										flexBasis: '100%',
+										backgroundColor: theme.colors.outline,
+									}}
+								/>
+								<Text style={styles.title}>Total weight:</Text>
+								<Text style={styles.item}>
+									{item.weightTotal.toFixed(3)} kg
+								</Text>
+							</View>
+						) : null}
+					</>
+				);
+			}
+			default:
+				return <Text>Default</Text>;
+		}
+	};
+
 	return (
 		<>
 			<Portal>
@@ -613,10 +816,13 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 					style={styles.modalContainer}
 					contentContainerStyle={[
 						styles.modalContentContainer,
-						{ backgroundColor: theme.colors.primaryContainer },
+						{
+							backgroundColor: theme.colors.primaryContainer,
+							borderColor: theme.colors.outline,
+						},
 					]}
 				>
-					<Text>{itemModal}</Text>
+					{renderRow(itemModal)}
 				</Modal>
 			</Portal>
 			{renderDataTable()}
@@ -635,5 +841,19 @@ const styles = StyleSheet.create({
 		paddingVertical: 10,
 		paddingHorizontal: 15,
 		borderRadius: 20,
+		borderWidth: 2,
 	},
+	itemContainer: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		flexWrap: 'wrap',
+		maxWidth: '90%',
+	},
+	title: {
+		textAlign: 'center',
+		textAlignVertical: 'center',
+		fontWeight: 'bold',
+		fontSize: 18,
+	},
+	item: { textAlign: 'center', textAlignVertical: 'center', fontSize: 15 },
 });
