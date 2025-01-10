@@ -18,7 +18,7 @@ export default function ShowClientOrder() {
 	const [hintClientList, setHintClientList] = useState([]);
 
 	const [name, setName] = useState('');
-	const [client, setClient] = useState([]);
+	const [client, setClient] = useState({});
 	const [clientOrders, setClientOrders] = useState([]);
 
 	// All the logic to implement the snackbar
@@ -41,7 +41,7 @@ export default function ShowClientOrder() {
 			return () => {
 				//console.log('This route is now unfocused.');
 				setName('');
-				setClient([]);
+				setClient({});
 				setClientOrders([]);
 			};
 		}, [])
@@ -84,20 +84,18 @@ export default function ShowClientOrder() {
 
 	const getClient = (clientName: string) => {
 		if (client) return;
-		const currentClient = [];
+		const currentClient = {};
 
 		for (const doc of clientList) {
 			if (doc.name === clientName.trim()) {
-				currentClient.push({ key: doc.key, name: doc.name });
+				currentClient.key = doc.key;
+				currentClient.name = doc.name;
 			}
 		}
+		setClient(currentClient);
+		getClientOrders(currentClient.key);
 
-		if (currentClient.length === 1) {
-			setClient(currentClient[0]);
-			getClientOrders(currentClient[0].key);
-		}
-
-		return currentClient[0];
+		return currentClient;
 	};
 
 	const getClientOrders = async (clientKey: string) => {
@@ -132,7 +130,7 @@ export default function ShowClientOrder() {
 					}
 				});
 				setClientOrders(orders);
-				console.log(orders);
+				//console.log(orders);
 			});
 	};
 
@@ -144,11 +142,14 @@ export default function ShowClientOrder() {
 				<TouchableRipple
 					onPress={() => {
 						Keyboard.dismiss();
-						const currentClient = [];
-						currentClient.push({ key: item.item.key, name: item.item.name });
+
+						const currentClient = {};
+						currentClient.key = item.item.key;
+						currentClient.name = item.item.name;
+
 						setName(item.item.name);
-						setClient(currentClient[0]);
-						getClientOrders(currentClient[0].key);
+						setClient(currentClient);
+						getClientOrders(currentClient.key);
 						setHintClientList([]);
 					}}
 				>
@@ -191,7 +192,7 @@ export default function ShowClientOrder() {
 						renderItem={renderClientHint}
 						onClearIconPress={() => {
 							setName('');
-							setClient([]);
+							setClient({});
 							setHintClientList([]);
 							setClientOrders([]);
 						}}

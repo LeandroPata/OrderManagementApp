@@ -156,37 +156,36 @@ export default function AddOrder() {
 
 	const getClient = (clientName: string) => {
 		if (Object.keys(client).length !== 0) return;
-		const currentClient = [];
+		const currentClient = {};
 
 		for (const doc of clientList) {
 			if (doc.name === clientName.trim()) {
-				currentClient.push({ key: doc.key, name: doc.name });
+				currentClient.key = doc.key;
+				currentClient.name = doc.name;
 			}
 		}
-		console.log(currentClient[0]);
+		setClient(currentClient);
+		console.log(currentClient);
 
-		if (currentClient.length === 1) setClient(currentClient[0]);
-		return currentClient[0];
+		return currentClient;
 	};
 
 	const getProduct = (productName: string) => {
 		if (Object.keys(product).length !== 0) return;
-		const currentProduct = [];
+		const currentProduct = {};
 
 		for (const doc of productList) {
 			if (doc.name === productName.trim()) {
-				currentProduct.push({
-					key: doc.key,
-					name: doc.name,
-					price: doc.price,
-					priceWeight: doc.priceWeight,
-				});
+				currentProduct.key = doc.key;
+				currentProduct.name = doc.name;
+				currentProduct.price = doc.price;
+				currentProduct.priceWeight = doc.priceWeight;
 			}
 		}
-		console.log(currentProduct[0]);
+		setProduct(currentProduct);
+		console.log(currentProduct);
 
-		if (currentProduct.length === 1) setProduct(currentProduct[0]);
-		return currentProduct[0];
+		return currentProduct;
 	};
 
 	const addToOrder = () => {
@@ -194,24 +193,27 @@ export default function AddOrder() {
 
 		if (Object.keys(client).length === 0) {
 			const currentClient = getClient(name);
-			console.log(!currentClient);
-			if (!currentClient) {
+			console.log(currentClient);
+			if (Object.keys(currentClient).length === 0) {
 				showSnackbar('No valid client selected!');
 				console.log('No client error');
 				return;
 			}
 		} else if (Object.keys(product).length === 0) {
 			const currentProduct = getProduct(productName);
-			if (!currentProduct) {
+			console.log(!currentProduct);
+			if (Object.keys(currentProduct).length === 0) {
 				showSnackbar('No valid product selected!');
 				console.log('No product error');
 				return;
 			}
 		}
-		console.log(client);
+		//console.log(client);
 		console.log(product);
+		console.log(product.priceWeight);
+		console.log(!productWeight.trim());
 
-		if (product.priceByWeight && !productWeight.trim()) {
+		if (product.priceWeight && !productWeight.trim()) {
 			showSnackbar('Weight is mandatory for this product!');
 			console.log('No weight for priceByWeight product');
 			return;
@@ -240,7 +242,7 @@ export default function AddOrder() {
 				price: Number(price.toFixed(2)),
 				notes: notes,
 			});
-			console.log(newOrder);
+			//console.log(newOrder);
 			setOrder(newOrder);
 		} catch {
 			(e: any) => {
@@ -252,7 +254,7 @@ export default function AddOrder() {
 			setProductQuantity('1');
 			setProductWeight('');
 			setNotes('');
-			setProduct([]);
+			setProduct({});
 
 			showSnackbar('Added to current order!');
 			console.log('Added to order');
@@ -264,7 +266,7 @@ export default function AddOrder() {
 		Keyboard.dismiss();
 
 		if (!name.trim() || !client || !checkClient()) {
-			showSnackbar(t('add.order.clientNameError'));
+			showSnackbar('No valid client selected!');
 			//setNameError(true);
 			setLoading(false);
 			return;
@@ -297,10 +299,10 @@ export default function AddOrder() {
 					console.log('Added');
 					showSnackbar(t('add.order.added'));
 					setName('');
-					setClient([]);
+					setClient({});
 					setHintClientList([]);
 					setProductName('');
-					setProduct([]);
+					setProduct({});
 					setHintProductList([]);
 					setProductQuantity('1');
 					setProductWeight('');
@@ -308,8 +310,7 @@ export default function AddOrder() {
 				});
 		} catch (e: any) {
 			const err = e as FirebaseError;
-			console.log(`Adding member failed: ${err.message}`);
-			//showSnackbar('Adding member failed: ' + err.message);
+			console.log(`Adding order failed: ${err.message}`);
 			setLoading(false);
 		} finally {
 			setLoading(false);
@@ -324,11 +325,14 @@ export default function AddOrder() {
 				<TouchableRipple
 					onPress={() => {
 						Keyboard.dismiss();
-						const currentClient = [];
-						currentClient.push({ key: item.item.key, name: item.item.name });
+
+						const currentClient = {};
+						currentClient.key = item.item.key;
+						currentClient.name = item.item.name;
+
 						setName(item.item.name);
-						//console.log(currentClient[0]);
-						setClient(currentClient[0]);
+						//console.log(currentClient);
+						setClient(currentClient);
 						setHintClientList([]);
 					}}
 				>
@@ -347,16 +351,16 @@ export default function AddOrder() {
 				<TouchableRipple
 					onPress={() => {
 						Keyboard.dismiss();
-						const currentProduct = [];
-						currentProduct.push({
-							key: item.item.key,
-							name: item.item.name,
-							price: item.item.price,
-							priceWeight: item.item.priceWeight,
-						});
+
+						const currentProduct = {};
+						currentProduct.key = item.item.key;
+						currentProduct.name = item.item.name;
+						currentProduct.price = item.item.price;
+						currentProduct.priceWeight = item.item.priceWeight;
+
 						setProductName(item.item.name);
-						//console.log(currentProduct[0]);
-						setProduct(currentProduct[0]);
+						//console.log(currentProduct);
+						setProduct(currentProduct);
 						setHintProductList([]);
 					}}
 				>
@@ -397,7 +401,7 @@ export default function AddOrder() {
 						renderItem={renderClientHint}
 						onClearIconPress={() => {
 							setName('');
-							setClient([]);
+							setClient({});
 							setOrder([]);
 							setHintClientList([]);
 						}}
@@ -421,7 +425,7 @@ export default function AddOrder() {
 						renderItem={renderProductHint}
 						onClearIconPress={() => {
 							setProductName('');
-							setProduct([]);
+							setProduct({});
 							setHintProductList([]);
 						}}
 					/>

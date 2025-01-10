@@ -42,7 +42,7 @@ export default function AddProduct() {
 			.then((querySnapshot) => {
 				// biome-ignore lint/complexity/noForEach:<Method that returns iterator necessary>
 				querySnapshot.forEach((doc) => {
-					if (name.trim() == doc.data().name) productExists = true;
+					if (name.trim() === doc.data().name) productExists = true;
 				});
 			});
 		console.log(`Product exists: ${productExists}`);
@@ -78,8 +78,7 @@ export default function AddProduct() {
 				});
 		} catch (e: any) {
 			const err = e as FirebaseError;
-			console.log(`Adding member failed: ${err.message}`);
-			//showSnackbar('Adding member failed: ' + err.message);
+			console.log(`Adding product failed: ${err.message}`);
 			setLoading(false);
 		} finally {
 			setLoading(false);

@@ -18,7 +18,7 @@ export default function ShowProductQuantity() {
 	const [hintProductList, setHintProductList] = useState([]);
 
 	const [name, setName] = useState('');
-	const [product, setProduct] = useState([]);
+	const [product, setProduct] = useState({});
 	const [productQuantity, setProductQuantity] = useState([]);
 
 	// All the logic to implement the snackbar
@@ -42,7 +42,7 @@ export default function ShowProductQuantity() {
 			return () => {
 				//console.log('This route is now unfocused.');
 				setName('');
-				setProduct([]);
+				setProduct({});
 			};
 		}, [])
 	);
@@ -89,26 +89,20 @@ export default function ShowProductQuantity() {
 
 	const getProduct = (productName: string) => {
 		if (product) return;
-		const currentProduct = [];
+		const currentProduct = {};
 
 		for (const doc of productList) {
 			if (doc.name === productName.trim()) {
-				currentProduct.push({
-					key: doc.key,
-					name: doc.name,
-					price: doc.price,
-					priceWeight: doc.priceWeight,
-				});
+				currentProduct.key = doc.key;
+				currentProduct.name = doc.name;
+				currentProduct.price = doc.price;
+				currentProduct.priceWeight = doc.priceWeight;
 			}
 		}
+		setProduct(currentProduct);
+		getProductCount(currentProduct.key);
 
-		//console.log(currentProduct[0]);
-		if (currentProduct.length === 1) {
-			setProduct(currentProduct[0]);
-			getProductCount(currentProduct[0].key);
-		}
-
-		return currentProduct[0];
+		return currentProduct;
 	};
 
 	const getProductCount = (productKey: string) => {
@@ -195,18 +189,17 @@ export default function ShowProductQuantity() {
 				<TouchableRipple
 					onPress={() => {
 						Keyboard.dismiss();
-						const currentProduct = [];
-						currentProduct.push({
-							key: item.item.key,
-							name: item.item.name,
-							price: item.item.price,
-							priceWeight: item.item.priceWeight,
-						});
+
+						const currentProduct = {};
+						currentProduct.key = item.item.key;
+						currentProduct.name = item.item.name;
+						currentProduct.price = item.item.price;
+						currentProduct.priceWeight = item.item.priceWeight;
+
 						setName(item.item.name);
-						setProduct(currentProduct[0]);
-						getProductCount(currentProduct[0].key);
+						setProduct(currentProduct);
+						getProductCount(currentProduct.key);
 						setHintProductList([]);
-						//console.log(currentProduct[0]);
 					}}
 				>
 					<Text style={{ padding: 5 }}>{item.item.name}</Text>
@@ -248,7 +241,7 @@ export default function ShowProductQuantity() {
 						renderItem={renderProductHint}
 						onClearIconPress={() => {
 							setName('');
-							setProduct([]);
+							setProduct({});
 							setHintProductList([]);
 							getAllProductsCount();
 						}}

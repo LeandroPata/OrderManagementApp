@@ -68,8 +68,7 @@ export default function AddClient() {
 				});
 		} catch (e: any) {
 			const err = e as FirebaseError;
-			console.log(`Adding member failed: ${err.message}`);
-			//showSnackbar('Adding member failed: ' + err.message);
+			console.log(`Adding client failed: ${err.message}`);
 			setLoading(false);
 		} finally {
 			setLoading(false);

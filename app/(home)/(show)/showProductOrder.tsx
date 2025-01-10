@@ -18,7 +18,7 @@ export default function ShowProductOrder() {
 	const [hintProductList, setHintProductList] = useState([]);
 
 	const [name, setName] = useState('');
-	const [product, setProduct] = useState([]);
+	const [product, setProduct] = useState({});
 	const [productOrders, setProductOrders] = useState([]);
 
 	// All the logic to implement the snackbar
@@ -40,9 +40,8 @@ export default function ShowProductOrder() {
 			// Screen unfocused in return
 			return () => {
 				//console.log('This route is now unfocused.');
-				//setProfile(null);
 				setName('');
-				setProduct([]);
+				setProduct({});
 				setProductOrders([]);
 			};
 		}, [])
@@ -90,26 +89,20 @@ export default function ShowProductOrder() {
 
 	const getProduct = (productName: string) => {
 		if (product) return;
-		const currentProduct = [];
+		const currentProduct = {};
 
 		for (const doc of productList) {
 			if (doc.name === productName.trim()) {
-				currentProduct.push({
-					key: doc.key,
-					name: doc.name,
-					price: doc.price,
-					priceWeight: doc.priceWeight,
-				});
+				currentProduct.key = doc.key;
+				currentProduct.name = doc.name;
+				currentProduct.price = doc.price;
+				currentProduct.priceWeight = doc.priceWeight;
 			}
 		}
-		console.log(currentProduct[0]);
+		setProduct(currentProduct);
+		getProductOrders(currentProduct.key);
 
-		if (currentProduct.length === 1) {
-			setProduct(currentProduct[0]);
-			getProductOrders(currentProduct[0].key);
-		}
-
-		return currentProduct[0];
+		return currentProduct;
 	};
 
 	const getProductOrders = async (productKey: string) => {
@@ -124,24 +117,7 @@ export default function ShowProductOrder() {
 				// biome-ignore lint/complexity/noForEach:<Method that returns iterator necessary>
 				snapshot.forEach((doc) => {
 					console.log(doc.data());
-					/* doc.data().order.forEach((order) => {
-						console.log(order.product.key + ' : ' + productKey);
-						if (order.product.key == productKey) {
-							console.log(order);
-							orders.push({
-								key: i,
-								client: doc.data().client,
-								quantity: order.quantity,
-								weight: order.weight,
-								price: order.price,
-								notes: order.notes,
-								deliveryDateTime: new Date(
-									doc.data().deliveryDateTime.toDate()
-								),
-							});
-							i++;
-						}
-					}); */
+
 					for (const order of doc.data().order) {
 						//console.log(`${order.product.key} : ${productKey}`);
 
@@ -176,16 +152,16 @@ export default function ShowProductOrder() {
 				<TouchableRipple
 					onPress={() => {
 						Keyboard.dismiss();
-						const currentProduct = [];
-						currentProduct.push({
-							key: item.item.key,
-							name: item.item.name,
-							price: item.item.price,
-							priceWeight: item.item.priceWeight,
-						});
+
+						const currentProduct = {};
+						currentProduct.key = item.item.key;
+						currentProduct.name = item.item.name;
+						currentProduct.price = item.item.price;
+						currentProduct.priceWeight = item.item.priceWeight;
+
 						setName(item.item.name);
-						setProduct(currentProduct[0]);
-						getProductOrders(currentProduct[0].key);
+						setProduct(currentProduct);
+						getProductOrders(currentProduct.key);
 						setHintProductList([]);
 						//console.log(currentProduct[0]);
 					}}
@@ -229,7 +205,7 @@ export default function ShowProductOrder() {
 						renderItem={renderProductHint}
 						onClearIconPress={() => {
 							setName('');
-							setProduct([]);
+							setProduct({});
 							setHintProductList([]);
 							setProductOrders([]);
 						}}
