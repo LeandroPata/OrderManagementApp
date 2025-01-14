@@ -9,12 +9,14 @@ import {
 	Text,
 	useTheme,
 } from 'react-native-paper';
+import DialogConfirmation from './DialogConfirmation';
 
 type DataTableOrderProps = {
 	data: ArrayLike<any> | null | undefined;
 	dataType: 'newOrder' | 'clientOrder' | 'productOrder' | 'productQuantity';
 	defaultSort: 'product.name' | 'client.name' | 'name';
 	numberofItemsPerPageList: Array<number>;
+	onLongPress: (item: object) => void;
 };
 
 const DataTableOrder = (props: DataTableOrderProps) => {
@@ -30,6 +32,11 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 	const [itemsPerPage, onItemsPerPageChange] = useState(
 		numberOfItemsPerPageList[0]
 	);
+
+	// All the logic to implemet DialogConfirmation
+	const [dialogConfirmationVisible, setDialogConfirmationVisible] =
+		useState(false);
+	const onDismissDialogConfirmation = () => setDialogConfirmationVisible(false);
 
 	const [data, setData] = useState(props.data);
 	//console.log('Props');
@@ -94,8 +101,19 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 	}, [itemsPerPage]);
 
 	useEffect(() => {
-		if (props.data?.length !== 0) handleSort(sortedColumn, props.data, false);
+		handleSort(sortedColumn, props.data, false);
 	}, [props.data?.length]);
+
+	const showItemModal = (item: object) => {
+		setItemModal(item);
+		setItemModalVisible(true);
+		//console.log(item);
+	};
+
+	const itemStatusChange = (item: object) => {
+		setItemModal(item);
+		setDialogConfirmationVisible(true);
+	};
 
 	const renderDataTable = () => {
 		//console.log(data);
@@ -168,12 +186,10 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 							<DataTable.Row
 								key={item.key}
 								onLongPress={() => {
-									console.log('Long clicked');
+									itemStatusChange(item);
 								}}
 								onPress={() => {
-									setItemModal(item);
-									setItemModalVisible(true);
-									console.log(item);
+									showItemModal(item);
 								}}
 							>
 								<DataTable.Cell style={{ justifyContent: 'center', flex: 2 }}>
@@ -297,19 +313,17 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								style={{ justifyContent: 'center' }}
 								textStyle={{ fontWeight: 'bold' }}
 							>
-								Note
+								Status
 							</DataTable.Title>
 						</DataTable.Header>
 						{data.slice(from, to).map((item) => (
 							<DataTable.Row
 								key={item.key}
 								onLongPress={() => {
-									console.log('Long clicked');
+									itemStatusChange(item);
 								}}
 								onPress={() => {
-									setItemModal(item);
-									setItemModalVisible(true);
-									console.log(item);
+									showItemModal(item);
 								}}
 							>
 								<DataTable.Cell style={{ justifyContent: 'center', flex: 2 }}>
@@ -328,7 +342,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 									{item.deliveryDateTime.toLocaleString('pt-pt')}
 								</DataTable.Cell>
 								<DataTable.Cell style={{ justifyContent: 'center' }}>
-									{item.notes}
+									{item.status}
 								</DataTable.Cell>
 							</DataTable.Row>
 						))}
@@ -412,19 +426,17 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								style={{ justifyContent: 'center' }}
 								textStyle={{ fontWeight: 'bold' }}
 							>
-								Note
+								Status
 							</DataTable.Title>
 						</DataTable.Header>
 						{data.slice(from, to).map((item) => (
 							<DataTable.Row
 								key={item.key}
 								onLongPress={() => {
-									console.log('Long clicked');
+									itemStatusChange(item);
 								}}
 								onPress={() => {
-									setItemModal(item);
-									setItemModalVisible(true);
-									console.log(item);
+									showItemModal(item);
 								}}
 							>
 								<DataTable.Cell style={{ justifyContent: 'center', flex: 2 }}>
@@ -443,7 +455,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 									{item.deliveryDateTime.toLocaleString('pt-pt')}
 								</DataTable.Cell>
 								<DataTable.Cell style={{ justifyContent: 'center' }}>
-									{item.notes}
+									{item.status}
 								</DataTable.Cell>
 							</DataTable.Row>
 						))}
@@ -504,21 +516,25 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 									sortedColumn === 'weightTotal' ? sortDirection : undefined
 								}
 								onPress={() => handleSort('weightTotal', data, true)}
-								name
 							>
 								Total Weight
+							</DataTable.Title>
+							<DataTable.Title
+								style={{ justifyContent: 'center' }}
+								textStyle={{ fontWeight: 'bold' }}
+								sortDirection={
+									sortedColumn === 'status' ? sortDirection : undefined
+								}
+								onPress={() => handleSort('status', data, true)}
+							>
+								Status
 							</DataTable.Title>
 						</DataTable.Header>
 						{data.slice(from, to).map((item) => (
 							<DataTable.Row
 								key={item.key}
-								onLongPress={() => {
-									console.log('Long clicked');
-								}}
 								onPress={() => {
-									setItemModal(item);
-									setItemModalVisible(true);
-									console.log(item);
+									showItemModal(item);
 								}}
 							>
 								<DataTable.Cell style={{ justifyContent: 'center' }}>
@@ -532,6 +548,9 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								</DataTable.Cell>
 								<DataTable.Cell style={{ justifyContent: 'center' }}>
 									{item.weightTotal.toFixed(2)}
+								</DataTable.Cell>
+								<DataTable.Cell style={{ justifyContent: 'center' }}>
+									{item.status}
 								</DataTable.Cell>
 							</DataTable.Row>
 						))}
@@ -557,7 +576,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 	const renderRow = (item: object) => {
 		switch (props.dataType) {
 			case 'newOrder': {
-				console.log(item);
+				//console.log(item);
 				return (
 					<>
 						{Object.keys(item).length !== 0 ? (
@@ -609,6 +628,15 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
+								<Text style={styles.title}>Status:</Text>
+								<Text style={styles.item}>{item.status}</Text>
+								<Divider
+									bold={true}
+									style={{
+										flexBasis: '100%',
+										backgroundColor: theme.colors.outline,
+									}}
+								/>
 								<Text style={styles.title}>Notes:</Text>
 								<Text style={styles.item}>{item.notes}</Text>
 							</View>
@@ -617,7 +645,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 				);
 			}
 			case 'clientOrder': {
-				console.log(item);
+				//console.log(item);
 				return (
 					<>
 						{Object.keys(item).length !== 0 ? (
@@ -680,6 +708,15 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
+								<Text style={styles.title}>Status:</Text>
+								<Text style={styles.item}>{item.status}</Text>
+								<Divider
+									bold={true}
+									style={{
+										flexBasis: '100%',
+										backgroundColor: theme.colors.outline,
+									}}
+								/>
 								<Text style={styles.title}>Notes:</Text>
 								<Text style={styles.item}>{item.notes}</Text>
 							</View>
@@ -688,7 +725,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 				);
 			}
 			case 'productOrder': {
-				console.log(item);
+				//console.log(item);
 				return (
 					<>
 						{Object.keys(item).length !== 0 ? (
@@ -751,6 +788,15 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
+								<Text style={styles.title}>Status:</Text>
+								<Text style={styles.item}>{item.status}</Text>
+								<Divider
+									bold={true}
+									style={{
+										flexBasis: '100%',
+										backgroundColor: theme.colors.outline,
+									}}
+								/>
 								<Text style={styles.title}>Notes:</Text>
 								<Text style={styles.item}>{item.notes}</Text>
 							</View>
@@ -759,7 +805,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 				);
 			}
 			case 'productQuantity': {
-				console.log(item);
+				//console.log(item);
 				return (
 					<>
 						{Object.keys(item).length !== 0 ? (
@@ -795,6 +841,15 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								<Text style={styles.item}>
 									{item.weightTotal.toFixed(3)} kg
 								</Text>
+								<Divider
+									bold={true}
+									style={{
+										flexBasis: '100%',
+										backgroundColor: theme.colors.outline,
+									}}
+								/>
+								<Text style={styles.title}>Status:</Text>
+								<Text style={styles.item}>{item.status}</Text>
 							</View>
 						) : null}
 					</>
@@ -807,6 +862,16 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 
 	return (
 		<>
+			<DialogConfirmation
+				text={'Yooooo'}
+				visible={dialogConfirmationVisible}
+				onDismiss={onDismissDialogConfirmation}
+				onConfirmation={() => {
+					props.onLongPress(itemModal);
+					setDialogConfirmationVisible(false);
+				}}
+			/>
+
 			<Portal>
 				<Modal
 					visible={itemModalVisible}
