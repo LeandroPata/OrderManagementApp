@@ -125,10 +125,13 @@ export default function ShowProductOrder() {
 							console.log(order);
 							orders.push({
 								key: i,
+								orderId: doc.id,
+								orderKey: order.key,
 								client: doc.data().client,
 								quantity: order.quantity,
 								weight: order.weight,
 								price: order.price,
+								status: order.status,
 								notes: order.notes,
 								deliveryDateTime: new Date(
 									doc.data().deliveryDateTime.toDate()
@@ -142,6 +145,55 @@ export default function ShowProductOrder() {
 				setProductOrders(orders);
 				//console.log(orders);
 			});
+	};
+
+	// I don't like having to copy the whole order to change one variable,
+	// but can't figure out how to do it dynamically (the index is varible = orderKey)
+	// on a map nested in an array
+	const updateOrderDatabase = async (item: object) => {
+		console.log(item);
+		const updatedOrder = [];
+		await firestore()
+			.collection('orders')
+			.doc(item.orderId)
+			.get()
+			.then((snapshot) => {
+				updatedOrder.push(...snapshot.data().order);
+			})
+			.catch((e: any) => {
+				const err = e as FirebaseError;
+				console.log(`Error getting order: ${err.message}`);
+			});
+
+		updatedOrder[item.orderKey].status = item.status;
+
+		firestore()
+			.collection('orders')
+			.doc(item.orderId)
+			.update({ order: updatedOrder })
+			.then(() => {
+				console.log('Updated');
+			})
+			.catch((e: any) => {
+				const err = e as FirebaseError;
+				console.log(`Error updating order: ${err.message}`);
+			});
+	};
+
+	const updateOrderStatus = (item: object) => {
+		//console.log(item);
+		// Mark as Complete if Incomplete
+		if (item.status === 'Incomplete') {
+			item.status = 'Complete';
+			//firestore().collection('orders').doc(item.)
+		}
+		// Mark as Delivered if Complete
+		else if (item.status === 'Complete') {
+			item.status = 'Delivered';
+		}
+		// Delete if Delivered
+		// Update in Firestore
+		updateOrderDatabase(item);
 	};
 
 	const renderProductHint = ({ item }) => {
@@ -206,8 +258,8 @@ export default function ShowProductOrder() {
 						onClearIconPress={() => {
 							setName('');
 							setProduct({});
-							setHintProductList([]);
 							setProductOrders([]);
+							setHintProductList([]);
 						}}
 					/>
 				</KeyboardAvoidingView>
@@ -217,6 +269,9 @@ export default function ShowProductOrder() {
 						dataType='productOrder'
 						defaultSort='client.name'
 						numberofItemsPerPageList={[6, 7, 8]}
+						onLongPress={(item: object) => {
+							updateOrderStatus(item);
+						}}
 					/>
 				</View>
 			</View>
