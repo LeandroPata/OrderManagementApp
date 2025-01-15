@@ -62,28 +62,28 @@ export default function AddProduct() {
 
 		const docRef = firestore().collection('products').doc();
 
-		try {
-			docRef
-				.set({
-					name: name.trim(),
-					price: Number(price.replace(',', '.').trim()).toFixed(2),
-					priceByWeight: priceWeightChecked,
-				})
-				.then(() => {
-					console.log('Added');
-					showSnackbar(t('add.product.added'));
-					setName('');
-					setPrice('');
-					setPriceWeightChecked(false);
-				});
-		} catch (e: any) {
-			const err = e as FirebaseError;
-			console.log(`Adding product failed: ${err.message}`);
-			setLoading(false);
-		} finally {
-			setLoading(false);
-			setNameError(false);
-		}
+		docRef
+			.set({
+				name: name.trim(),
+				price: Number(price.replace(',', '.').trim()).toFixed(2),
+				priceByWeight: priceWeightChecked,
+			})
+			.then(() => {
+				console.log('Added');
+				showSnackbar(t('add.product.added'));
+				setName('');
+				setPrice('');
+				setPriceWeightChecked(false);
+			})
+			.catch((e: any) => {
+				const err = e as FirebaseError;
+				console.log(`Adding product failed: ${err.message}`);
+				setLoading(false);
+			})
+			.finally(() => {
+				setLoading(false);
+				setNameError(false);
+			});
 	};
 
 	return (

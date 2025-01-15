@@ -142,6 +142,10 @@ export default function ShowProductOrder() {
 
 				setProductOrders(orders);
 				//console.log(orders);
+			})
+			.catch((e: any) => {
+				const err = e as FirebaseError;
+				console.log(`Error getting product orders: ${err.message}`);
 			});
 	};
 

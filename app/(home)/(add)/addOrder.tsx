@@ -190,48 +190,47 @@ export default function AddOrder() {
 
 	const addToOrder = () => {
 		Keyboard.dismiss();
-
-		if (Object.keys(client).length === 0) {
-			const currentClient = getClient(name);
-			console.log(currentClient);
-			if (Object.keys(currentClient).length === 0) {
-				showSnackbar('No valid client selected!');
-				console.log('No client error');
-				return;
-			}
-		} else if (Object.keys(product).length === 0) {
-			const currentProduct = getProduct(productName);
-			console.log(!currentProduct);
-			if (Object.keys(currentProduct).length === 0) {
-				showSnackbar('No valid product selected!');
-				console.log('No product error');
-				return;
-			}
-		}
-		//console.log(client);
-		console.log(product);
-		console.log(product.priceWeight);
-		console.log(!productWeight.trim());
-
-		if (product.priceWeight && !productWeight.trim()) {
-			showSnackbar('Weight is mandatory for this product!');
-			console.log('No weight for priceByWeight product');
-			return;
-		}
-
-		const weight =
-			product.priceWeight && productWeight.trim()
-				? Number(Number.parseFloat(productWeight).toFixed(2))
-				: Number(Number.parseFloat('0.00').toFixed(2));
-		//console.log(weight)
-
-		const price =
-			product.priceWeight && weight > 0
-				? Number(productQuantity) * (product.price * weight)
-				: Number(productQuantity) * product.price;
-		//console.log(price);
-
 		try {
+			if (Object.keys(client).length === 0) {
+				const currentClient = getClient(name);
+				console.log(currentClient);
+				if (Object.keys(currentClient).length === 0) {
+					showSnackbar('No valid client selected!');
+					console.log('No client error');
+					return;
+				}
+			} else if (Object.keys(product).length === 0) {
+				const currentProduct = getProduct(productName);
+				console.log(!currentProduct);
+				if (Object.keys(currentProduct).length === 0) {
+					showSnackbar('No valid product selected!');
+					console.log('No product error');
+					return;
+				}
+			}
+			//console.log(client);
+			console.log(product);
+			console.log(product.priceWeight);
+			console.log(!productWeight.trim());
+
+			if (product.priceWeight && !productWeight.trim()) {
+				showSnackbar('Weight is mandatory for this product!');
+				console.log('No weight for priceByWeight product');
+				return;
+			}
+
+			const weight =
+				product.priceWeight && productWeight.trim()
+					? Number(Number.parseFloat(productWeight).toFixed(2))
+					: Number(Number.parseFloat('0.00').toFixed(2));
+			//console.log(weight)
+
+			const price =
+				product.priceWeight && weight > 0
+					? Number(productQuantity) * (product.price * weight)
+					: Number(productQuantity) * product.price;
+			//console.log(price);
+
 			const newOrder = order;
 			//console.log(newOrder.length);
 			newOrder.push({
@@ -247,8 +246,7 @@ export default function AddOrder() {
 			setOrder(newOrder);
 		} catch {
 			(e: any) => {
-				const err = e as FirebaseError;
-				console.log(`Error adding to order: ${err.message}`);
+				console.log(`Error adding to order: ${e.message}`);
 			};
 		} finally {
 			setProductName('');
@@ -280,42 +278,42 @@ export default function AddOrder() {
 
 		const docRef = firestore().collection('orders').doc();
 
-		try {
-			docRef
-				.set({
-					client: client,
-					order: order,
-					deliveryDateTime: Timestamp.fromDate(
-						new Date(
-							deliveryDate.getFullYear(),
-							deliveryDate.getMonth(),
-							deliveryDate.getDate(),
-							deliveryTime.getHours(),
-							deliveryTime.getMinutes(),
-							deliveryTime.getSeconds()
-						)
-					),
-				})
-				.then(() => {
-					console.log('Added');
-					showSnackbar(t('add.order.added'));
-					setName('');
-					setClient({});
-					setHintClientList([]);
-					setProductName('');
-					setProduct({});
-					setHintProductList([]);
-					setProductQuantity('1');
-					setProductWeight('');
-					setOrder([]);
-				});
-		} catch (e: any) {
-			const err = e as FirebaseError;
-			console.log(`Adding order failed: ${err.message}`);
-			setLoading(false);
-		} finally {
-			setLoading(false);
-		}
+		docRef
+			.set({
+				client: client,
+				order: order,
+				deliveryDateTime: Timestamp.fromDate(
+					new Date(
+						deliveryDate.getFullYear(),
+						deliveryDate.getMonth(),
+						deliveryDate.getDate(),
+						deliveryTime.getHours(),
+						deliveryTime.getMinutes(),
+						deliveryTime.getSeconds()
+					)
+				),
+			})
+			.then(() => {
+				console.log('Added');
+				showSnackbar(t('add.order.added'));
+				setName('');
+				setClient({});
+				setHintClientList([]);
+				setProductName('');
+				setProduct({});
+				setHintProductList([]);
+				setProductQuantity('1');
+				setProductWeight('');
+				setOrder([]);
+			})
+			.catch((e: any) => {
+				const err = e as FirebaseError;
+				console.log(`Adding order failed: ${err.message}`);
+				setLoading(false);
+			})
+			.finally(() => {
+				setLoading(false);
+			});
 	};
 
 	const deleteOrder = async (item: object) => {

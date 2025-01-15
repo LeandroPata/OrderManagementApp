@@ -134,6 +134,10 @@ export default function ShowClientOrder() {
 				});
 				setClientOrders(orders);
 				//console.log(orders);
+			})
+			.catch((e: any) => {
+				const err = e as FirebaseError;
+				console.log(`Error getting client orders: ${err.message}`);
 			});
 	};
 

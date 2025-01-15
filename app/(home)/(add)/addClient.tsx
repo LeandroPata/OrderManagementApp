@@ -37,6 +37,11 @@ export default function AddClient() {
 				querySnapshot.forEach((doc) => {
 					if (name.trim() === doc.data().name) clientExists = true;
 				});
+			})
+			.catch((e: any) => {
+				const err = e as FirebaseError;
+				console.log(`Checking client failed: ${err.message}`);
+				setLoading(false);
 			});
 		return clientExists;
 	};
@@ -54,25 +59,25 @@ export default function AddClient() {
 
 		const docRef = firestore().collection('clients').doc();
 
-		try {
-			docRef
-				.set({
-					name: name.trim(),
-					contact: contact.trim(),
-				})
-				.then(() => {
-					console.log('Added');
-					showSnackbar(t('add.client.added'));
-					setName('');
-					setContact('');
-				});
-		} catch (e: any) {
-			const err = e as FirebaseError;
-			console.log(`Adding client failed: ${err.message}`);
-			setLoading(false);
-		} finally {
-			setLoading(false);
-		}
+		docRef
+			.set({
+				name: name.trim(),
+				contact: contact.trim(),
+			})
+			.then(() => {
+				console.log('Added');
+				showSnackbar(t('add.client.added'));
+				setName('');
+				setContact('');
+			})
+			.catch((e: any) => {
+				const err = e as FirebaseError;
+				console.log(`Adding client failed: ${err.message}`);
+				setLoading(false);
+			})
+			.finally(() => {
+				setLoading(false);
+			});
 	};
 
 	return (
