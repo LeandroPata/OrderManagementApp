@@ -241,6 +241,7 @@ export default function AddOrder() {
 				weight: weight,
 				price: Number(price.toFixed(2)),
 				notes: notes,
+				status: 'Incomplete',
 			});
 			//console.log(newOrder);
 			setOrder(newOrder);
