@@ -116,6 +116,7 @@ export default function ShowClientOrder() {
 							//console.log(order);
 							orders.push({
 								key: i,
+								orderKey: doc.id,
 								product: order.product,
 								quantity: order.quantity,
 								weight: order.weight,
@@ -124,6 +125,7 @@ export default function ShowClientOrder() {
 								deliveryDateTime: new Date(
 									doc.data().deliveryDateTime.toDate()
 								),
+								status: order.status,
 							});
 							i++;
 						}

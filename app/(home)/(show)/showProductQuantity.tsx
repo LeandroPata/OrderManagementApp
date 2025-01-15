@@ -164,6 +164,7 @@ export default function ShowProductQuantity() {
 								quantity: order.quantity,
 								weight: order.weight,
 								weightTotal: productCount[order.product.name],
+								status: order.status,
 							});
 							i++;
 						}
