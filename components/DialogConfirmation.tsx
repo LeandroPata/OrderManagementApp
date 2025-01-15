@@ -5,7 +5,14 @@ import { Button, Dialog, Portal, Text } from 'react-native-paper';
 /* // All the logic to implemet DialogConfirmation
   const [dialogConfirmationVisible, setDialogConfirmationVisible] =
     useState(false);
-  const onDismissDialogConfirmation = () => setDialogConfirmationVisible(false); */
+  const onDismissDialogConfirmation = () => setDialogConfirmationVisible(false);
+
+	<DialogConfirmation
+						text={'Text'}
+						visible={dialogConfirmationVisible}
+						onDismiss={onDismissDialogConfirmation}
+						onConfirmation={onConfirmation}
+		/> */
 
 type DialogConfirmationProps = {
 	text: string;
