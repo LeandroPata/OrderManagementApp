@@ -323,17 +323,22 @@ export default function AddOrder() {
 		const updatedOrder = [];
 		let i = 0;
 
-		for (const singleOrder of order) {
-			console.log(singleOrder);
-			if (singleOrder.key !== item.key) {
-				singleOrder.key = i;
-				updatedOrder.push(singleOrder);
-				i++;
+		try {
+			for (const singleOrder of order) {
+				console.log(singleOrder);
+				if (singleOrder.key !== item.key) {
+					singleOrder.key = i;
+					updatedOrder.push(singleOrder);
+					i++;
+				}
 			}
-		}
 
-		console.log(updatedOrder);
-		setOrder(updatedOrder);
+			console.log(updatedOrder);
+			setOrder(updatedOrder);
+			showSnackbar('Deleted!');
+		} catch (e: any) {
+			console.log(`Deleting order failed: ${e.message}`);
+		}
 	};
 
 	const renderClientHint = ({ item }) => {

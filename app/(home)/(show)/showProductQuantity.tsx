@@ -254,6 +254,7 @@ export default function ShowProductQuantity() {
 						dataType='productQuantity'
 						defaultSort='name'
 						numberofItemsPerPageList={[6, 7, 8]}
+						onLongPress={() => {}}
 					/>
 				</View>
 			</View>

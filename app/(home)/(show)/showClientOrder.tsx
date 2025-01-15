@@ -162,6 +162,7 @@ export default function ShowClientOrder() {
 			.update({ order: updatedOrder })
 			.then(() => {
 				console.log('Updated');
+				showSnackbar('Updated order status!');
 			})
 			.catch((e: any) => {
 				const err = e as FirebaseError;
@@ -194,6 +195,7 @@ export default function ShowClientOrder() {
 				.delete()
 				.then(() => {
 					console.log('Order entry deleted because order is empty');
+					showSnackbar('Deleted order!');
 					getClientOrders(client.key);
 				})
 				.catch((e: any) => {
@@ -207,6 +209,7 @@ export default function ShowClientOrder() {
 				.update({ order: updatedOrder })
 				.then(() => {
 					console.log('Updated');
+					showSnackbar('Deleted order!');
 					getClientOrders(client.key);
 				})
 				.catch((e: any) => {
