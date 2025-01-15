@@ -116,7 +116,8 @@ export default function ShowClientOrder() {
 							//console.log(order);
 							orders.push({
 								key: i,
-								orderKey: doc.id,
+								orderId: doc.id,
+								orderKey: order.key,
 								product: order.product,
 								quantity: order.quantity,
 								weight: order.weight,
@@ -134,6 +135,105 @@ export default function ShowClientOrder() {
 				setClientOrders(orders);
 				//console.log(orders);
 			});
+	};
+
+	// I don't like having to copy the whole order to change one variable,
+	// but can't figure out how to do it dynamically (the index is varible = orderKey)
+	// on a map nested in an array
+	const updateOrderDatabase = async (item: object) => {
+		const updatedOrder = [];
+		await firestore()
+			.collection('orders')
+			.doc(item.orderId)
+			.get()
+			.then((snapshot) => {
+				updatedOrder.push(...snapshot.data().order);
+			})
+			.catch((e: any) => {
+				const err = e as FirebaseError;
+				console.log(`Error getting order: ${err.message}`);
+			});
+
+		updatedOrder[item.orderKey].status = item.status;
+
+		firestore()
+			.collection('orders')
+			.doc(item.orderId)
+			.update({ order: updatedOrder })
+			.then(() => {
+				console.log('Updated');
+			})
+			.catch((e: any) => {
+				const err = e as FirebaseError;
+				console.log(`Error updating order: ${err.message}`);
+			});
+	};
+
+	const deleteOrder = async (item: object) => {
+		const updatedOrder = [];
+		await firestore()
+			.collection('orders')
+			.doc(item.orderId)
+			.get()
+			.then((snapshot) => {
+				for (const order of snapshot.data().order) {
+					if (order.key !== item.orderKey) {
+						updatedOrder.push(order);
+					}
+				}
+			})
+			.catch((e: any) => {
+				const err = e as FirebaseError;
+				console.log(`Error getting order: ${err.message}`);
+			});
+
+		if (updatedOrder.length <= 0) {
+			firestore()
+				.collection('orders')
+				.doc(item.orderId)
+				.delete()
+				.then(() => {
+					console.log('Order entry deleted because order is empty');
+					getClientOrders(client.key);
+				})
+				.catch((e: any) => {
+					const err = e as FirebaseError;
+					console.log(`Error deleting order: ${err.message}`);
+				});
+		} else {
+			firestore()
+				.collection('orders')
+				.doc(item.orderId)
+				.update({ order: updatedOrder })
+				.then(() => {
+					console.log('Updated');
+					getClientOrders(client.key);
+				})
+				.catch((e: any) => {
+					const err = e as FirebaseError;
+					console.log(`Error updating order: ${err.message}`);
+				});
+		}
+	};
+
+	const updateOrderStatus = (item: object) => {
+		//console.log(item);
+		// Mark as Complete if Incomplete
+		if (item.status === 'Incomplete') {
+			item.status = 'Complete';
+			//firestore().collection('orders').doc(item.)
+		}
+		// Mark as Delivered if Complete
+		else if (item.status === 'Complete') {
+			item.status = 'Delivered';
+		}
+		// Delete if Delivered
+		else if (item.status === 'Delivered') {
+			deleteOrder(item);
+			return;
+		}
+		// Update in Firestore
+		updateOrderDatabase(item);
 	};
 
 	const renderClientHint = ({ item }) => {
@@ -206,6 +306,9 @@ export default function ShowClientOrder() {
 						dataType='clientOrder'
 						defaultSort='product.name'
 						numberofItemsPerPageList={[6, 7, 8]}
+						onLongPress={(item: object) => {
+							updateOrderStatus(item);
+						}}
 					/>
 				</View>
 			</View>

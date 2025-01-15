@@ -318,6 +318,24 @@ export default function AddOrder() {
 		}
 	};
 
+	const deleteOrder = async (item: object) => {
+		console.log(item);
+		const updatedOrder = [];
+		let i = 0;
+
+		for (const singleOrder of order) {
+			console.log(singleOrder);
+			if (singleOrder.key !== item.key) {
+				singleOrder.key = i;
+				updatedOrder.push(singleOrder);
+				i++;
+			}
+		}
+
+		console.log(updatedOrder);
+		setOrder(updatedOrder);
+	};
+
 	const renderClientHint = ({ item }) => {
 		//console.log(item.item.name + ' : ' + item.score);
 		return (
@@ -560,6 +578,9 @@ export default function AddOrder() {
 						dataType='newOrder'
 						defaultSort='product.name'
 						numberofItemsPerPageList={[2, 3, 4]}
+						onLongPress={(item: object) => {
+							deleteOrder(item);
+						}}
 					/>
 					<View
 						style={{
