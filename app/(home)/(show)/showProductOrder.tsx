@@ -116,13 +116,11 @@ export default function ShowProductOrder() {
 				let i = 0;
 				// biome-ignore lint/complexity/noForEach:<Method that returns iterator necessary>
 				snapshot.forEach((doc) => {
-					console.log(doc.data());
-
 					for (const order of doc.data().order) {
 						//console.log(`${order.product.key} : ${productKey}`);
 
 						if (order.product.key === productKey) {
-							console.log(order);
+							//console.log(order);
 							orders.push({
 								key: i,
 								orderId: doc.id,
@@ -151,7 +149,6 @@ export default function ShowProductOrder() {
 	// but can't figure out how to do it dynamically (the index is varible = orderKey)
 	// on a map nested in an array
 	const updateOrderDatabase = async (item: object) => {
-		console.log(item);
 		const updatedOrder = [];
 		await firestore()
 			.collection('orders')
@@ -180,6 +177,53 @@ export default function ShowProductOrder() {
 			});
 	};
 
+	const deleteOrder = async (item: object) => {
+		const updatedOrder = [];
+		await firestore()
+			.collection('orders')
+			.doc(item.orderId)
+			.get()
+			.then((snapshot) => {
+				for (const order of snapshot.data().order) {
+					if (order.key !== item.orderKey) {
+						updatedOrder.push(order);
+					}
+				}
+			})
+			.catch((e: any) => {
+				const err = e as FirebaseError;
+				console.log(`Error getting order: ${err.message}`);
+			});
+
+		if (updatedOrder.length <= 0) {
+			firestore()
+				.collection('orders')
+				.doc(item.orderId)
+				.delete()
+				.then(() => {
+					console.log('Order entry deleted because order is empty');
+					getProductOrders(product.key);
+				})
+				.catch((e: any) => {
+					const err = e as FirebaseError;
+					console.log(`Error deleting order: ${err.message}`);
+				});
+		} else {
+			firestore()
+				.collection('orders')
+				.doc(item.orderId)
+				.update({ order: updatedOrder })
+				.then(() => {
+					console.log('Updated');
+					getProductOrders(product.key);
+				})
+				.catch((e: any) => {
+					const err = e as FirebaseError;
+					console.log(`Error updating order: ${err.message}`);
+				});
+		}
+	};
+
 	const updateOrderStatus = (item: object) => {
 		//console.log(item);
 		// Mark as Complete if Incomplete
@@ -192,6 +236,10 @@ export default function ShowProductOrder() {
 			item.status = 'Delivered';
 		}
 		// Delete if Delivered
+		else if (item.status === 'Delivered') {
+			deleteOrder(item);
+			return;
+		}
 		// Update in Firestore
 		updateOrderDatabase(item);
 	};
