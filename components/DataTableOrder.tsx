@@ -36,6 +36,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 	// All the logic to implemet DialogConfirmation
 	const [dialogConfirmationVisible, setDialogConfirmationVisible] =
 		useState(false);
+	const [dialogText, setDialogText] = useState('');
 	const onDismissDialogConfirmation = () => setDialogConfirmationVisible(false);
 
 	const [data, setData] = useState(props.data);
@@ -112,6 +113,9 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 
 	const itemStatusChange = (item: object) => {
 		setItemModal(item);
+		if (item.status === 'Incomplete') setDialogText('Order is completed?');
+		else if (item.status === 'Complete') setDialogText('Order is delivered?');
+		else if (item.status === 'Delivered') setDialogText('Delete order?');
 		setDialogConfirmationVisible(true);
 	};
 
@@ -863,7 +867,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 	return (
 		<>
 			<DialogConfirmation
-				text={'Yooooo'}
+				text={dialogText}
 				visible={dialogConfirmationVisible}
 				onDismiss={onDismissDialogConfirmation}
 				onConfirmation={() => {
