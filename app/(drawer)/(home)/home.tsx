@@ -4,7 +4,7 @@ import { Button } from 'react-native-paper';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
-export default function AddHome() {
+export default function Home() {
 	const { t } = useTranslation();
 
 	return (
@@ -17,9 +17,9 @@ export default function AddHome() {
 					icon='account-plus'
 					mode='elevated'
 					//loading={loginLoading}
-					onPress={() => router.push('/(home)/(add)/addClient')}
+					onPress={() => router.push('/(drawer)/(home)/(add)/addHome')}
 				>
-					{t('add.addClient')}
+					{t('home.add')}
 				</Button>
 				<Button
 					style={styles.button}
@@ -28,9 +28,9 @@ export default function AddHome() {
 					icon='account-search'
 					mode='elevated'
 					//loading={loginLoading}
-					onPress={() => router.push('/(home)/(add)/addProduct')}
+					onPress={() => router.push('/(drawer)/(home)/(show)/showHome')}
 				>
-					{t('add.addProduct')}
+					{t('home.show')}
 				</Button>
 				<Button
 					style={styles.button}
@@ -39,9 +39,9 @@ export default function AddHome() {
 					icon='database'
 					mode='elevated'
 					//loading={loginLoading}
-					onPress={() => router.push('/(home)/(add)/addOrder')}
+					onPress={() => router.push('/(drawer)/(home)/importExport')}
 				>
-					{t('add.addOrder')}
+					{t('home.importExport')}
 				</Button>
 			</View>
 		</View>

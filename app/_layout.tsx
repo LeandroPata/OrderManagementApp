@@ -150,7 +150,7 @@ export default function RootLayout() {
 		const inAuthGroup = segments[0] === '(home)';
 
 		if (user && !inAuthGroup) {
-			router.replace('/(home)/home');
+			router.replace('/(drawer)/(home)/home');
 		} else if (!user && inAuthGroup) {
 			router.replace('/');
 		}
@@ -200,7 +200,7 @@ export default function RootLayout() {
 							options={{ headerShown: false }}
 						/>
 						<Stack.Screen
-							name='(home)'
+							name='(drawer)'
 							options={{ headerShown: false }}
 						/>
 					</Stack>

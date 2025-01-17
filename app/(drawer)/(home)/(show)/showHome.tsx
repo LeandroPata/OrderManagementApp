@@ -4,7 +4,7 @@ import { Button } from 'react-native-paper';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
-export default function Home() {
+export default function ShowHome() {
 	const { t } = useTranslation();
 
 	return (
@@ -17,9 +17,9 @@ export default function Home() {
 					icon='account-plus'
 					mode='elevated'
 					//loading={loginLoading}
-					onPress={() => router.push('/(home)/(add)/addHome')}
+					onPress={() => router.push('/(drawer)/(home)/(show)/showClientOrder')}
 				>
-					{t('home.add')}
+					{t('show.showClientOrder')}
 				</Button>
 				<Button
 					style={styles.button}
@@ -28,20 +28,24 @@ export default function Home() {
 					icon='account-search'
 					mode='elevated'
 					//loading={loginLoading}
-					onPress={() => router.push('/(home)/(show)/showHome')}
+					onPress={() =>
+						router.push('/(drawer)/(home)/(show)/showProductOrder')
+					}
 				>
-					{t('home.show')}
+					{t('show.showProductOrder')}
 				</Button>
 				<Button
 					style={styles.button}
 					contentStyle={styles.buttonContent}
 					labelStyle={styles.buttonText}
-					icon='database'
+					icon='account-search'
 					mode='elevated'
 					//loading={loginLoading}
-					onPress={() => router.push('/(home)/importExport')}
+					onPress={() =>
+						router.push('/(drawer)/(home)/(show)/showProductQuantity')
+					}
 				>
-					{t('home.importExport')}
+					{t('show.showProductQuantity')}
 				</Button>
 			</View>
 		</View>

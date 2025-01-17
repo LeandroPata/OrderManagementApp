@@ -7,7 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import CustomDrawerContent from '@/components/CustomDrawerContent';
 
-const HomeLayout = () => {
+const DrawerLayout = () => {
 	const theme = useTheme();
 	const insets = useSafeAreaInsets();
 	const { t } = useTranslation();
@@ -53,65 +53,8 @@ const HomeLayout = () => {
 				drawerInactiveTintColor: theme.colors.onBackground,
 				drawerInactiveBackgroundColor: 'transparent',
 			}}
-		>
-			<Drawer.Screen
-				name='home'
-				options={{
-					drawerLabel: t('drawer.home'),
-					title: t('drawer.home'),
-					drawerIcon: ({ focused, size, color }) => (
-						<Ionicons
-							name={focused ? 'home' : 'home-outline'}
-							size={size}
-							color={color}
-						/>
-					),
-				}}
-			/>
-			<Drawer.Screen
-				name='(add)'
-				options={{
-					drawerLabel: t('drawer.add'),
-					title: t('drawer.add'),
-					drawerIcon: ({ focused, size, color }) => (
-						<Ionicons
-							name={focused ? 'person-add' : 'person-add-outline'}
-							size={size}
-							color={color}
-						/>
-					),
-				}}
-			/>
-			<Drawer.Screen
-				name='(show)'
-				options={{
-					drawerLabel: t('drawer.show'),
-					title: t('drawer.show'),
-					drawerIcon: ({ focused, size, color }) => (
-						<Ionicons
-							name={focused ? 'search' : 'search-outline'}
-							size={size}
-							color={color}
-						/>
-					),
-				}}
-			/>
-			<Drawer.Screen
-				name='importExport'
-				options={{
-					drawerLabel: t('drawer.importExport'),
-					title: t('drawer.importExport'),
-					drawerIcon: ({ focused, size, color }) => (
-						<Ionicons
-							name={focused ? 'server' : 'server-outline'}
-							size={size}
-							color={color}
-						/>
-					),
-				}}
-			/>
-		</Drawer>
+		/>
 	);
 };
 
-export default HomeLayout;
+export default DrawerLayout;
