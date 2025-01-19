@@ -100,7 +100,6 @@ export default function Index() {
 			await auth().createUserWithEmailAndPassword(email, password);
 		} catch (e: any) {
 			const err = e as FirebaseError;
-			//showSnackbar('Registration failed: ' + err.message);
 			console.log(`Registration failed: ${err.message}`);
 		} finally {
 			setSignupLoading(false);
@@ -156,7 +155,6 @@ export default function Index() {
 				setLoginLoading(false);
 				setPassword('');
 			} else {
-				//showSnackbar('Sign in failed: ' + err.message);
 				console.log(`Sign in failed: ${err.message}`);
 			}
 		} finally {

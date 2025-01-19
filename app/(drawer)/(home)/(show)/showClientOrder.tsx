@@ -165,8 +165,8 @@ export default function ShowClientOrder() {
 			.doc(item.orderId)
 			.update({ order: updatedOrder })
 			.then(() => {
-				console.log('Updated');
-				showSnackbar('Updated order status!');
+				console.log('Updated status');
+				showSnackbar(t('show.clientOrder.updatedStatus'));
 			})
 			.catch((e: any) => {
 				const err = e as FirebaseError;
@@ -199,7 +199,7 @@ export default function ShowClientOrder() {
 				.delete()
 				.then(() => {
 					console.log('Order entry deleted because order is empty');
-					showSnackbar('Deleted order!');
+					showSnackbar(t('show.clientOrder.DeletedOrder'));
 					getClientOrders(client.key);
 				})
 				.catch((e: any) => {
@@ -213,7 +213,7 @@ export default function ShowClientOrder() {
 				.update({ order: updatedOrder })
 				.then(() => {
 					console.log('Updated');
-					showSnackbar('Deleted order!');
+					showSnackbar(t('show.clientOrder.DeletedOrder'));
 					getClientOrders(client.key);
 				})
 				.catch((e: any) => {
@@ -225,13 +225,12 @@ export default function ShowClientOrder() {
 
 	const updateOrderStatus = (item: object) => {
 		//console.log(item);
-		// Mark as Complete if Incomplete
+		// Mark as Ready if Incomplete
 		if (item.status === 'Incomplete') {
-			item.status = 'Complete';
-			//firestore().collection('orders').doc(item.)
+			item.status = 'Ready';
 		}
-		// Mark as Delivered if Complete
-		else if (item.status === 'Complete') {
+		// Mark as Delivered if Ready
+		else if (item.status === 'Ready') {
 			item.status = 'Delivered';
 		}
 		// Delete if Delivered
@@ -285,7 +284,7 @@ export default function ShowClientOrder() {
 						style={{ marginBottom: 10 }}
 						icon='account'
 						value={name}
-						placeholder='Search Client'
+						placeholder={t('show.clientOrder.clientSearch')}
 						data={hintClientList}
 						onChangeText={(input) => {
 							setName(input);

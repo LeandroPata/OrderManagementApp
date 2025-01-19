@@ -29,9 +29,30 @@
 		"downloadingDialog": "A transferir...",
 		"signOutDialog": "Sair da conta?"
 	},
+	"dataTableOrder": {
+		"of": "de",
+		"rowsPerPage": "Linhas por página",
+		"orderReady": "A encomenda está pronta para entrega?",
+		"orderDelivered": "A encomenda foi entregue?",
+		"orderDelete": "Apagar encomenda?",
+		"name": "Nome",
+		"product": "Produto",
+		"client": "Cliente",
+		"quantity": "Quantidade",
+		"weight": "Peso",
+		"weightTotal": "Peso Total",
+		"price": "Preço",
+		"notes": "Notas",
+		"delivery": "Data",
+		"deliveryDate": "Data de Entrega",
+		"status": "Estado",
+		"incomplete": "Incompleto",
+		"ready": "Pronta",
+		"delivered": "Entregue"
+	},
 	"home": {
-		"add": "Menu Adicionar",
-		"show": "Menu Procurar",
+		"add": "Adicionar",
+		"show": "Procurar",
 		"importExport": "Importar/Exportar"
 	},
 	"add": {
@@ -41,6 +62,7 @@
 		"client": {
 			"name": "Nome",
 			"nameError": "Nome é mandatório!",
+			"nameInvalid": "Nome é invalido!",
 			"contact": "Contacto",
 			"add": "Adicionar Cliente",
 			"added": "Cliente adicionado!"
@@ -48,19 +70,51 @@
 		"product": {
 			"name": "Nome do produto",
 			"nameError": "Nome do produto é mandatório!",
+			"nameInvalid": "Nome é invalido!",
 			"price": "Preço",
+			"priceWeight": "Preço/Peso",
 			"add": "Adicionar Produto",
 			"added": "Produto adicionado!"
 		},
 		"order": {
 			"clientName": "Nome do cliente",
 			"clientNameError": "Nome é mandatório!",
+			"clientNameInvalid": "Nenhum cliente válido selecionado!",
+			"clientSearch": "Procurar Cliente",
 			"productName": "Nome do produto",
 			"productNameError": "Nome do produto é mandatório!",
+			"productNameInvalid": "Nenhum produto válido selecionado!",
+			"productSearch": "Procurar Produto",
 			"productQuantity": "Quantidade",
+			"weight": "Peso",
+			"weightMandatory": "Peso é mandatório para este produto!",
+			"notes": "Notas",
+			"deliveryDate": "Data de Entrega:",
 			"totalPrice": "Preço total",
-			"add": "Adicionar Encomenda",
-			"added": "Encomenda adicionada!"
+			"orderEmpty": "Encomenda está vazia!",
+			"deleted": "Apagada!",
+			"addToOrder": "Adicionar à Encomenda",
+			"addOrder": "Adicionar Encomenda",
+			"addedToOrder": "Adicionada à encomenda atual!",
+			"addedOrder": "Encomenda adicionada!"
+		}
+	},
+	"show": {
+		"showClientOrder": "Encomenda por Cliente",
+		"showProductOrder": "Encomenda por Produto",
+		"showProductQuantity": "Quantidade de Produtos",
+		"clientOrder": {
+			"clientSearch": "Procurar Cliente",
+			"updatedStatus": "Estado da encomenda atualizado!",
+			"deletedOrder": "Encomenda Apagada!"
+		},
+		"productOrder": {
+			"productSearch": "Procurar Produto",
+			"updatedStatus": "Estado da encomenda atualizado!",
+			"deletedOrder": "Encomenda Apagada!"
+		},
+		"productQuantity": {
+			"productSearch": "Procurar Produto"
 		}
 	},
 	"importExport": {

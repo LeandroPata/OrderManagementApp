@@ -25,7 +25,7 @@ export default function AddHome() {
 					style={styles.button}
 					contentStyle={styles.buttonContent}
 					labelStyle={styles.buttonText}
-					icon='account-search'
+					icon='cake-variant'
 					mode='elevated'
 					//loading={loginLoading}
 					onPress={() => router.push('/(drawer)/(home)/(add)/addProduct')}
@@ -36,7 +36,7 @@ export default function AddHome() {
 					style={styles.button}
 					contentStyle={styles.buttonContent}
 					labelStyle={styles.buttonText}
-					icon='database'
+					icon='package-variant-closed'
 					mode='elevated'
 					//loading={loginLoading}
 					onPress={() => router.push('/(drawer)/(home)/(add)/addOrder')}

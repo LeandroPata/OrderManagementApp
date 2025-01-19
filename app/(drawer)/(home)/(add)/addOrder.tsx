@@ -195,7 +195,7 @@ export default function AddOrder() {
 				const currentClient = getClient(name);
 				console.log(currentClient);
 				if (Object.keys(currentClient).length === 0) {
-					showSnackbar('No valid client selected!');
+					showSnackbar(t('add.order.clientNameInvalid'));
 					console.log('No client error');
 					return;
 				}
@@ -203,7 +203,7 @@ export default function AddOrder() {
 				const currentProduct = getProduct(productName);
 				console.log(!currentProduct);
 				if (Object.keys(currentProduct).length === 0) {
-					showSnackbar('No valid product selected!');
+					showSnackbar(t('add.order.productNameInvalid'));
 					console.log('No product error');
 					return;
 				}
@@ -214,7 +214,7 @@ export default function AddOrder() {
 			console.log(!productWeight.trim());
 
 			if (product.priceWeight && !productWeight.trim()) {
-				showSnackbar('Weight is mandatory for this product!');
+				showSnackbar(t('add.order.weightMandatory'));
 				console.log('No weight for priceByWeight product');
 				return;
 			}
@@ -255,7 +255,7 @@ export default function AddOrder() {
 			setNotes('');
 			setProduct({});
 
-			showSnackbar('Added to current order!');
+			showSnackbar(t('add.order.addedToOrder'));
 			console.log('Added to order');
 		}
 	};
@@ -265,12 +265,12 @@ export default function AddOrder() {
 		Keyboard.dismiss();
 
 		if (!name.trim() || !client || !checkClient()) {
-			showSnackbar('No valid client selected!');
+			showSnackbar(t('add.order.clientNameInvalid'));
 			//setNameError(true);
 			setLoading(false);
 			return;
 		} else if (!order.length) {
-			showSnackbar('Order is empty!');
+			showSnackbar(t('add.order.orderEmpty'));
 			console.log('Order empty');
 			setLoading(false);
 			return;
@@ -295,7 +295,7 @@ export default function AddOrder() {
 			})
 			.then(() => {
 				console.log('Added');
-				showSnackbar(t('add.order.added'));
+				showSnackbar(t('add.order.addedOrder'));
 				setName('');
 				setClient({});
 				setHintClientList([]);
@@ -333,7 +333,7 @@ export default function AddOrder() {
 
 			console.log(updatedOrder);
 			setOrder(updatedOrder);
-			showSnackbar('Deleted!');
+			showSnackbar(t('add.order.deleted'));
 		} catch (e: any) {
 			console.log(`Deleting order failed: ${e.message}`);
 		}
@@ -407,7 +407,7 @@ export default function AddOrder() {
 						style={{ marginBottom: 10 }}
 						icon='account'
 						value={name}
-						placeholder='Search Client'
+						placeholder={t('add.order.clientSearch')}
 						data={hintClientList}
 						onChangeText={(input) => {
 							setName(input);
@@ -431,7 +431,7 @@ export default function AddOrder() {
 					<SearchList
 						icon='cake-variant'
 						value={productName}
-						placeholder='Search Product'
+						placeholder={t('add.order.productSearch')}
 						data={hintProductList}
 						onChangeText={(input) => {
 							setProductName(input);
@@ -509,7 +509,7 @@ export default function AddOrder() {
 								}}
 								autoCapitalize='none'
 								keyboardType='numeric'
-								label='Quantity'
+								label={t('add.order.productQuantity')}
 							/>
 							<TouchableRipple
 								style={{
@@ -555,7 +555,7 @@ export default function AddOrder() {
 								}}
 								autoCapitalize='none'
 								keyboardType='decimal-pad'
-								label='Weight(kg)'
+								label={`${t('add.order.weight')}(kg)`}
 							/>
 						</View>
 					</View>
@@ -565,14 +565,14 @@ export default function AddOrder() {
 						onChangeText={setNotes}
 						autoCapitalize='sentences'
 						keyboardType='default'
-						label='Notes'
+						label={t('add.order.notes')}
 					/>
 					<Button
 						style={styles.button}
 						labelStyle={[styles.buttonText, { fontSize: 20, paddingTop: 5 }]}
 						onPress={addToOrder}
 					>
-						Add to Order
+						{t('add.order.addToOrder')}
 					</Button>
 				</KeyboardAvoidingView>
 				<View>
@@ -595,7 +595,7 @@ export default function AddOrder() {
 						}}
 					>
 						<Text style={[styles.title, { color: theme.colors.primary }]}>
-							Delivery Date:
+							{t('add.order.deliveryDate')}
 						</Text>
 
 						<Button
@@ -653,12 +653,12 @@ export default function AddOrder() {
 						style={styles.button}
 						contentStyle={styles.buttonContent}
 						labelStyle={styles.buttonText}
-						icon='account-plus'
+						icon='package-variant-closed'
 						mode='elevated'
 						loading={loading}
 						onPress={createOrder}
 					>
-						{t('add.order.add')}
+						{t('add.order.addOrder')}
 					</Button>
 				</View>
 			</View>

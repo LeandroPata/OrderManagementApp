@@ -14,7 +14,7 @@ export default function ShowHome() {
 					style={styles.button}
 					contentStyle={styles.buttonContent}
 					labelStyle={styles.buttonText}
-					icon='account-plus'
+					icon='account-search'
 					mode='elevated'
 					//loading={loginLoading}
 					onPress={() => router.push('/(drawer)/(home)/(show)/showClientOrder')}
@@ -25,7 +25,7 @@ export default function ShowHome() {
 					style={styles.button}
 					contentStyle={styles.buttonContent}
 					labelStyle={styles.buttonText}
-					icon='account-search'
+					icon='cake-variant'
 					mode='elevated'
 					//loading={loginLoading}
 					onPress={() =>
@@ -38,7 +38,7 @@ export default function ShowHome() {
 					style={styles.button}
 					contentStyle={styles.buttonContent}
 					labelStyle={styles.buttonText}
-					icon='account-search'
+					icon='cake-layered'
 					mode='elevated'
 					//loading={loginLoading}
 					onPress={() =>

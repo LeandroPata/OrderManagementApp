@@ -111,7 +111,7 @@ export default function AddClient() {
 							visible={nameError}
 							style={styles.errorHelper}
 						>
-							Name is invalid!
+							{t('add.client.nameInvalid')}
 						</HelperText>
 					) : null}
 

@@ -174,7 +174,7 @@ export default function ShowProductOrder() {
 			.update({ order: updatedOrder })
 			.then(() => {
 				console.log('Updated');
-				showSnackbar('Updated order status!');
+				showSnackbar(t('show.productOrder.updatedStatus'));
 			})
 			.catch((e: any) => {
 				const err = e as FirebaseError;
@@ -207,7 +207,7 @@ export default function ShowProductOrder() {
 				.delete()
 				.then(() => {
 					console.log('Order entry deleted because order is empty');
-					showSnackbar('Deleted order!');
+					showSnackbar(t('show.productOrder.deletedOrder'));
 					getProductOrders(product.key);
 				})
 				.catch((e: any) => {
@@ -221,7 +221,7 @@ export default function ShowProductOrder() {
 				.update({ order: updatedOrder })
 				.then(() => {
 					console.log('Updated');
-					showSnackbar('Deleted order!');
+					showSnackbar(t('show.productOrder.deletedOrder'));
 					getProductOrders(product.key);
 				})
 				.catch((e: any) => {
@@ -233,13 +233,12 @@ export default function ShowProductOrder() {
 
 	const updateOrderStatus = (item: object) => {
 		//console.log(item);
-		// Mark as Complete if Incomplete
+		// Mark as Ready if Incomplete
 		if (item.status === 'Incomplete') {
-			item.status = 'Complete';
-			//firestore().collection('orders').doc(item.)
+			item.status = 'Ready';
 		}
-		// Mark as Delivered if Complete
-		else if (item.status === 'Complete') {
+		// Mark as Delivered if Ready
+		else if (item.status === 'Ready') {
 			item.status = 'Delivered';
 		}
 		// Delete if Delivered
@@ -294,9 +293,9 @@ export default function ShowProductOrder() {
 				>
 					<SearchList
 						style={{ marginBottom: 10 }}
-						icon='account'
+						icon='cake-variant'
 						value={name}
-						placeholder='Search Product'
+						placeholder={t('show.productOrder.productSearch')}
 						data={hintProductList}
 						onChangeText={(input) => {
 							setName(input);

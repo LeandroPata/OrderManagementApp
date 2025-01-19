@@ -224,9 +224,9 @@ export default function ShowProductQuantity() {
 				>
 					<SearchList
 						style={{ marginBottom: 10 }}
-						icon='account'
+						icon='cake-variant'
 						value={name}
-						placeholder='Search Product'
+						placeholder={t('show.productQuantity.productSearch')}
 						data={hintProductList}
 						onChangeText={(input) => {
 							setName(input);

@@ -117,7 +117,7 @@ export default function AddProduct() {
 							visible={nameError}
 							style={styles.errorHelper}
 						>
-							Name is invalid!
+							{t('add.product.nameInvalid')}
 						</HelperText>
 					) : null}
 
@@ -135,7 +135,6 @@ export default function AddProduct() {
 								setPrice(input.replace(/[^0-9.,]/g, ''));
 							}}
 							onEndEditing={() => {
-								console.log('ENd');
 								setPrice(Number(price.replace(',', '.').trim()).toFixed(2));
 							}}
 							autoCapitalize='none'
@@ -148,7 +147,7 @@ export default function AddProduct() {
 								status={priceWeightChecked ? 'checked' : 'unchecked'}
 								onPress={() => setPriceWeightChecked(!priceWeightChecked)}
 							/>
-							<Text style={styles.title}>Price/Weight</Text>
+							<Text style={styles.title}>{t('add.product.priceWeight')}</Text>
 						</View>
 					</View>
 				</KeyboardAvoidingView>

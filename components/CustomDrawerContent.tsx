@@ -5,7 +5,6 @@ import {
 	View,
 	StyleSheet,
 	TouchableOpacity,
-	Linking,
 } from 'react-native';
 import {
 	Dialog,
@@ -15,11 +14,7 @@ import {
 	Switch,
 	useTheme,
 } from 'react-native-paper';
-import {
-	DrawerContentScrollView,
-	DrawerItem,
-	DrawerItemList,
-} from '@react-navigation/drawer';
+import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import auth from '@react-native-firebase/auth';
@@ -291,7 +286,7 @@ export default function CustomDrawerContent(props: any) {
 				>
 					<DrawerItem
 						labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
-						label='Home Menu'
+						label={t('drawer.home')}
 						icon={({ focused, size, color }) => (
 							<Ionicons
 								name={focused ? 'home' : 'home-outline'}
@@ -307,7 +302,7 @@ export default function CustomDrawerContent(props: any) {
 					/>
 					<DrawerItem
 						labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
-						label='Add Menu'
+						label={t('drawer.add')}
 						icon={({ focused, size, color }) => (
 							<Ionicons
 								name={focused ? 'person-add' : 'person-add-outline'}
@@ -323,7 +318,7 @@ export default function CustomDrawerContent(props: any) {
 					/>
 					<DrawerItem
 						labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
-						label='Show Menu'
+						label={t('drawer.show')}
 						icon={({ focused, size, color }) => (
 							<Ionicons
 								name={focused ? 'search' : 'search-outline'}
@@ -339,7 +334,7 @@ export default function CustomDrawerContent(props: any) {
 					/>
 					<DrawerItem
 						labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
-						label='Import/Export'
+						label={t('drawer.importExport')}
 						icon={({ focused, size, color }) => (
 							<Ionicons
 								name={focused ? 'server' : 'server-outline'}

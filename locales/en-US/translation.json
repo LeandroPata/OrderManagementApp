@@ -17,8 +17,8 @@
 	},
 	"drawer": {
 		"home": "Home",
-		"add": "Add",
-		"show": "Show",
+		"add": "Add Menu",
+		"show": "Show Menu",
 		"importExport": "Import/Export",
 		"darkMode": "Dark Mode",
 		"language": "Language",
@@ -28,6 +28,27 @@
 		"runUpdateDialog": "There is a new version available, do you want to update?",
 		"downloadingDialog": "Downloading...",
 		"signOutDialog": "Sign Out?"
+	},
+	"dataTableOrder": {
+		"of": "of",
+		"rowsPerPage": "Rows per page",
+		"orderReady": "Order is ready to deliver?",
+		"orderDelivered": "Order was delivered?",
+		"orderDelete": "Delete order?",
+		"name": "Name",
+		"product": "Product",
+		"client": "Client",
+		"quantity": "Quantity",
+		"weight": "Weight",
+		"weightTotal": "Total Weight",
+		"price": "Price",
+		"notes": "Notes",
+		"delivery": "Date",
+		"deliveryDate": "Delivery Date",
+		"status": "Status",
+		"incomplete": "Incomplete",
+		"ready": "Ready",
+		"delivered": "Delivered"
 	},
 	"home": {
 		"add": "Add Menu",
@@ -41,6 +62,7 @@
 		"client": {
 			"name": "Name",
 			"nameError": "Name is mandatory!",
+			"nameInvalid": "Name is invalid!",
 			"contact": "Contact",
 			"add": "Add Client",
 			"added": "Client added!"
@@ -48,19 +70,51 @@
 		"product": {
 			"name": "Product name",
 			"nameError": "Product name is mandatory!",
+			"nameInvalid": "Name is invalid!",
 			"price": "Price",
+			"priceWeight": "Price/Weight",
 			"add": "Add Product",
 			"added": "Product added!"
 		},
 		"order": {
 			"clientName": "Client name",
 			"clientNameError": "Name is mandatory!",
+			"clientNameInvalid": "No valid client selected!",
+			"clientSearch": "Search Client",
 			"productName": "Product name",
 			"productNameError": "Product name is mandatory!",
+			"productNameInvalid": "No valid product selected!",
+			"productSearch": "Search Product",
 			"productQuantity": "Quantity",
+			"weight": "Weight",
+			"weightMandatory": "Weight is mandatory for this product!",
+			"notes": "Notes",
+			"deliveryDate": "Delivery Date:",
 			"totalPrice": "Total price",
-			"add": "Add Order",
-			"added": "Order added!"
+			"orderEmpty": "Order is empty!",
+			"deleted": "Deleted!",
+			"addToOrder": "Add to Order",
+			"addOrder": "Add Order",
+			"addedToOrder": "Added to current order!",
+			"addedOrder": "Order added!"
+		}
+	},
+	"show": {
+		"showClientOrder": "Show Client Order",
+		"showProductOrder": "Show Product Order",
+		"showProductQuantity": "Show Product Quantity",
+		"clientOrder": {
+			"clientSearch": "Search Client",
+			"updatedStatus": "Updated order status!",
+			"deletedOrder": "Deleted order!"
+		},
+		"productOrder": {
+			"productSearch": "Search Product",
+			"updatedStatus": "Updated order status!",
+			"deletedOrder": "Deleted order!"
+		},
+		"productQuantity": {
+			"productSearch": "Search Product"
 		}
 	},
 	"importExport": {

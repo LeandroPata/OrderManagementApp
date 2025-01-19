@@ -113,10 +113,26 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 
 	const itemStatusChange = (item: object) => {
 		setItemModal(item);
-		if (item.status === 'Incomplete') setDialogText('Order is completed?');
-		else if (item.status === 'Complete') setDialogText('Order is delivered?');
-		else if (item.status === 'Delivered') setDialogText('Delete order?');
+		if (item.status === 'Incomplete')
+			setDialogText(t('dataTableOrder.orderReady'));
+		else if (item.status === 'Ready')
+			setDialogText(t('dataTableOrder.orderDelivered'));
+		else if (item.status === 'Delivered')
+			setDialogText(t('dataTableOrder.orderDelete'));
 		setDialogConfirmationVisible(true);
+	};
+
+	const translateStatus = (orderStatus: string) => {
+		switch (orderStatus) {
+			case 'Incomplete':
+				return t('dataTableOrder.incomplete');
+			case 'Ready':
+				return t('dataTableOrder.ready');
+			case 'Delivered':
+				return t('dataTableOrder.delivered');
+			default:
+				return orderStatus;
+		}
 	};
 
 	const renderDataTable = () => {
@@ -137,7 +153,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								}
 								onPress={() => handleSort('product.name', data, true)}
 							>
-								Product
+								{t('dataTableOrder.product')}
 							</DataTable.Title>
 							<DataTable.Title
 								style={{
@@ -149,7 +165,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								}
 								onPress={() => handleSort('quantity', data, true)}
 							>
-								Quantity
+								{t('dataTableOrder.quantity')}
 							</DataTable.Title>
 							<DataTable.Title
 								style={{
@@ -157,7 +173,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								}}
 								textStyle={{ fontWeight: 'bold' }}
 							>
-								Weight
+								{t('dataTableOrder.weight')}
 							</DataTable.Title>
 							<DataTable.Title
 								style={{
@@ -166,7 +182,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								}}
 								textStyle={{ fontWeight: 'bold' }}
 							>
-								Total Weight
+								{t('dataTableOrder.weightTotal')}
 							</DataTable.Title>
 							<DataTable.Title
 								style={{
@@ -174,7 +190,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								}}
 								textStyle={{ fontWeight: 'bold' }}
 							>
-								Price
+								{t('dataTableOrder.price')}
 							</DataTable.Title>
 							<DataTable.Title
 								style={{
@@ -182,7 +198,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								}}
 								textStyle={{ fontWeight: 'bold' }}
 							>
-								Notes
+								{t('dataTableOrder.notes')}
 							</DataTable.Title>
 						</DataTable.Header>
 
@@ -241,12 +257,14 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 							page={page}
 							numberOfPages={Math.ceil(data.length / itemsPerPage)}
 							onPageChange={(page) => setPage(page)}
-							label={`${from + 1}-${to} of ${data.length}`}
+							label={`${from + 1}-${to} ${t('dataTableOrder.of')} ${
+								data.length
+							}`}
 							numberOfItemsPerPage={itemsPerPage}
 							numberOfItemsPerPageList={numberOfItemsPerPageList}
 							onItemsPerPageChange={onItemsPerPageChange}
 							//showFastPaginationControls
-							selectPageDropdownLabel={'Rows per page'}
+							selectPageDropdownLabel={t('dataTableOrder.rowsPerPage')}
 						/>
 					</DataTable>
 				);
@@ -266,7 +284,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								}
 								onPress={() => handleSort('product.name', data, true)}
 							>
-								Product
+								{t('dataTableOrder.product')}
 							</DataTable.Title>
 							<DataTable.Title
 								style={{ justifyContent: 'center' }}
@@ -276,7 +294,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								}
 								onPress={() => handleSort('quantity', data, true)}
 							>
-								Quantity
+								{t('dataTableOrder.quantity')}
 							</DataTable.Title>
 							<DataTable.Title
 								style={{ justifyContent: 'center' }}
@@ -286,7 +304,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								}
 								onPress={() => handleSort('weight', data, true)}
 							>
-								Weight
+								{t('dataTableOrder.weight')}
 							</DataTable.Title>
 							<DataTable.Title
 								style={{ justifyContent: 'center' }}
@@ -296,7 +314,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								}
 								onPress={() => handleSort('price', data, true)}
 							>
-								Price
+								{t('dataTableOrder.price')}
 							</DataTable.Title>
 							<DataTable.Title
 								style={{
@@ -311,13 +329,13 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								}
 								onPress={() => handleSort('deliveryDateTime', data, true)}
 							>
-								Delivery
+								{t('dataTableOrder.delivery')}
 							</DataTable.Title>
 							<DataTable.Title
 								style={{ justifyContent: 'center' }}
 								textStyle={{ fontWeight: 'bold' }}
 							>
-								Status
+								{t('dataTableOrder.status')}
 							</DataTable.Title>
 						</DataTable.Header>
 						{data.slice(from, to).map((item) => (
@@ -346,7 +364,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 									{item.deliveryDateTime.toLocaleString('pt-pt')}
 								</DataTable.Cell>
 								<DataTable.Cell style={{ justifyContent: 'center' }}>
-									{item.status}
+									{translateStatus(item.status)}
 								</DataTable.Cell>
 							</DataTable.Row>
 						))}
@@ -354,12 +372,14 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 							page={page}
 							numberOfPages={Math.ceil(data.length / itemsPerPage)}
 							onPageChange={(page) => setPage(page)}
-							label={`${from + 1}-${to} of ${data.length}`}
+							label={`${from + 1}-${to} ${t('dataTableOrder.of')} ${
+								data.length
+							}`}
 							numberOfItemsPerPage={itemsPerPage}
 							numberOfItemsPerPageList={numberOfItemsPerPageList}
 							onItemsPerPageChange={onItemsPerPageChange}
 							//showFastPaginationControls
-							selectPageDropdownLabel={'Rows per page'}
+							selectPageDropdownLabel={t('dataTableOrder.rowsPerPage')}
 						/>
 					</DataTable>
 				);
@@ -379,7 +399,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								}
 								onPress={() => handleSort('client.name', data, true)}
 							>
-								Client
+								{t('dataTableOrder.client')}
 							</DataTable.Title>
 							<DataTable.Title
 								style={{ justifyContent: 'center' }}
@@ -389,7 +409,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								}
 								onPress={() => handleSort('quantity', data, true)}
 							>
-								Quantity
+								{t('dataTableOrder.quantity')}
 							</DataTable.Title>
 							<DataTable.Title
 								style={{ justifyContent: 'center' }}
@@ -399,7 +419,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								}
 								onPress={() => handleSort('weight', data, true)}
 							>
-								Weight
+								{t('dataTableOrder.weight')}
 							</DataTable.Title>
 							<DataTable.Title
 								style={{ justifyContent: 'center' }}
@@ -409,7 +429,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								}
 								onPress={() => handleSort('price', data, true)}
 							>
-								Price
+								{t('dataTableOrder.price')}
 							</DataTable.Title>
 							<DataTable.Title
 								style={{
@@ -424,13 +444,13 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								}
 								onPress={() => handleSort('deliveryDateTime', data, true)}
 							>
-								Delivery
+								{t('dataTableOrder.delivery')}
 							</DataTable.Title>
 							<DataTable.Title
 								style={{ justifyContent: 'center' }}
 								textStyle={{ fontWeight: 'bold' }}
 							>
-								Status
+								{t('dataTableOrder.status')}
 							</DataTable.Title>
 						</DataTable.Header>
 						{data.slice(from, to).map((item) => (
@@ -459,7 +479,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 									{item.deliveryDateTime.toLocaleString('pt-pt')}
 								</DataTable.Cell>
 								<DataTable.Cell style={{ justifyContent: 'center' }}>
-									{item.status}
+									{translateStatus(item.status)}
 								</DataTable.Cell>
 							</DataTable.Row>
 						))}
@@ -467,12 +487,14 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 							page={page}
 							numberOfPages={Math.ceil(data.length / itemsPerPage)}
 							onPageChange={(page) => setPage(page)}
-							label={`${from + 1}-${to} of ${data.length}`}
+							label={`${from + 1}-${to} ${t('dataTableOrder.of')} ${
+								data.length
+							}`}
 							numberOfItemsPerPage={itemsPerPage}
 							numberOfItemsPerPageList={numberOfItemsPerPageList}
 							onItemsPerPageChange={onItemsPerPageChange}
 							//showFastPaginationControls
-							selectPageDropdownLabel={'Rows per page'}
+							selectPageDropdownLabel={t('dataTableOrder.rowsPerPage')}
 						/>
 					</DataTable>
 				);
@@ -491,7 +513,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								}
 								onPress={() => handleSort('name', data, true)}
 							>
-								Product
+								{t('dataTableOrder.product')}
 							</DataTable.Title>
 							<DataTable.Title
 								style={{ justifyContent: 'center' }}
@@ -501,7 +523,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								}
 								onPress={() => handleSort('quantity', data, true)}
 							>
-								Quantity
+								{t('dataTableOrder.quantity')}
 							</DataTable.Title>
 							<DataTable.Title
 								style={{ justifyContent: 'center' }}
@@ -511,7 +533,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								}
 								onPress={() => handleSort('weight', data, true)}
 							>
-								Weight
+								{t('dataTableOrder.weight')}
 							</DataTable.Title>
 							<DataTable.Title
 								style={{ justifyContent: 'center' }}
@@ -521,7 +543,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								}
 								onPress={() => handleSort('weightTotal', data, true)}
 							>
-								Total Weight
+								{t('dataTableOrder.weightTotal')}
 							</DataTable.Title>
 							<DataTable.Title
 								style={{ justifyContent: 'center' }}
@@ -531,7 +553,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								}
 								onPress={() => handleSort('status', data, true)}
 							>
-								Status
+								{t('dataTableOrder.status')}
 							</DataTable.Title>
 						</DataTable.Header>
 						{data.slice(from, to).map((item) => (
@@ -554,7 +576,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 									{item.weightTotal.toFixed(2)}
 								</DataTable.Cell>
 								<DataTable.Cell style={{ justifyContent: 'center' }}>
-									{item.status}
+									{translateStatus(item.status)}
 								</DataTable.Cell>
 							</DataTable.Row>
 						))}
@@ -562,12 +584,14 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 							page={page}
 							numberOfPages={Math.ceil(data.length / itemsPerPage)}
 							onPageChange={(page) => setPage(page)}
-							label={`${from + 1}-${to} of ${data.length}`}
+							label={`${from + 1}-${to} ${t('dataTableOrder.of')} ${
+								data.length
+							}`}
 							numberOfItemsPerPage={itemsPerPage}
 							numberOfItemsPerPageList={numberOfItemsPerPageList}
 							onItemsPerPageChange={onItemsPerPageChange}
 							//showFastPaginationControls
-							selectPageDropdownLabel={'Rows per page'}
+							selectPageDropdownLabel={t('dataTableOrder.rowsPerPage')}
 						/>
 					</DataTable>
 				);
@@ -585,7 +609,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 					<>
 						{Object.keys(item).length !== 0 ? (
 							<View style={styles.itemContainer}>
-								<Text style={styles.title}>Name:</Text>
+								<Text style={styles.title}>{t('dataTableOrder.name')}:</Text>
 								<Text style={styles.item}>{item.product.name}</Text>
 								<Divider
 									bold={true}
@@ -594,7 +618,9 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={styles.title}>Quantity:</Text>
+								<Text style={styles.title}>
+									{t('dataTableOrder.quantity')}:
+								</Text>
 								<Text style={styles.item}>{item.quantity}</Text>
 								<Divider
 									bold={true}
@@ -603,7 +629,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={styles.title}>Weight:</Text>
+								<Text style={styles.title}>{t('dataTableOrder.weight')}:</Text>
 								<Text style={styles.item}>{item.weight.toFixed(3)} kg</Text>
 								<Divider
 									bold={true}
@@ -612,7 +638,9 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={styles.title}>Total weight:</Text>
+								<Text style={styles.title}>
+									{t('dataTableOrder.weightTotal')}:
+								</Text>
 								<Text style={styles.item}>
 									{(item.weight * item.quantity).toFixed(3)} kg
 								</Text>
@@ -623,7 +651,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={styles.title}>Price:</Text>
+								<Text style={styles.title}>{t('dataTableOrder.price')}:</Text>
 								<Text style={styles.item}>{item.price.toFixed(2)}</Text>
 								<Divider
 									bold={true}
@@ -632,8 +660,8 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={styles.title}>Status:</Text>
-								<Text style={styles.item}>{item.status}</Text>
+								<Text style={styles.title}>{t('dataTableOrder.status')}:</Text>
+								<Text style={styles.item}>{translateStatus(item.status)}</Text>
 								<Divider
 									bold={true}
 									style={{
@@ -641,7 +669,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={styles.title}>Notes:</Text>
+								<Text style={styles.title}>{t('dataTableOrder.notes')}:</Text>
 								<Text style={styles.item}>{item.notes}</Text>
 							</View>
 						) : null}
@@ -654,7 +682,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 					<>
 						{Object.keys(item).length !== 0 ? (
 							<View style={styles.itemContainer}>
-								<Text style={styles.title}>Name:</Text>
+								<Text style={styles.title}>{t('dataTableOrder.name')}:</Text>
 								<Text style={styles.item}>{item.product.name}</Text>
 								<Divider
 									bold={true}
@@ -663,7 +691,9 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={styles.title}>Quantity:</Text>
+								<Text style={styles.title}>
+									{t('dataTableOrder.quantity')}:
+								</Text>
 								<Text style={styles.item}>{item.quantity}</Text>
 								<Divider
 									bold={true}
@@ -672,7 +702,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={styles.title}>Weight:</Text>
+								<Text style={styles.title}>{t('dataTableOrder.weight')}:</Text>
 								<Text style={styles.item}>{item.weight.toFixed(3)} kg</Text>
 								<Divider
 									bold={true}
@@ -681,7 +711,9 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={styles.title}>Total weight:</Text>
+								<Text style={styles.title}>
+									{t('dataTableOrder.weightTotal')}:
+								</Text>
 								<Text style={styles.item}>
 									{(item.weight * item.quantity).toFixed(3)} kg
 								</Text>
@@ -692,7 +724,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={styles.title}>Price:</Text>
+								<Text style={styles.title}>{t('dataTableOrder.price')}:</Text>
 								<Text style={styles.item}>{item.price.toFixed(2)}</Text>
 								<Divider
 									bold={true}
@@ -701,7 +733,9 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={styles.title}>Delivery Date:</Text>
+								<Text style={styles.title}>
+									{t('dataTableOrder.deliveryDate')}:
+								</Text>
 								<Text style={styles.item}>
 									{item.deliveryDateTime.toLocaleString('pt-pt')}
 								</Text>
@@ -712,8 +746,8 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={styles.title}>Status:</Text>
-								<Text style={styles.item}>{item.status}</Text>
+								<Text style={styles.title}>{t('dataTableOrder.status')}:</Text>
+								<Text style={styles.item}>{translateStatus(item.status)}</Text>
 								<Divider
 									bold={true}
 									style={{
@@ -721,7 +755,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={styles.title}>Notes:</Text>
+								<Text style={styles.title}>{t('dataTableOrder.notes')}:</Text>
 								<Text style={styles.item}>{item.notes}</Text>
 							</View>
 						) : null}
@@ -734,7 +768,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 					<>
 						{Object.keys(item).length !== 0 ? (
 							<View style={styles.itemContainer}>
-								<Text style={styles.title}>Name:</Text>
+								<Text style={styles.title}>{t('dataTableOrder.name')}:</Text>
 								<Text style={styles.item}>{item.client.name}</Text>
 								<Divider
 									bold={true}
@@ -743,7 +777,9 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={styles.title}>Quantity:</Text>
+								<Text style={styles.title}>
+									{t('dataTableOrder.quantity')}:
+								</Text>
 								<Text style={styles.item}>{item.quantity}</Text>
 								<Divider
 									bold={true}
@@ -752,7 +788,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={styles.title}>Weight:</Text>
+								<Text style={styles.title}>{t('dataTableOrder.weight')}:</Text>
 								<Text style={styles.item}>{item.weight.toFixed(3)} kg</Text>
 								<Divider
 									bold={true}
@@ -761,7 +797,9 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={styles.title}>Total weight:</Text>
+								<Text style={styles.title}>
+									{t('dataTableOrder.weightTotal')}:
+								</Text>
 								<Text style={styles.item}>
 									{(item.weight * item.quantity).toFixed(3)} kg
 								</Text>
@@ -772,7 +810,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={styles.title}>Price:</Text>
+								<Text style={styles.title}>{t('dataTableOrder.price')}:</Text>
 								<Text style={styles.item}>{item.price.toFixed(2)}</Text>
 								<Divider
 									bold={true}
@@ -781,7 +819,9 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={styles.title}>Delivery Date:</Text>
+								<Text style={styles.title}>
+									{t('dataTableOrder.deliveryDate')}:
+								</Text>
 								<Text style={styles.item}>
 									{item.deliveryDateTime.toLocaleString('pt-pt')}
 								</Text>
@@ -792,8 +832,8 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={styles.title}>Status:</Text>
-								<Text style={styles.item}>{item.status}</Text>
+								<Text style={styles.title}>{t('dataTableOrder.status')}:</Text>
+								<Text style={styles.item}>{translateStatus(item.status)}</Text>
 								<Divider
 									bold={true}
 									style={{
@@ -801,7 +841,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={styles.title}>Notes:</Text>
+								<Text style={styles.title}>{t('dataTableOrder.notes')}:</Text>
 								<Text style={styles.item}>{item.notes}</Text>
 							</View>
 						) : null}
@@ -814,7 +854,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 					<>
 						{Object.keys(item).length !== 0 ? (
 							<View style={styles.itemContainer}>
-								<Text style={styles.title}>Name:</Text>
+								<Text style={styles.title}>{t('dataTableOrder.name')}:</Text>
 								<Text style={styles.item}>{item.name}</Text>
 								<Divider
 									bold={true}
@@ -823,7 +863,9 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={styles.title}>Quantity:</Text>
+								<Text style={styles.title}>
+									{t('dataTableOrder.quantity')}:
+								</Text>
 								<Text style={styles.item}>{item.quantity}</Text>
 								<Divider
 									bold={true}
@@ -832,7 +874,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={styles.title}>Weight:</Text>
+								<Text style={styles.title}>{t('dataTableOrder.weight')}:</Text>
 								<Text style={styles.item}>{item.weight.toFixed(3)} kg</Text>
 								<Divider
 									bold={true}
@@ -841,7 +883,9 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={styles.title}>Total weight:</Text>
+								<Text style={styles.title}>
+									{t('dataTableOrder.weightTotal')}:
+								</Text>
 								<Text style={styles.item}>
 									{item.weightTotal.toFixed(3)} kg
 								</Text>
@@ -852,8 +896,8 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={styles.title}>Status:</Text>
-								<Text style={styles.item}>{item.status}</Text>
+								<Text style={styles.title}>{t('dataTableOrder.status')}:</Text>
+								<Text style={styles.item}>{translateStatus(item.status)}</Text>
 							</View>
 						) : null}
 					</>
