@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 	Platform,
 	UIManager,
@@ -7,6 +7,7 @@ import {
 	TouchableOpacity,
 } from 'react-native';
 import {
+	Avatar,
 	Dialog,
 	List,
 	Portal,
@@ -14,8 +15,13 @@ import {
 	Switch,
 	useTheme,
 } from 'react-native-paper';
-import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
+import {
+	DrawerContentScrollView,
+	DrawerItem,
+	useDrawerStatus,
+} from '@react-navigation/drawer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { router, usePathname } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import auth from '@react-native-firebase/auth';
 import { useTranslation } from 'react-i18next';
@@ -34,12 +40,18 @@ import Constants from 'expo-constants';
 import getFlagEmoji from './GetCountryFlag';
 import SnackbarInfo from './SnackbarInfo';
 import DialogConfirmation from './DialogConfirmation';
-import { router, usePathname } from 'expo-router';
 
 export default function CustomDrawerContent(props: any) {
 	const theme = useTheme();
 	const insets = useSafeAreaInsets();
 	const { t } = useTranslation();
+
+	const isDrawerOpen = useDrawerStatus() === 'open';
+
+	useEffect(() => {
+		//console.log(isDrawerOpen);
+		if (!isDrawerOpen && expanded) toggleAccordion();
+	}, [isDrawerOpen]);
 
 	const [currentRoute, setCurrentRoute] = useState(usePathname());
 
@@ -160,7 +172,10 @@ export default function CustomDrawerContent(props: any) {
 					console.log('Do update?');
 
 					setRunUpdateConfirmationVisible(true);
-				} else console.log('No update');
+				} else {
+					console.log('No update');
+					showSnackbar(t('drawer.noUpdate'));
+				}
 			});
 	};
 
@@ -188,7 +203,7 @@ export default function CustomDrawerContent(props: any) {
 
 		console.log(`updates/${updateFolderName}/${updateFileName}`);
 
-		const apkPath = `${RNFetchBlob.fs.dirs.DownloadDir}/${updateFolderName}`;
+		const apkPath = `${RNFetchBlob.fs.dirs.DownloadDir}/${updateFileName}`;
 
 		const task = updateStorageRef.writeToFile(apkPath);
 		setUpdateDownloadProgressVisible(true);
@@ -284,6 +299,11 @@ export default function CustomDrawerContent(props: any) {
 					{...props}
 					scrollEnabled={false}
 				>
+					<Avatar.Image
+						size={120}
+						style={{ alignSelf: 'center', backgroundColor: 'transparent' }}
+						source={require('@/assets/images/logoReact.png')}
+					/>
 					<DrawerItem
 						labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
 						label={t('drawer.home')}
