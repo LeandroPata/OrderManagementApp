@@ -5,6 +5,7 @@ import {
 	View,
 	StyleSheet,
 	TouchableOpacity,
+	useWindowDimensions,
 } from 'react-native';
 import {
 	Avatar,
@@ -15,6 +16,10 @@ import {
 	Switch,
 	useTheme,
 	Text,
+	Modal,
+	TextInput,
+	HelperText,
+	Button,
 } from 'react-native-paper';
 import {
 	DrawerContentScrollView,
@@ -59,10 +64,22 @@ export default function CustomDrawerContent(props: any) {
 	const [expanded, setExpanded] = useState(false);
 	const [darkModeSwitch, setDarkModeSwitch] = useState(false);
 
+	const [changePasswordModal, setChangePasswordModal] = useState(false);
+
+	const [currentPassword, setCurrentPassword] = useState('');
+	const [newPassword, setNewPassword] = useState('');
+	const [confirmNewPassword, setConfirmNewPassword] = useState('');
+
+	const [currentPasswordError, setCurrentPasswordError] = useState(false);
+	const [newPasswordError, setNewPasswordError] = useState(false);
+	const [confirmNewPasswordError, setConfirmNewPasswordError] = useState(false);
+
 	const [updateVersion, setUpdateVersion] = useState('');
 	const [updateDownloadProgressVisible, setUpdateDownloadProgressVisible] =
 		useState(false);
 	const [updateDownloadProgress, setUpdateDownloadProgress] = useState(1);
+
+	const user = auth().currentUser;
 
 	// All the logic to implement the snackbar
 	const [snackbarVisible, setSnackbarVisible] = useState(false);
@@ -244,6 +261,92 @@ export default function CustomDrawerContent(props: any) {
 		}
 	};
 
+	const onChangePasswordModalDismiss = () => {
+		setChangePasswordModal(false);
+		setCurrentPassword('');
+		setCurrentPasswordError(false);
+		setNewPassword('');
+		setNewPasswordError(false);
+		setConfirmNewPassword('');
+		setConfirmNewPasswordError(false);
+	};
+
+	const checkCurrentPassword = async () => {
+		let passwordCheck = false;
+		if (!user || currentPassword.trim() === '') {
+			passwordCheck = false;
+			return passwordCheck;
+		}
+		const credential = auth.EmailAuthProvider.credential(
+			user.email,
+			currentPassword
+		);
+		await user
+			?.reauthenticateWithCredential(credential)
+			.then(() => {
+				console.log('Successfull reauthentication');
+				passwordCheck = true;
+			})
+			.catch((e: any) => {
+				const err = e as FirebaseError;
+				if (err.code === 'auth/invalid-credential') {
+					console.log(`Invalid credentials: ${err.message}`);
+					setCurrentPassword('');
+					setCurrentPasswordError(true);
+				} else {
+					//showSnackbar('Sign in failed: ' + err.message);
+					console.log(`Reauthentication failed: ${err.message}`);
+				}
+				passwordCheck = false;
+			});
+		return passwordCheck;
+	};
+
+	const changePassword = async () => {
+		if (!currentPassword.trim() || currentPassword.trim().length < 6) {
+			console.log('Invalid current password');
+			setCurrentPasswordError(true);
+			return;
+		} else if (!newPassword.trim() || newPassword.trim().length < 6) {
+			console.log('Invalid new password');
+			setNewPasswordError(true);
+			return;
+		} else if (
+			!confirmNewPassword.trim() ||
+			confirmNewPassword.trim().length < 6
+		) {
+			console.log('Invalid confirmed new password');
+			setConfirmNewPasswordError(true);
+			return;
+		} else if (newPassword !== confirmNewPassword) {
+			console.log('Passwords do not match');
+			setNewPasswordError(false);
+			setConfirmNewPasswordError(true);
+			return;
+		} else if (!(await checkCurrentPassword())) {
+			console.log('False');
+			return;
+		}
+
+		user
+			?.updatePassword(newPassword)
+			.then(() => {
+				console.log('Password updated');
+				showSnackbar(t('drawer.passwordUpdated'));
+			})
+			.catch((e: any) => {
+				const err = e as FirebaseError;
+				//showSnackbar('Sign in failed: ' + err.message);
+				console.log(`Updating password failed: ${err.message}`);
+			});
+	};
+
+	const signOut = () => {
+		setSignOutConfirmationVisible(false);
+		props.navigation.closeDrawer();
+		auth().signOut();
+	};
+
 	const drawerItemPress = (goToPathName: string) => {
 		props.navigation.closeDrawer();
 		setCurrentRoute(goToPathName);
@@ -252,50 +355,163 @@ export default function CustomDrawerContent(props: any) {
 
 	return (
 		<>
+			<DialogConfirmation
+				text={t('drawer.checkUpdateDialog')}
+				visible={checkUpdateConfirmationVisible}
+				onDismiss={onDismissDialogConfirmation}
+				onConfirmation={checkUpdates}
+			/>
+
+			<DialogConfirmation
+				text={t('drawer.runUpdateDialog')}
+				visible={runUpdateConfirmationVisible}
+				onDismiss={onDismissDialogConfirmation}
+				onConfirmation={() => downloadUpdate(updateVersion)}
+			/>
+
+			<DialogConfirmation
+				text={t('drawer.signOutDialog')}
+				visible={signOutConfirmationVisible}
+				onDismiss={onDismissDialogConfirmation}
+				onConfirmation={signOut}
+			/>
+
+			<Portal>
+				<Dialog visible={updateDownloadProgressVisible}>
+					<Dialog.Title style={{ textAlign: 'center' }}>
+						{t('drawer.downloadingDialog')}
+					</Dialog.Title>
+					<Dialog.Content>
+						<ProgressBar
+							progress={updateDownloadProgress}
+							color={theme.colors.primary}
+						/>
+					</Dialog.Content>
+				</Dialog>
+				<Modal
+					visible={changePasswordModal}
+					onDismiss={onChangePasswordModalDismiss}
+					style={styles.modalContainer}
+					contentContainerStyle={[
+						styles.modalContentContainer,
+						{
+							backgroundColor: theme.colors.primaryContainer,
+							minHeight: useWindowDimensions().height / 2,
+						},
+					]}
+				>
+					<View
+						style={{
+							flex: 1,
+							justifyContent: 'space-evenly',
+						}}
+					>
+						<View>
+							<TextInput
+								style={styles.input}
+								value={currentPassword}
+								onChangeText={setCurrentPassword}
+								onEndEditing={() => {
+									if (
+										currentPassword.trim() === '' ||
+										currentPassword.trim().length < 6
+									)
+										setCurrentPasswordError(true);
+									else setCurrentPasswordError(false);
+								}}
+								error={currentPasswordError}
+								autoCapitalize='none'
+								label={t('drawer.currentPassword')}
+								secureTextEntry
+							/>
+							{currentPasswordError ? (
+								<HelperText
+									type='error'
+									visible={currentPasswordError}
+									style={styles.errorHelper}
+								>
+									{t('drawer.currentPasswordError')}
+								</HelperText>
+							) : null}
+						</View>
+						<View>
+							<TextInput
+								style={styles.input}
+								value={newPassword}
+								onChangeText={setNewPassword}
+								onEndEditing={() => {
+									if (
+										newPassword.trim() === '' ||
+										newPassword.trim().length < 6
+									)
+										setNewPasswordError(true);
+									else setNewPasswordError(false);
+								}}
+								error={newPasswordError}
+								autoCapitalize='none'
+								label={t('drawer.newPassword')}
+								secureTextEntry
+							/>
+							{newPasswordError ? (
+								<HelperText
+									type='error'
+									visible={newPasswordError}
+									style={styles.errorHelper}
+								>
+									{t('drawer.newPasswordError')}
+								</HelperText>
+							) : null}
+						</View>
+						<View>
+							<TextInput
+								style={styles.input}
+								value={confirmNewPassword}
+								onChangeText={setConfirmNewPassword}
+								onEndEditing={() => {
+									if (
+										newPassword.trim() !== '' &&
+										(confirmNewPassword.trim() === '' ||
+											confirmNewPassword.trim().length < 6 ||
+											newPassword !== confirmNewPassword)
+									)
+										setConfirmNewPasswordError(true);
+									else setConfirmNewPasswordError(false);
+								}}
+								error={confirmNewPasswordError}
+								autoCapitalize='none'
+								label={t('drawer.confirmNewPassword')}
+								secureTextEntry
+							/>
+							{confirmNewPasswordError ? (
+								<HelperText
+									type='error'
+									visible={confirmNewPasswordError}
+									style={styles.errorHelper}
+								>
+									{t('drawer.confirmNewPasswordError')}
+								</HelperText>
+							) : null}
+						</View>
+					</View>
+					<Button
+						style={styles.button}
+						contentStyle={styles.buttonContent}
+						labelStyle={styles.buttonText}
+						icon='check-bold'
+						mode='elevated'
+						onPress={changePassword}
+					>
+						{t('drawer.changePassword')}
+					</Button>
+				</Modal>
+			</Portal>
+
 			<SnackbarInfo
 				text={snackbarText}
 				visible={snackbarVisible}
 				onDismiss={onDismissSnackbar}
 			/>
 			<View style={{ flex: 1 }}>
-				<DialogConfirmation
-					text={t('drawer.checkUpdateDialog')}
-					visible={checkUpdateConfirmationVisible}
-					onDismiss={onDismissDialogConfirmation}
-					onConfirmation={checkUpdates}
-				/>
-
-				<DialogConfirmation
-					text={t('drawer.runUpdateDialog')}
-					visible={runUpdateConfirmationVisible}
-					onDismiss={onDismissDialogConfirmation}
-					onConfirmation={() => downloadUpdate(updateVersion)}
-				/>
-
-				<DialogConfirmation
-					text={t('drawer.signOutDialog')}
-					visible={signOutConfirmationVisible}
-					onDismiss={onDismissDialogConfirmation}
-					onConfirmation={() => {
-						setSignOutConfirmationVisible(false);
-						auth().signOut();
-					}}
-				/>
-
-				<Portal>
-					<Dialog visible={updateDownloadProgressVisible}>
-						<Dialog.Title style={{ textAlign: 'center' }}>
-							{t('drawer.downloadingDialog')}
-						</Dialog.Title>
-						<Dialog.Content>
-							<ProgressBar
-								progress={updateDownloadProgress}
-								color={theme.colors.primary}
-							/>
-						</Dialog.Content>
-					</Dialog>
-				</Portal>
-
 				<DrawerContentScrollView
 					{...props}
 					scrollEnabled={false}
@@ -452,7 +668,7 @@ export default function CustomDrawerContent(props: any) {
 							<Ionicons
 								name={'cloud-download-outline'}
 								color={color}
-								size={32}
+								size={27}
 							/>
 						)}
 						inactiveTintColor={theme.colors.onBackground}
@@ -460,11 +676,25 @@ export default function CustomDrawerContent(props: any) {
 						inactiveBackgroundColor='transparent'
 						onPress={() => setCheckUpdateConfirmationVisible(true)}
 					/>
-
+					<DrawerItem
+						labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
+						label={t('drawer.changePassword')}
+						icon={({ color }) => (
+							<Ionicons
+								name={'lock-open-outline'}
+								color={color}
+								size={28}
+							/>
+						)}
+						inactiveTintColor={theme.colors.onBackground}
+						activeTintColor={theme.colors.primary}
+						inactiveBackgroundColor='transparent'
+						onPress={() => setChangePasswordModal(true)}
+					/>
 					<DrawerItem
 						labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
 						label={t('drawer.signOut')}
-						icon={({ focused, color }) => (
+						icon={({ color }) => (
 							<Ionicons
 								name={'log-out-outline'}
 								color={color}
