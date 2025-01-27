@@ -14,6 +14,7 @@ import {
 	ProgressBar,
 	Switch,
 	useTheme,
+	Text,
 } from 'react-native-paper';
 import {
 	DrawerContentScrollView,
@@ -475,6 +476,9 @@ export default function CustomDrawerContent(props: any) {
 						inactiveBackgroundColor='transparent'
 						onPress={() => setSignOutConfirmationVisible(true)}
 					/>
+					<Text style={styles.title}>
+						{t('drawer.version')}: {Constants.expoConfig?.version}
+					</Text>
 				</View>
 			</View>
 		</>
@@ -484,5 +488,46 @@ export default function CustomDrawerContent(props: any) {
 const styles = StyleSheet.create({
 	content: {
 		overflow: 'hidden',
+	},
+	image: {
+		alignSelf: 'center',
+		resizeMode: 'contain',
+		width: '50%',
+		height: '50%',
+	},
+	modalContainer: {
+		marginHorizontal: 30,
+	},
+	modalContentContainer: {
+		paddingVertical: 5,
+		paddingHorizontal: 15,
+		borderRadius: 20,
+		justifyContent: 'center',
+	},
+	input: {
+		marginVertical: 2,
+	},
+	errorHelper: {
+		fontWeight: 'bold',
+		fontSize: 15,
+	},
+	button: {
+		marginVertical: 8,
+		justifyContent: 'center',
+	},
+	buttonContent: {
+		minWidth: 50,
+		minHeight: 20,
+	},
+	buttonText: {
+		fontSize: 25,
+		fontWeight: 'bold',
+		overflow: 'visible',
+		paddingTop: 10,
+	},
+	title: {
+		fontSize: 13,
+		textAlign: 'center',
+		textAlignVertical: 'center',
 	},
 });

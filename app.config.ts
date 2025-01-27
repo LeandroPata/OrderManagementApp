@@ -4,7 +4,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 	...config,
 	name: 'OrderManagementApp',
 	slug: 'OrderManagementApp',
-	version: '0.10.5',
+	version: '0.10.7',
 	orientation: 'portrait',
 	icon: './assets/images/iconReact.png',
 	scheme: 'myapp',
@@ -53,12 +53,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 			'expo-splash-screen',
 			{
 				image: './assets/images/logoReact.png',
-				imageWidth: 250,
+				imageWidth: 200,
 				resizeMode: 'contain',
 				backgroundColor: '#fffbff',
 				dark: {
 					image: './assets/images/logoReact.png',
-					imageWidth: 250,
+					imageWidth: 200,
 					resizeMode: 'contain',
 					backgroundColor: '#191918',
 				},

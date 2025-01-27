@@ -27,7 +27,8 @@
 		"checkUpdateDialog": "Verificar se existem atualizações?",
 		"runUpdateDialog": "Existe uma nova atualização, atualizar?",
 		"downloadingDialog": "A transferir...",
-		"signOutDialog": "Sair da conta?"
+		"signOutDialog": "Sair da conta?",
+		"version": "Versão"
 	},
 	"dataTableOrder": {
 		"of": "de",

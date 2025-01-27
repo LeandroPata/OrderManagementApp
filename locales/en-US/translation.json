@@ -27,7 +27,8 @@
 		"checkUpdateDialog": "Check for updates?",
 		"runUpdateDialog": "There is a new version available, do you want to update?",
 		"downloadingDialog": "Downloading...",
-		"signOutDialog": "Sign Out?"
+		"signOutDialog": "Sign Out?",
+		"version": "Version"
 	},
 	"dataTableOrder": {
 		"of": "of",
