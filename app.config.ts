@@ -4,9 +4,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 	...config,
 	name: 'OrderManagementApp',
 	slug: 'OrderManagementApp',
-	version: '0.10.1',
+	version: '0.10.5',
 	orientation: 'portrait',
-	icon: './assets/images/logoReact.png',
+	icon: './assets/images/iconReact.png',
 	scheme: 'myapp',
 	userInterfaceStyle: 'automatic',
 	newArchEnabled: false,
@@ -18,7 +18,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 	},
 	android: {
 		adaptiveIcon: {
-			foregroundImage: './assets/images/logoReact.png',
+			foregroundImage: './assets/images/adaptiveIconReact.png',
 			backgroundColor: '#fffbff',
 		},
 		package: 'com.leandropata.ordermanagementapp',
@@ -53,12 +53,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 			'expo-splash-screen',
 			{
 				image: './assets/images/logoReact.png',
-				imageWidth: 200,
+				imageWidth: 250,
 				resizeMode: 'contain',
 				backgroundColor: '#fffbff',
 				dark: {
 					image: './assets/images/logoReact.png',
-					imageWidth: 200,
+					imageWidth: 250,
 					resizeMode: 'contain',
 					backgroundColor: '#191918',
 				},
@@ -81,4 +81,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 		'@react-native-firebase/auth',
 	],
 	experiments: { typedRoutes: true },
+	extra: {
+		eas: {
+			projectId: '9cb15171-b707-4e5a-bfd0-ae289a2ecf07',
+		},
+	},
 });

@@ -196,10 +196,9 @@ export default function importExport() {
 	};
 
 	const pickFile = async () => {
-		let doc = null;
 		//console.log(Platform.OS);
 		try {
-			doc = await DocumentPicker.getDocumentAsync({
+			const doc = await DocumentPicker.getDocumentAsync({
 				type:
 					Platform.OS === 'android'
 						? 'text/comma-separated-values'
@@ -335,8 +334,8 @@ export default function importExport() {
 					// which I now realize will never happen and will always be the default,
 					// because the document ID is completely new, oh well
 					/* const url = await storage()
-          	.ref('profilePicture/' + memberRef + '.jpg')
-          	.getDownloadURL();
+						.ref('profilePicture/' + memberRef + '.jpg')
+						.getDownloadURL();
           console.log(url); */
 
 					member.profilePicture =
@@ -356,6 +355,7 @@ export default function importExport() {
 		} finally {
 			await batch.commit();
 			console.log(existingMembers);
+
 			let importMsg = t('importExport.importSuccess');
 			if (existingMembers.length) {
 				importMsg += `\n${t(
@@ -398,7 +398,6 @@ export default function importExport() {
 			//console.log(file);
 
 			const filePath = `${RNFetchBlob.fs.dirs.CacheDir}/membersData.csv`;
-
 			//console.log(filePath);
 
 			await RNFetchBlob.fs.writeFile(filePath, file);
