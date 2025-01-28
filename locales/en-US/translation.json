@@ -26,6 +26,8 @@
 		"signOut": "Sign Out",
 		"checkUpdateDialog": "Check for updates?",
 		"runUpdateDialog": "There is a new version available, do you want to update?",
+		"noUpdate": "Most up to date version already installed!",
+		"passiveUpdateCheck": "A new version is available!",
 		"downloadingDialog": "Downloading...",
 		"currentPassword": "Current Password",
 		"currentPasswordError": "Password is invalid!",

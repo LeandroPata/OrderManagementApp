@@ -26,6 +26,8 @@
 		"signOut": "Sair da Conta",
 		"checkUpdateDialog": "Verificar se existem atualizações?",
 		"runUpdateDialog": "Existe uma nova atualização, atualizar?",
+		"noUpdate": "Versão mais atualizada já instalada!",
+		"passiveUpdateCheck": "Uma nova versão está disponível!",
 		"downloadingDialog": "A transferir...",
 		"currentPassword": "Password Atual",
 		"currentPasswordError": "Password é inválida!",

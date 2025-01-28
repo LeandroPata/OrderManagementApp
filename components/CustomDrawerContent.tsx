@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
 	Platform,
 	UIManager,
@@ -27,7 +27,7 @@ import {
 	useDrawerStatus,
 } from '@react-navigation/drawer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { router, usePathname } from 'expo-router';
+import { router, useFocusEffect, usePathname } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import auth from '@react-native-firebase/auth';
 import { useTranslation } from 'react-i18next';
@@ -58,6 +58,25 @@ export default function CustomDrawerContent(props: any) {
 		//console.log(isDrawerOpen);
 		if (!isDrawerOpen && expanded) toggleAccordion();
 	}, [isDrawerOpen]);
+
+	const [firstTimeCount, setFirstTimeCount] = useState(0);
+
+	useFocusEffect(
+		useCallback(() => {
+			// Screen focused
+			//console.log("Hello, I'm focused!");
+			//console.log(firstTimeCount);
+			if (!firstTimeCount) {
+				setFirstTimeCount(1);
+				checkUpdates(true);
+			}
+
+			// Screen unfocused in return
+			return () => {
+				//console.log('This route is now unfocused.');
+			};
+		}, [])
+	);
 
 	const [currentRoute, setCurrentRoute] = useState(usePathname());
 
@@ -163,7 +182,7 @@ export default function CustomDrawerContent(props: any) {
 		return false;
 	};
 
-	const checkUpdates = async () => {
+	const checkUpdates = async (passive = false) => {
 		setCheckUpdateConfirmationVisible(false);
 		setUpdateDownloadProgress(0);
 
@@ -187,12 +206,19 @@ export default function CustomDrawerContent(props: any) {
 			})
 			.finally(() => {
 				if (update) {
-					console.log('Do update?');
+					if (!passive) {
+						console.log('Do update?');
 
-					setRunUpdateConfirmationVisible(true);
+						setRunUpdateConfirmationVisible(true);
+					} else {
+						console.log('Passive update check');
+						showSnackbar(t('drawer.passiveUpdateCheck'));
+					}
 				} else {
-					console.log('No update');
-					showSnackbar(t('drawer.noUpdate'));
+					if (!passive) {
+						console.log('No update');
+						showSnackbar(t('drawer.noUpdate'));
+					}
 				}
 			});
 	};
@@ -359,7 +385,7 @@ export default function CustomDrawerContent(props: any) {
 				text={t('drawer.checkUpdateDialog')}
 				visible={checkUpdateConfirmationVisible}
 				onDismiss={onDismissDialogConfirmation}
-				onConfirmation={checkUpdates}
+				onConfirmation={() => checkUpdates()}
 			/>
 
 			<DialogConfirmation
