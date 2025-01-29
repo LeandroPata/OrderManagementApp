@@ -5,10 +5,10 @@ import {
 	View,
 	StyleSheet,
 	TouchableOpacity,
+	Image,
 	useWindowDimensions,
 } from 'react-native';
 import {
-	Avatar,
 	Dialog,
 	List,
 	Portal,
@@ -537,14 +537,14 @@ export default function CustomDrawerContent(props: any) {
 				visible={snackbarVisible}
 				onDismiss={onDismissSnackbar}
 			/>
+
 			<View style={{ flex: 1 }}>
 				<DrawerContentScrollView
 					{...props}
 					scrollEnabled={false}
 				>
-					<Avatar.Image
-						size={120}
-						style={{ alignSelf: 'center', backgroundColor: 'transparent' }}
+					<Image
+						style={styles.image}
 						source={require('@/assets/images/logoReact.png')}
 					/>
 					<DrawerItem
@@ -560,6 +560,7 @@ export default function CustomDrawerContent(props: any) {
 						inactiveTintColor={theme.colors.onBackground}
 						activeTintColor={theme.colors.primary}
 						inactiveBackgroundColor='transparent'
+						pressColor='rgba(80, 80, 80, 0.32)'
 						focused={currentRoute === '/(drawer)/(home)/home'}
 						onPress={() => drawerItemPress('/(drawer)/(home)/home')}
 					/>
@@ -576,6 +577,7 @@ export default function CustomDrawerContent(props: any) {
 						inactiveTintColor={theme.colors.onBackground}
 						activeTintColor={theme.colors.primary}
 						inactiveBackgroundColor='transparent'
+						pressColor='rgba(80, 80, 80, 0.32)'
 						focused={currentRoute === '/(drawer)/(home)/(add)/addHome'}
 						onPress={() => drawerItemPress('/(drawer)/(home)/(add)/addHome')}
 					/>
@@ -592,6 +594,7 @@ export default function CustomDrawerContent(props: any) {
 						inactiveTintColor={theme.colors.onBackground}
 						activeTintColor={theme.colors.primary}
 						inactiveBackgroundColor='transparent'
+						pressColor='rgba(80, 80, 80, 0.32)'
 						focused={currentRoute === '/(drawer)/(home)/(show)/showHome'}
 						onPress={() => drawerItemPress('/(drawer)/(home)/(show)/showHome')}
 					/>
@@ -608,6 +611,7 @@ export default function CustomDrawerContent(props: any) {
 						inactiveTintColor={theme.colors.onBackground}
 						activeTintColor={theme.colors.primary}
 						inactiveBackgroundColor='transparent'
+						pressColor='rgba(80, 80, 80, 0.32)'
 						focused={currentRoute === '/(drawer)/(home)/importExport'}
 						onPress={() => drawerItemPress('/(drawer)/(home)/importExport')}
 					/>
@@ -700,6 +704,7 @@ export default function CustomDrawerContent(props: any) {
 						inactiveTintColor={theme.colors.onBackground}
 						activeTintColor={theme.colors.primary}
 						inactiveBackgroundColor='transparent'
+						pressColor='rgba(80, 80, 80, 0.32)'
 						onPress={() => setCheckUpdateConfirmationVisible(true)}
 					/>
 					<DrawerItem
@@ -715,6 +720,7 @@ export default function CustomDrawerContent(props: any) {
 						inactiveTintColor={theme.colors.onBackground}
 						activeTintColor={theme.colors.primary}
 						inactiveBackgroundColor='transparent'
+						pressColor='rgba(80, 80, 80, 0.32)'
 						onPress={() => setChangePasswordModal(true)}
 					/>
 					<DrawerItem
@@ -730,6 +736,7 @@ export default function CustomDrawerContent(props: any) {
 						inactiveTintColor={theme.colors.onBackground}
 						activeTintColor={theme.colors.primary}
 						inactiveBackgroundColor='transparent'
+						pressColor='rgba(80, 80, 80, 0.32)'
 						onPress={() => setSignOutConfirmationVisible(true)}
 					/>
 					<Text style={styles.title}>

@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { StyleSheet, KeyboardAvoidingView, View, Keyboard } from 'react-native';
+import {
+	StyleSheet,
+	KeyboardAvoidingView,
+	View,
+	Keyboard,
+	Image,
+} from 'react-native';
 import {
 	Portal,
 	Modal,
@@ -166,11 +172,6 @@ export default function Index() {
 
 	return (
 		<>
-			<SnackbarInfo
-				text={snackbarText}
-				visible={snackbarVisible}
-				onDismiss={onDismissSnackbar}
-			/>
 			<Portal>
 				<Modal
 					visible={showModal}
@@ -229,63 +230,82 @@ export default function Index() {
 					</View>
 				</Modal>
 			</Portal>
+
+			<SnackbarInfo
+				text={snackbarText}
+				visible={snackbarVisible}
+				onDismiss={onDismissSnackbar}
+			/>
+
 			<View style={[styles.container, { paddingTop: insets.top }]}>
 				<KeyboardAvoidingView
-					style={{ marginHorizontal: 20 }}
+					style={{ flex: 1, marginHorizontal: 20 }}
 					behavior='padding'
 				>
-					<TextInput
-						style={styles.input}
-						value={email}
-						onChangeText={setEmail}
-						onEndEditing={() => {
-							if (!email.match(emailRegex)) {
-								setEmailError(true);
-							} else setEmailError(false);
-							setEmail(email.trim());
+					<View style={styles.imageContainer}>
+						<Image
+							style={styles.image}
+							source={require('@/assets/images/logoReact.png')}
+						/>
+					</View>
+					<View
+						style={{
+							flex: 1,
 						}}
-						error={emailError}
-						autoCapitalize='none'
-						keyboardType='email-address'
-						label={t('index.email')}
-					/>
-					{emailError ? (
-						<HelperText
-							type='error'
-							visible={emailError}
-							style={styles.errorHelper}
-						>
-							{t('index.emailError')}
-						</HelperText>
-					) : null}
-					<TextInput
-						style={styles.input}
-						value={password}
-						onChangeText={setPassword}
-						onEndEditing={() => {
-							if (password.length < 6) {
-								setPasswordError(true);
-							} else setPasswordError(false);
-							setPassword(password.trim());
-						}}
-						error={passwordError}
-						autoCapitalize='none'
-						keyboardType='default'
-						label={t('index.password')}
-						secureTextEntry
-					/>
-					{passwordError ? (
-						<HelperText
-							type='error'
-							visible={passwordError}
-							style={styles.errorHelper}
-						>
-							{t('index.passwordError')}
-						</HelperText>
-					) : null}
+					>
+						<TextInput
+							style={styles.input}
+							value={email}
+							onChangeText={setEmail}
+							onEndEditing={() => {
+								if (!email.match(emailRegex)) {
+									setEmailError(true);
+								} else setEmailError(false);
+								setEmail(email.trim());
+							}}
+							error={emailError}
+							autoCapitalize='none'
+							keyboardType='email-address'
+							label={t('index.email')}
+						/>
+						{emailError ? (
+							<HelperText
+								type='error'
+								visible={emailError}
+								style={styles.errorHelper}
+							>
+								{t('index.emailError')}
+							</HelperText>
+						) : null}
+						<TextInput
+							style={styles.input}
+							value={password}
+							onChangeText={setPassword}
+							onEndEditing={() => {
+								if (password.length < 6) {
+									setPasswordError(true);
+								} else setPasswordError(false);
+								setPassword(password.trim());
+							}}
+							error={passwordError}
+							autoCapitalize='none'
+							keyboardType='default'
+							label={t('index.password')}
+							secureTextEntry
+						/>
+						{passwordError ? (
+							<HelperText
+								type='error'
+								visible={passwordError}
+								style={styles.errorHelper}
+							>
+								{t('index.passwordError')}
+							</HelperText>
+						) : null}
+					</View>
 				</KeyboardAvoidingView>
 
-				<View style={[styles.buttonContainer, { marginTop: 50 }]}>
+				<View style={styles.buttonContainer}>
 					<Button
 						style={styles.button}
 						contentStyle={styles.buttonContent}
@@ -319,7 +339,6 @@ export default function Index() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		justifyContent: 'center',
 	},
 	modalContainer: {
 		marginHorizontal: 30,
@@ -350,5 +369,16 @@ const styles = StyleSheet.create({
 	errorHelper: {
 		fontWeight: 'bold',
 		fontSize: 15,
+	},
+	imageContainer: {
+		justifyContent: 'center',
+		alignSelf: 'center',
+		width: '50%',
+		height: '35%',
+	},
+	image: {
+		resizeMode: 'contain',
+		width: '100%',
+		height: '100%',
 	},
 });
