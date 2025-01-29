@@ -47,7 +47,10 @@ const DrawerLayout = () => {
 				sceneStyle: {
 					backgroundColor: theme.colors.background,
 				},
-				drawerStyle: { backgroundColor: theme.colors.background },
+				drawerStyle: {
+					backgroundColor: theme.colors.background,
+					paddingTop: insets.top,
+				},
 				drawerActiveTintColor: theme.colors.primary,
 				drawerInactiveTintColor: theme.colors.onBackground,
 				drawerInactiveBackgroundColor: 'transparent',

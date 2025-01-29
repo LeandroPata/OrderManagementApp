@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
 	Platform,
 	UIManager,
@@ -20,6 +20,7 @@ import {
 	TextInput,
 	HelperText,
 	Button,
+	Divider,
 } from 'react-native-paper';
 import {
 	DrawerContentScrollView,
@@ -52,11 +53,16 @@ export default function CustomDrawerContent(props: any) {
 	const insets = useSafeAreaInsets();
 	const { t } = useTranslation();
 
+	const scrollRef = useRef();
+
 	const isDrawerOpen = useDrawerStatus() === 'open';
 
 	useEffect(() => {
 		//console.log(isDrawerOpen);
-		if (!isDrawerOpen && expanded) toggleAccordion();
+		if (!isDrawerOpen) {
+			scrollRef?.current?.scrollTo({ y: 0 });
+			if (expanded) toggleAccordion();
+		}
 	}, [isDrawerOpen]);
 
 	const [firstTimeCount, setFirstTimeCount] = useState(0);
@@ -541,204 +547,249 @@ export default function CustomDrawerContent(props: any) {
 			<View style={{ flex: 1 }}>
 				<DrawerContentScrollView
 					{...props}
-					scrollEnabled={false}
+					style={{
+						flex: 1,
+					}}
+					ref={scrollRef}
 				>
-					<Image
-						style={styles.image}
-						source={require('@/assets/images/logoReact.png')}
-					/>
-					<DrawerItem
-						labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
-						label={t('drawer.home')}
-						icon={({ focused, size, color }) => (
-							<Ionicons
-								name={focused ? 'home' : 'home-outline'}
-								size={size}
-								color={color}
-							/>
-						)}
-						inactiveTintColor={theme.colors.onBackground}
-						activeTintColor={theme.colors.primary}
-						inactiveBackgroundColor='transparent'
-						pressColor='rgba(80, 80, 80, 0.32)'
-						focused={currentRoute === '/(drawer)/(home)/home'}
-						onPress={() => drawerItemPress('/(drawer)/(home)/home')}
-					/>
-					<DrawerItem
-						labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
-						label={t('drawer.add')}
-						icon={({ focused, size, color }) => (
-							<Ionicons
-								name={focused ? 'person-add' : 'person-add-outline'}
-								size={size}
-								color={color}
-							/>
-						)}
-						inactiveTintColor={theme.colors.onBackground}
-						activeTintColor={theme.colors.primary}
-						inactiveBackgroundColor='transparent'
-						pressColor='rgba(80, 80, 80, 0.32)'
-						focused={currentRoute === '/(drawer)/(home)/(add)/addHome'}
-						onPress={() => drawerItemPress('/(drawer)/(home)/(add)/addHome')}
-					/>
-					<DrawerItem
-						labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
-						label={t('drawer.show')}
-						icon={({ focused, size, color }) => (
-							<Ionicons
-								name={focused ? 'search' : 'search-outline'}
-								size={size}
-								color={color}
-							/>
-						)}
-						inactiveTintColor={theme.colors.onBackground}
-						activeTintColor={theme.colors.primary}
-						inactiveBackgroundColor='transparent'
-						pressColor='rgba(80, 80, 80, 0.32)'
-						focused={currentRoute === '/(drawer)/(home)/(show)/showHome'}
-						onPress={() => drawerItemPress('/(drawer)/(home)/(show)/showHome')}
-					/>
-					<DrawerItem
-						labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
-						label={t('drawer.importExport')}
-						icon={({ focused, size, color }) => (
-							<Ionicons
-								name={focused ? 'server' : 'server-outline'}
-								size={size}
-								color={color}
-							/>
-						)}
-						inactiveTintColor={theme.colors.onBackground}
-						activeTintColor={theme.colors.primary}
-						inactiveBackgroundColor='transparent'
-						pressColor='rgba(80, 80, 80, 0.32)'
-						focused={currentRoute === '/(drawer)/(home)/importExport'}
-						onPress={() => drawerItemPress('/(drawer)/(home)/importExport')}
-					/>
-					{/* <DrawerItemList {...props} /> */}
-				</DrawerContentScrollView>
+					<View style={{ flex: 1, justifyContent: 'flex-start' }}>
+						<Image
+							style={[
+								styles.image,
+								{
+									height: useWindowDimensions().height / 10,
+									marginTop: -insets.top,
+								},
+							]}
+							source={require('@/assets/images/logoReact.png')}
+						/>
 
-				<View style={{ paddingBottom: 20 + insets.bottom }}>
-					<View
-						style={{
-							flexDirection: 'row',
-							justifyContent: 'space-between',
-							width: '95%',
-						}}
-					>
-						<List.Item
-							title={t('drawer.darkMode')}
-							titleStyle={{ fontSize: 15, fontWeight: 'bold' }}
-							left={(props) => (
+						<Divider
+							style={{ marginVertical: 5 }}
+							bold={true}
+						/>
+
+						<DrawerItem
+							labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
+							label={t('drawer.home')}
+							style={{ minHeight: 10 }}
+							icon={({ focused, size, color }) => (
 								<Ionicons
-									{...props}
-									name='moon-sharp'
-									size={25}
+									name={focused ? 'home' : 'home-outline'}
+									size={size}
+									color={color}
 								/>
 							)}
+							inactiveTintColor={theme.colors.onBackground}
+							activeTintColor={theme.colors.primary}
+							inactiveBackgroundColor='transparent'
+							pressColor='rgba(80, 80, 80, 0.32)'
+							focused={currentRoute === '/(drawer)/(home)/home'}
+							onPress={() => drawerItemPress('/(drawer)/(home)/home')}
 						/>
-						<Switch
-							value={darkModeSwitch}
-							onValueChange={changeColorScheme}
+
+						<DrawerItem
+							labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
+							label={t('drawer.add')}
+							style={{ minHeight: 10 }}
+							icon={({ focused, size, color }) => (
+								<Ionicons
+									name={focused ? 'person-add' : 'person-add-outline'}
+									size={size}
+									color={color}
+								/>
+							)}
+							inactiveTintColor={theme.colors.onBackground}
+							activeTintColor={theme.colors.primary}
+							inactiveBackgroundColor='transparent'
+							pressColor='rgba(80, 80, 80, 0.32)'
+							focused={currentRoute === '/(drawer)/(home)/(add)/addHome'}
+							onPress={() => drawerItemPress('/(drawer)/(home)/(add)/addHome')}
+						/>
+
+						<DrawerItem
+							labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
+							label={t('drawer.show')}
+							style={{ minHeight: 10 }}
+							icon={({ focused, size, color }) => (
+								<Ionicons
+									name={focused ? 'search' : 'search-outline'}
+									size={size}
+									color={color}
+								/>
+							)}
+							inactiveTintColor={theme.colors.onBackground}
+							activeTintColor={theme.colors.primary}
+							inactiveBackgroundColor='transparent'
+							pressColor='rgba(80, 80, 80, 0.32)'
+							focused={currentRoute === '/(drawer)/(home)/(show)/showHome'}
+							onPress={() =>
+								drawerItemPress('/(drawer)/(home)/(show)/showHome')
+							}
+						/>
+
+						<DrawerItem
+							labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
+							label={t('drawer.importExport')}
+							style={{ minHeight: 10 }}
+							icon={({ focused, size, color }) => (
+								<Ionicons
+									name={focused ? 'server' : 'server-outline'}
+									size={size}
+									color={color}
+								/>
+							)}
+							inactiveTintColor={theme.colors.onBackground}
+							activeTintColor={theme.colors.primary}
+							inactiveBackgroundColor='transparent'
+							pressColor='rgba(80, 80, 80, 0.32)'
+							focused={currentRoute === '/(drawer)/(home)/importExport'}
+							onPress={() => drawerItemPress('/(drawer)/(home)/importExport')}
 						/>
 					</View>
-					<TouchableOpacity
-						style={{ marginLeft: -4 }}
-						onPress={toggleAccordion}
-					>
-						<List.Item
-							title={t('drawer.language')}
-							titleStyle={{ fontSize: 15, fontWeight: 'bold' }}
-							left={(props) => (
-								<Ionicons
-									{...props}
-									name='language-sharp'
-									size={32}
-								/>
-							)}
-							right={(props) => (
-								<Ionicons
-									{...props}
-									name={expanded ? 'arrow-up' : 'arrow-down'}
-									size={25}
-								/>
-							)}
-						/>
-					</TouchableOpacity>
-					<Animated.View style={[styles.content, animatedStyle]}>
+
+					<Divider
+						style={{ marginVertical: 5 }}
+						bold={true}
+					/>
+
+					<View style={{ flex: 1, justifyContent: 'flex-end' }}>
 						<View
 							style={{
-								width: '80%',
-								justifyContent: 'center',
-
-								alignSelf: 'center',
+								flexDirection: 'row',
+								justifyContent: 'space-between',
+								width: '95%',
+								minHeight: 10,
 							}}
 						>
 							<List.Item
-								title={`${getFlagEmoji('GB')}     English`}
-								onPress={() => {
-									i18next.changeLanguage('en-US');
-									AsyncStorage.setItem('language', 'en-US');
-								}}
+								title={t('drawer.darkMode')}
+								titleStyle={{ fontSize: 15, fontWeight: 'bold' }}
+								left={(props) => (
+									<Ionicons
+										{...props}
+										name='moon-sharp'
+										size={25}
+									/>
+								)}
 							/>
-							<List.Item
-								title={`${getFlagEmoji('PT')}     Português`}
-								onPress={() => {
-									i18next.changeLanguage('pt-PT');
-									AsyncStorage.setItem('language', 'pt-PT');
-								}}
+							<Switch
+								value={darkModeSwitch}
+								onValueChange={changeColorScheme}
 							/>
 						</View>
-					</Animated.View>
 
-					<DrawerItem
-						labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
-						label={t('drawer.checkUpdate')}
-						icon={({ color }) => (
-							<Ionicons
-								name={'cloud-download-outline'}
-								color={color}
-								size={27}
+						<TouchableOpacity
+							style={{ marginLeft: -4, minHeight: 10 }}
+							onPress={toggleAccordion}
+						>
+							<List.Item
+								title={t('drawer.language')}
+								titleStyle={{ fontSize: 15, fontWeight: 'bold' }}
+								left={(props) => (
+									<Ionicons
+										{...props}
+										name='language-sharp'
+										size={32}
+									/>
+								)}
+								right={(props) => (
+									<Ionicons
+										{...props}
+										name={expanded ? 'arrow-up' : 'arrow-down'}
+										size={25}
+									/>
+								)}
 							/>
-						)}
-						inactiveTintColor={theme.colors.onBackground}
-						activeTintColor={theme.colors.primary}
-						inactiveBackgroundColor='transparent'
-						pressColor='rgba(80, 80, 80, 0.32)'
-						onPress={() => setCheckUpdateConfirmationVisible(true)}
-					/>
-					<DrawerItem
-						labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
-						label={t('drawer.changePassword')}
-						icon={({ color }) => (
-							<Ionicons
-								name={'lock-open-outline'}
-								color={color}
-								size={28}
-							/>
-						)}
-						inactiveTintColor={theme.colors.onBackground}
-						activeTintColor={theme.colors.primary}
-						inactiveBackgroundColor='transparent'
-						pressColor='rgba(80, 80, 80, 0.32)'
-						onPress={() => setChangePasswordModal(true)}
-					/>
-					<DrawerItem
-						labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
-						label={t('drawer.signOut')}
-						icon={({ color }) => (
-							<Ionicons
-								name={'log-out-outline'}
-								color={color}
-								size={32}
-							/>
-						)}
-						inactiveTintColor={theme.colors.onBackground}
-						activeTintColor={theme.colors.primary}
-						inactiveBackgroundColor='transparent'
-						pressColor='rgba(80, 80, 80, 0.32)'
-						onPress={() => setSignOutConfirmationVisible(true)}
-					/>
+						</TouchableOpacity>
+
+						<Animated.View style={[styles.content, animatedStyle]}>
+							<View
+								style={{
+									width: '80%',
+									justifyContent: 'center',
+
+									alignSelf: 'center',
+								}}
+							>
+								<List.Item
+									title={`${getFlagEmoji('GB')}     English`}
+									onPress={() => {
+										i18next.changeLanguage('en-US');
+										AsyncStorage.setItem('language', 'en-US');
+									}}
+								/>
+								<List.Item
+									title={`${getFlagEmoji('PT')}     Português`}
+									onPress={() => {
+										i18next.changeLanguage('pt-PT');
+										AsyncStorage.setItem('language', 'pt-PT');
+									}}
+								/>
+							</View>
+						</Animated.View>
+
+						<DrawerItem
+							labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
+							label={t('drawer.checkUpdate')}
+							style={{ minHeight: 10 }}
+							icon={({ color }) => (
+								<Ionicons
+									name={'cloud-download-outline'}
+									color={color}
+									size={27}
+								/>
+							)}
+							inactiveTintColor={theme.colors.onBackground}
+							activeTintColor={theme.colors.primary}
+							inactiveBackgroundColor='transparent'
+							pressColor='rgba(80, 80, 80, 0.32)'
+							onPress={() => setCheckUpdateConfirmationVisible(true)}
+						/>
+
+						<DrawerItem
+							labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
+							label={t('drawer.changePassword')}
+							style={{ minHeight: 10 }}
+							icon={({ color }) => (
+								<Ionicons
+									name={'lock-open-outline'}
+									color={color}
+									size={28}
+								/>
+							)}
+							inactiveTintColor={theme.colors.onBackground}
+							activeTintColor={theme.colors.primary}
+							inactiveBackgroundColor='transparent'
+							pressColor='rgba(80, 80, 80, 0.32)'
+							onPress={() => setChangePasswordModal(true)}
+						/>
+
+						<DrawerItem
+							labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
+							label={t('drawer.signOut')}
+							style={{ minHeight: 10 }}
+							icon={({ color }) => (
+								<Ionicons
+									name={'log-out-outline'}
+									color={color}
+									size={32}
+								/>
+							)}
+							inactiveTintColor={theme.colors.onBackground}
+							activeTintColor={theme.colors.primary}
+							inactiveBackgroundColor='transparent'
+							pressColor='rgba(80, 80, 80, 0.32)'
+							onPress={() => setSignOutConfirmationVisible(true)}
+						/>
+					</View>
+					{/* <DrawerItemList {...props} /> */}
+				</DrawerContentScrollView>
+				<Divider
+					style={{ marginVertical: 5 }}
+					bold={true}
+				/>
+				<View style={{ paddingBottom: insets.bottom }}>
 					<Text style={styles.title}>
 						{t('drawer.version')}: {Constants.expoConfig?.version}
 					</Text>
@@ -755,8 +806,6 @@ const styles = StyleSheet.create({
 	image: {
 		alignSelf: 'center',
 		resizeMode: 'contain',
-		width: '50%',
-		height: '50%',
 	},
 	modalContainer: {
 		marginHorizontal: 30,
