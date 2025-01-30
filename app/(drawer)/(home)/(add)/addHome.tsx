@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import { Button } from 'react-native-paper';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +8,7 @@ export default function AddHome() {
 	const { t } = useTranslation();
 
 	return (
-		<View style={styles.container}>
+		<ScrollView contentContainerStyle={styles.scrollContainer}>
 			<View style={styles.buttonContainer}>
 				<Button
 					style={styles.button}
@@ -44,13 +44,13 @@ export default function AddHome() {
 					{t('add.addOrder')}
 				</Button>
 			</View>
-		</View>
+		</ScrollView>
 	);
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
+	scrollContainer: {
+		flexGrow: 1,
 		justifyContent: 'center',
 	},
 	buttonContainer: {

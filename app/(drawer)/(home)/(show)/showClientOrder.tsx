@@ -1,5 +1,11 @@
 import React, { useCallback, useState } from 'react';
-import { View, StyleSheet, KeyboardAvoidingView, Keyboard } from 'react-native';
+import {
+	View,
+	StyleSheet,
+	KeyboardAvoidingView,
+	Keyboard,
+	ScrollView,
+} from 'react-native';
 import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import type { FirebaseError } from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
@@ -276,7 +282,10 @@ export default function ShowClientOrder() {
 				onDismiss={onDismissSnackbar}
 			/>
 
-			<View style={styles.container}>
+			<ScrollView
+				contentContainerStyle={styles.scrollContainer}
+				keyboardShouldPersistTaps='handled'
+			>
 				<KeyboardAvoidingView
 					style={{ paddingHorizontal: 10, marginBottom: 120 }}
 				>
@@ -317,14 +326,14 @@ export default function ShowClientOrder() {
 						}}
 					/>
 				</View>
-			</View>
+			</ScrollView>
 		</>
 	);
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
+	scrollContainer: {
+		flexGrow: 1,
 	},
 	input: {
 		marginVertical: 2,

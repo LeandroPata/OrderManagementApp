@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, KeyboardAvoidingView, Keyboard } from 'react-native';
+import {
+	View,
+	StyleSheet,
+	KeyboardAvoidingView,
+	Keyboard,
+	ScrollView,
+} from 'react-native';
 import {
 	Button,
 	TextInput,
@@ -94,7 +100,7 @@ export default function AddProduct() {
 				onDismiss={onDismissSnackbar}
 			/>
 
-			<View style={styles.container}>
+			<ScrollView contentContainerStyle={styles.scrollContainer}>
 				<KeyboardAvoidingView style={{ paddingHorizontal: 10 }}>
 					<TextInput
 						style={styles.input}
@@ -165,14 +171,14 @@ export default function AddProduct() {
 						{t('add.product.add')}
 					</Button>
 				</View>
-			</View>
+			</ScrollView>
 		</>
 	);
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
+	scrollContainer: {
+		flexGrow: 1,
 		justifyContent: 'center',
 	},
 	buttonContainer: {

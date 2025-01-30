@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, PermissionsAndroid, Platform } from 'react-native';
+import {
+	View,
+	StyleSheet,
+	PermissionsAndroid,
+	Platform,
+	ScrollView,
+} from 'react-native';
 import { Button } from 'react-native-paper';
 import type { FirebaseError } from 'firebase/app';
 import firestore, { Timestamp } from '@react-native-firebase/firestore';
@@ -455,7 +461,7 @@ export default function importExport() {
 				onDismiss={onDismissSnackbar}
 			/>
 
-			<View style={styles.container}>
+			<ScrollView contentContainerStyle={styles.scrollContainer}>
 				<View style={styles.buttonContainer}>
 					<Button
 						style={styles.button}
@@ -480,14 +486,14 @@ export default function importExport() {
 						{t('importExport.exportMembers')}
 					</Button>
 				</View>
-			</View>
+			</ScrollView>
 		</>
 	);
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
+	scrollContainer: {
+		flexGrow: 1,
 		justifyContent: 'center',
 	},
 	buttonContainer: {

@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, KeyboardAvoidingView, Keyboard } from 'react-native';
+import {
+	View,
+	StyleSheet,
+	KeyboardAvoidingView,
+	Keyboard,
+	ScrollView,
+} from 'react-native';
 import { Button, TextInput, HelperText } from 'react-native-paper';
 import type { FirebaseError } from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
@@ -88,7 +94,7 @@ export default function AddClient() {
 				onDismiss={onDismissSnackbar}
 			/>
 
-			<View style={styles.container}>
+			<ScrollView contentContainerStyle={styles.scrollContainer}>
 				<KeyboardAvoidingView style={{ paddingHorizontal: 10 }}>
 					<TextInput
 						style={styles.input}
@@ -144,14 +150,14 @@ export default function AddClient() {
 						{t('add.client.add')}
 					</Button>
 				</View>
-			</View>
+			</ScrollView>
 		</>
 	);
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
+	scrollContainer: {
+		flexGrow: 1,
 		justifyContent: 'center',
 	},
 	buttonContainer: {

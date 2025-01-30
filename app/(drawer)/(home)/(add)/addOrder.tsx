@@ -1,5 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { View, StyleSheet, KeyboardAvoidingView, Keyboard } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import {
+	View,
+	StyleSheet,
+	KeyboardAvoidingView,
+	Keyboard,
+	ScrollView,
+} from 'react-native';
 import {
 	Button,
 	Divider,
@@ -401,7 +407,7 @@ export default function AddOrder() {
 				onDismiss={onDismissSnackbar}
 			/>
 
-			<View style={styles.container}>
+			<ScrollView contentContainerStyle={styles.scrollContainer}>
 				<KeyboardAvoidingView style={{ paddingHorizontal: 10 }}>
 					<SearchList
 						style={{ marginBottom: 10 }}
@@ -568,7 +574,7 @@ export default function AddOrder() {
 						label={t('add.order.notes')}
 					/>
 					<Button
-						style={styles.button}
+						style={[styles.button, { width: '50%', alignSelf: 'center' }]}
 						labelStyle={[styles.buttonText, { fontSize: 20, paddingTop: 5 }]}
 						onPress={addToOrder}
 					>
@@ -661,14 +667,15 @@ export default function AddOrder() {
 						{t('add.order.addOrder')}
 					</Button>
 				</View>
-			</View>
+			</ScrollView>
 		</>
 	);
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
+	scrollContainer: {
+		flexGrow: 1,
+		justifyContent: 'center',
 	},
 	buttonContainer: {
 		flex: 1,

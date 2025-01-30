@@ -1,5 +1,11 @@
 import React, { useCallback, useState } from 'react';
-import { View, StyleSheet, KeyboardAvoidingView, Keyboard } from 'react-native';
+import {
+	View,
+	StyleSheet,
+	KeyboardAvoidingView,
+	Keyboard,
+	ScrollView,
+} from 'react-native';
 import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import type { FirebaseError } from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
@@ -257,6 +263,7 @@ export default function ShowProductOrder() {
 				<Divider bold={true} />
 				<TouchableRipple
 					onPress={() => {
+						console.log('Pressed');
 						Keyboard.dismiss();
 
 						const currentProduct = {};
@@ -269,7 +276,7 @@ export default function ShowProductOrder() {
 						setProduct(currentProduct);
 						getProductOrders(currentProduct.key);
 						setHintProductList([]);
-						//console.log(currentProduct[0]);
+						//console.log(currentProduct);
 					}}
 				>
 					<Text style={{ padding: 5 }}>{item.item.name}</Text>
@@ -287,7 +294,10 @@ export default function ShowProductOrder() {
 				onDismiss={onDismissSnackbar}
 			/>
 
-			<View style={styles.container}>
+			<ScrollView
+				contentContainerStyle={styles.scrollContainer}
+				keyboardShouldPersistTaps='handled'
+			>
 				<KeyboardAvoidingView
 					style={{ paddingHorizontal: 10, marginBottom: 120 }}
 				>
@@ -328,14 +338,14 @@ export default function ShowProductOrder() {
 						}}
 					/>
 				</View>
-			</View>
+			</ScrollView>
 		</>
 	);
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
+	scrollContainer: {
+		flexGrow: 1,
 	},
 	input: {
 		marginVertical: 2,
