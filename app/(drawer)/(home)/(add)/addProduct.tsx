@@ -100,7 +100,10 @@ export default function AddProduct() {
 				onDismiss={onDismissSnackbar}
 			/>
 
-			<ScrollView contentContainerStyle={styles.scrollContainer}>
+			<ScrollView
+				contentContainerStyle={styles.scrollContainer}
+				keyboardShouldPersistTaps='handled'
+			>
 				<KeyboardAvoidingView style={{ paddingHorizontal: 10 }}>
 					<TextInput
 						style={styles.input}

@@ -8,7 +8,10 @@ export default function ShowHome() {
 	const { t } = useTranslation();
 
 	return (
-		<ScrollView contentContainerStyle={styles.scrollContainer}>
+		<ScrollView
+			contentContainerStyle={styles.scrollContainer}
+			keyboardShouldPersistTaps='handled'
+		>
 			<View style={styles.buttonContainer}>
 				<Button
 					style={styles.button}
@@ -21,6 +24,7 @@ export default function ShowHome() {
 				>
 					{t('show.showClientOrder')}
 				</Button>
+
 				<Button
 					style={styles.button}
 					contentStyle={styles.buttonContent}
@@ -34,6 +38,7 @@ export default function ShowHome() {
 				>
 					{t('show.showProductOrder')}
 				</Button>
+
 				<Button
 					style={styles.button}
 					contentStyle={styles.buttonContent}

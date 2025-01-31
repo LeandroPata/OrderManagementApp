@@ -8,7 +8,10 @@ export default function AddHome() {
 	const { t } = useTranslation();
 
 	return (
-		<ScrollView contentContainerStyle={styles.scrollContainer}>
+		<ScrollView
+			contentContainerStyle={styles.scrollContainer}
+			keyboardShouldPersistTaps='handled'
+		>
 			<View style={styles.buttonContainer}>
 				<Button
 					style={styles.button}
@@ -21,6 +24,7 @@ export default function AddHome() {
 				>
 					{t('add.addClient')}
 				</Button>
+
 				<Button
 					style={styles.button}
 					contentStyle={styles.buttonContent}
@@ -32,6 +36,7 @@ export default function AddHome() {
 				>
 					{t('add.addProduct')}
 				</Button>
+
 				<Button
 					style={styles.button}
 					contentStyle={styles.buttonContent}
