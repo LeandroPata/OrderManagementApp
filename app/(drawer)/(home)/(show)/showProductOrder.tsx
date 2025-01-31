@@ -294,50 +294,45 @@ export default function ShowProductOrder() {
 				onDismiss={onDismissSnackbar}
 			/>
 
+			<SearchList
+				style={styles.searchList}
+				icon='cake-variant'
+				value={name}
+				placeholder={t('show.productOrder.productSearch')}
+				data={hintProductList}
+				onChangeText={(input) => {
+					setName(input);
+					if (input.trim()) filterProductList(input);
+					else setHintProductList([]);
+				}}
+				onEndEditing={() => {
+					setHintProductList([]);
+					if (!product) {
+						getProduct(name);
+					}
+				}}
+				renderItem={renderProductHint}
+				onClearIconPress={() => {
+					setName('');
+					setProduct({});
+					setProductOrders([]);
+					setHintProductList([]);
+				}}
+			/>
+
 			<ScrollView
 				contentContainerStyle={styles.scrollContainer}
 				keyboardShouldPersistTaps='handled'
 			>
-				<KeyboardAvoidingView
-					style={{ paddingHorizontal: 10, marginBottom: 120 }}
-				>
-					<SearchList
-						style={{ marginBottom: 10 }}
-						icon='cake-variant'
-						value={name}
-						placeholder={t('show.productOrder.productSearch')}
-						data={hintProductList}
-						onChangeText={(input) => {
-							setName(input);
-							if (input.trim()) filterProductList(input);
-							else setHintProductList([]);
-						}}
-						onEndEditing={() => {
-							setHintProductList([]);
-							if (!product) {
-								getProduct(name);
-							}
-						}}
-						renderItem={renderProductHint}
-						onClearIconPress={() => {
-							setName('');
-							setProduct({});
-							setProductOrders([]);
-							setHintProductList([]);
-						}}
-					/>
-				</KeyboardAvoidingView>
-				<View>
-					<DataTableOrder
-						data={productOrders}
-						dataType='productOrder'
-						defaultSort='client.name'
-						numberofItemsPerPageList={[6, 7, 8]}
-						onLongPress={(item: object) => {
-							updateOrderStatus(item);
-						}}
-					/>
-				</View>
+				<DataTableOrder
+					data={productOrders}
+					dataType='productOrder'
+					defaultSort='client.name'
+					numberofItemsPerPageList={[6, 7, 8]}
+					onLongPress={(item: object) => {
+						updateOrderStatus(item);
+					}}
+				/>
 			</ScrollView>
 		</>
 	);
@@ -346,6 +341,10 @@ export default function ShowProductOrder() {
 const styles = StyleSheet.create({
 	scrollContainer: {
 		flexGrow: 1,
+	},
+	searchList: {
+		paddingHorizontal: 10,
+		marginBottom: 10,
 	},
 	input: {
 		marginVertical: 2,

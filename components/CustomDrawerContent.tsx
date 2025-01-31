@@ -160,7 +160,7 @@ export default function CustomDrawerContent(props: any) {
 			AsyncStorage.setItem('colorScheme', 'light');
 		}
 
-		console.log(darkMode);
+		//console.log(darkMode);
 	};
 
 	const compareVersions = (newVersion: string) => {
@@ -785,10 +785,12 @@ export default function CustomDrawerContent(props: any) {
 					</View>
 					{/* <DrawerItemList {...props} /> */}
 				</DrawerContentScrollView>
+
 				<Divider
 					style={{ marginVertical: 5 }}
 					bold={true}
 				/>
+
 				<View style={{ paddingBottom: insets.bottom }}>
 					<Text style={styles.title}>
 						{t('drawer.version')}: {Constants.expoConfig?.version}

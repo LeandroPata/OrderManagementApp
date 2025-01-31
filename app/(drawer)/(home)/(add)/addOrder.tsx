@@ -407,56 +407,62 @@ export default function AddOrder() {
 				onDismiss={onDismissSnackbar}
 			/>
 
-			<ScrollView contentContainerStyle={styles.scrollContainer}>
+			<SearchList
+				style={styles.searchList}
+				icon='account'
+				value={name}
+				placeholder={t('add.order.clientSearch')}
+				data={hintClientList}
+				onChangeText={(input) => {
+					setName(input);
+					if (input.trim()) filterClientList(input);
+					else setHintClientList([]);
+				}}
+				onEndEditing={() => {
+					setHintClientList([]);
+					if (!client) {
+						getClient(name);
+					}
+				}}
+				renderItem={renderClientHint}
+				onClearIconPress={() => {
+					setName('');
+					setClient({});
+					setOrder([]);
+					setHintClientList([]);
+				}}
+			/>
+
+			<SearchList
+				style={styles.searchList}
+				icon='cake-variant'
+				value={productName}
+				placeholder={t('add.order.productSearch')}
+				data={hintProductList}
+				onChangeText={(input) => {
+					setProductName(input);
+					if (input.trim()) filterProductList(input);
+					else setHintProductList([]);
+				}}
+				onEndEditing={() => {
+					setHintProductList([]);
+					if (!product) {
+						getProduct(productName);
+					}
+				}}
+				renderItem={renderProductHint}
+				onClearIconPress={() => {
+					setProductName('');
+					setProduct({});
+					setHintProductList([]);
+				}}
+			/>
+
+			<ScrollView
+				contentContainerStyle={styles.scrollContainer}
+				keyboardShouldPersistTaps='handled'
+			>
 				<KeyboardAvoidingView style={{ paddingHorizontal: 10 }}>
-					<SearchList
-						style={{ marginBottom: 10 }}
-						icon='account'
-						value={name}
-						placeholder={t('add.order.clientSearch')}
-						data={hintClientList}
-						onChangeText={(input) => {
-							setName(input);
-							if (input.trim()) filterClientList(input);
-							else setHintClientList([]);
-						}}
-						onEndEditing={() => {
-							setHintClientList([]);
-							if (!client) {
-								getClient(name);
-							}
-						}}
-						renderItem={renderClientHint}
-						onClearIconPress={() => {
-							setName('');
-							setClient({});
-							setOrder([]);
-							setHintClientList([]);
-						}}
-					/>
-					<SearchList
-						icon='cake-variant'
-						value={productName}
-						placeholder={t('add.order.productSearch')}
-						data={hintProductList}
-						onChangeText={(input) => {
-							setProductName(input);
-							if (input.trim()) filterProductList(input);
-							else setHintProductList([]);
-						}}
-						onEndEditing={() => {
-							setHintProductList([]);
-							if (!product) {
-								getProduct(productName);
-							}
-						}}
-						renderItem={renderProductHint}
-						onClearIconPress={() => {
-							setProductName('');
-							setProduct({});
-							setHintProductList([]);
-						}}
-					/>
 					<View
 						style={{
 							flexDirection: 'row',
@@ -696,6 +702,10 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		overflow: 'visible',
 		paddingTop: 10,
+	},
+	searchList: {
+		paddingHorizontal: 10,
+		marginBottom: 10,
 	},
 	input: {
 		marginVertical: 2,

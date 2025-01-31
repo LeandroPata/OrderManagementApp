@@ -282,50 +282,45 @@ export default function ShowClientOrder() {
 				onDismiss={onDismissSnackbar}
 			/>
 
+			<SearchList
+				style={styles.searchList}
+				icon='account'
+				value={name}
+				placeholder={t('show.clientOrder.clientSearch')}
+				data={hintClientList}
+				onChangeText={(input) => {
+					setName(input);
+					if (input.trim()) filterClientList(input);
+					else setHintClientList([]);
+				}}
+				onEndEditing={() => {
+					setHintClientList([]);
+					if (!client) {
+						getClient(name);
+					}
+				}}
+				renderItem={renderClientHint}
+				onClearIconPress={() => {
+					setName('');
+					setClient({});
+					setHintClientList([]);
+					setClientOrders([]);
+				}}
+			/>
+
 			<ScrollView
 				contentContainerStyle={styles.scrollContainer}
 				keyboardShouldPersistTaps='handled'
 			>
-				<KeyboardAvoidingView
-					style={{ paddingHorizontal: 10, marginBottom: 120 }}
-				>
-					<SearchList
-						style={{ marginBottom: 10 }}
-						icon='account'
-						value={name}
-						placeholder={t('show.clientOrder.clientSearch')}
-						data={hintClientList}
-						onChangeText={(input) => {
-							setName(input);
-							if (input.trim()) filterClientList(input);
-							else setHintClientList([]);
-						}}
-						onEndEditing={() => {
-							setHintClientList([]);
-							if (!client) {
-								getClient(name);
-							}
-						}}
-						renderItem={renderClientHint}
-						onClearIconPress={() => {
-							setName('');
-							setClient({});
-							setHintClientList([]);
-							setClientOrders([]);
-						}}
-					/>
-				</KeyboardAvoidingView>
-				<View>
-					<DataTableOrder
-						data={clientOrders}
-						dataType='clientOrder'
-						defaultSort='product.name'
-						numberofItemsPerPageList={[6, 7, 8]}
-						onLongPress={(item: object) => {
-							updateOrderStatus(item);
-						}}
-					/>
-				</View>
+				<DataTableOrder
+					data={clientOrders}
+					dataType='clientOrder'
+					defaultSort='product.name'
+					numberofItemsPerPageList={[6, 7, 8]}
+					onLongPress={(item: object) => {
+						updateOrderStatus(item);
+					}}
+				/>
 			</ScrollView>
 		</>
 	);
@@ -334,6 +329,10 @@ export default function ShowClientOrder() {
 const styles = StyleSheet.create({
 	scrollContainer: {
 		flexGrow: 1,
+	},
+	searchList: {
+		paddingHorizontal: 10,
+		marginBottom: 10,
 	},
 	input: {
 		marginVertical: 2,

@@ -7,13 +7,13 @@ import React, {
 import {
 	Animated,
 	FlatList,
+	View,
 	type GestureResponderEvent,
 	type KeyboardTypeOptions,
 	type ListRenderItem,
 	type StyleProp,
 	type TextInput,
 	type TextStyle,
-	View,
 	type ViewStyle,
 } from 'react-native';
 import { Searchbar, useTheme } from 'react-native-paper';
@@ -76,8 +76,10 @@ const SearchList = (props: SearchListProps) => {
 			{flatlistVisible ? (
 				<Animated.View
 					style={{
-						overflow: 'hidden',
+						//overflow: 'hidden',
 						height: height,
+						minHeight: 31,
+						maxHeight: 31 * 5,
 						position: 'absolute',
 						top: 55,
 						zIndex: 10,
@@ -93,11 +95,10 @@ const SearchList = (props: SearchListProps) => {
 				>
 					<FlatList
 						keyboardShouldPersistTaps='handled'
-						scrollEnabled={false}
+						scrollEnabled={true}
 						data={props.data}
 						renderItem={props.renderItem}
 						keyExtractor={(item) => item.item.key}
-						//extraData={refreshFlatlist}
 						numColumns={1}
 					/>
 				</Animated.View>

@@ -224,48 +224,43 @@ export default function ShowProductQuantity() {
 				onDismiss={onDismissSnackbar}
 			/>
 
+			<SearchList
+				style={styles.searchList}
+				icon='cake-variant'
+				value={name}
+				placeholder={t('show.productQuantity.productSearch')}
+				data={hintProductList}
+				onChangeText={(input) => {
+					setName(input);
+					if (input.trim()) filterProductList(input);
+					else setHintProductList([]);
+				}}
+				onEndEditing={() => {
+					setHintProductList([]);
+					if (!product) {
+						getProduct(name);
+					}
+				}}
+				renderItem={renderProductHint}
+				onClearIconPress={() => {
+					setName('');
+					setProduct({});
+					setHintProductList([]);
+					getAllProductsCount();
+				}}
+			/>
+
 			<ScrollView
 				contentContainerStyle={styles.scrollContainer}
 				keyboardShouldPersistTaps='handled'
 			>
-				<KeyboardAvoidingView
-					style={{ paddingHorizontal: 10, marginBottom: 120 }}
-				>
-					<SearchList
-						style={{ marginBottom: 10 }}
-						icon='cake-variant'
-						value={name}
-						placeholder={t('show.productQuantity.productSearch')}
-						data={hintProductList}
-						onChangeText={(input) => {
-							setName(input);
-							if (input.trim()) filterProductList(input);
-							else setHintProductList([]);
-						}}
-						onEndEditing={() => {
-							setHintProductList([]);
-							if (!product) {
-								getProduct(name);
-							}
-						}}
-						renderItem={renderProductHint}
-						onClearIconPress={() => {
-							setName('');
-							setProduct({});
-							setHintProductList([]);
-							getAllProductsCount();
-						}}
-					/>
-				</KeyboardAvoidingView>
-				<View>
-					<DataTableOrder
-						data={productQuantity}
-						dataType='productQuantity'
-						defaultSort='name'
-						numberofItemsPerPageList={[6, 7, 8]}
-						onLongPress={() => {}}
-					/>
-				</View>
+				<DataTableOrder
+					data={productQuantity}
+					dataType='productQuantity'
+					defaultSort='name'
+					numberofItemsPerPageList={[6, 7, 8]}
+					onLongPress={() => {}}
+				/>
 			</ScrollView>
 		</>
 	);
@@ -274,6 +269,10 @@ export default function ShowProductQuantity() {
 const styles = StyleSheet.create({
 	scrollContainer: {
 		flexGrow: 1,
+	},
+	searchList: {
+		paddingHorizontal: 10,
+		marginBottom: 10,
 	},
 	input: {
 		marginVertical: 2,
