@@ -300,6 +300,7 @@ export default function ShowProductOrder() {
 				value={name}
 				placeholder={t('show.productOrder.productSearch')}
 				data={hintProductList}
+				autoCapitalize='words'
 				onChangeText={(input) => {
 					setName(input);
 					if (input.trim()) filterProductList(input);

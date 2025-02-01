@@ -413,6 +413,7 @@ export default function AddOrder() {
 				value={name}
 				placeholder={t('add.order.clientSearch')}
 				data={hintClientList}
+				autoCapitalize='words'
 				onChangeText={(input) => {
 					setName(input);
 					if (input.trim()) filterClientList(input);
@@ -439,6 +440,7 @@ export default function AddOrder() {
 				value={productName}
 				placeholder={t('add.order.productSearch')}
 				data={hintProductList}
+				autoCapitalize='words'
 				onChangeText={(input) => {
 					setProductName(input);
 					if (input.trim()) filterProductList(input);

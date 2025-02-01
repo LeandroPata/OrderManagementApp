@@ -288,6 +288,7 @@ export default function ShowClientOrder() {
 				value={name}
 				placeholder={t('show.clientOrder.clientSearch')}
 				data={hintClientList}
+				autoCapitalize='words'
 				onChangeText={(input) => {
 					setName(input);
 					if (input.trim()) filterClientList(input);
