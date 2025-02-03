@@ -73,7 +73,7 @@
 		"client": {
 			"name": "Nome",
 			"nameError": "Nome é mandatório!",
-			"nameInvalid": "Nome é invalido!",
+			"nameInvalid": "Nome é inválido!",
 			"contact": "Contacto",
 			"add": "Adicionar Cliente",
 			"added": "Cliente adicionado!"
@@ -81,7 +81,7 @@
 		"product": {
 			"name": "Nome do produto",
 			"nameError": "Nome do produto é mandatório!",
-			"nameInvalid": "Nome é invalido!",
+			"nameInvalid": "Nome é inválido!",
 			"price": "Preço",
 			"priceWeight": "Preço/Peso",
 			"add": "Adicionar Produto",
@@ -89,8 +89,8 @@
 		},
 		"order": {
 			"clientName": "Nome do cliente",
-			"clientNameError": "Nome é mandatório!",
-			"clientNameInvalid": "Nenhum cliente válido selecionado!",
+			"clientNameEmpty": "Campo de Client está vazio!",
+			"clientNameInvalid": "Client é inválido!",
 			"clientSearch": "Procurar Cliente",
 			"productName": "Nome do produto",
 			"productNameError": "Nome do produto é mandatório!",

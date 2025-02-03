@@ -98,7 +98,7 @@ const SearchList = (props: SearchListProps) => {
 						scrollEnabled={true}
 						data={props.data}
 						renderItem={props.renderItem}
-						keyExtractor={(item) => item.item.key}
+						//keyExtractor={(item) => item.item.key}
 						numColumns={1}
 					/>
 				</Animated.View>

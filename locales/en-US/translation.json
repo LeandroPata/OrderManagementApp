@@ -89,12 +89,12 @@
 		},
 		"order": {
 			"clientName": "Client name",
-			"clientNameError": "Name is mandatory!",
-			"clientNameInvalid": "No valid client selected!",
+			"clientNameEmpty": "Client field is empty!",
+			"clientNameInvalid": "Client is invalid!",
 			"clientSearch": "Search Client",
 			"productName": "Product name",
-			"productNameError": "Product name is mandatory!",
-			"productNameInvalid": "No valid product selected!",
+			"productNameEmpty": "Product field is empty!",
+			"productNameInvalid": "Product is invalid!",
 			"productSearch": "Search Product",
 			"productQuantity": "Quantity",
 			"weight": "Weight",
@@ -117,15 +117,21 @@
 		"clientOrder": {
 			"clientSearch": "Search Client",
 			"updatedStatus": "Updated order status!",
-			"deletedOrder": "Deleted order!"
+			"deletedOrder": "Deleted order!",
+			"clientNameEmpty": "Client field is empty!",
+			"clientNameInvalid": "Client is invalid!"
 		},
 		"productOrder": {
 			"productSearch": "Search Product",
 			"updatedStatus": "Updated order status!",
-			"deletedOrder": "Deleted order!"
+			"deletedOrder": "Deleted order!",
+			"productNameEmpty": "Product field is empty!",
+			"productNameInvalid": "Product is invalid!"
 		},
 		"productQuantity": {
-			"productSearch": "Search Product"
+			"productSearch": "Search Product",
+			"productNameEmpty": "Product field is empty!",
+			"productNameInvalid": "Product is invalid!"
 		}
 	},
 	"importExport": {

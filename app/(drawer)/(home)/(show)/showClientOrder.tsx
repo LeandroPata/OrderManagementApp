@@ -1,11 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import {
-	View,
-	StyleSheet,
-	KeyboardAvoidingView,
-	Keyboard,
-	ScrollView,
-} from 'react-native';
+import { StyleSheet, Keyboard, ScrollView } from 'react-native';
 import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import type { FirebaseError } from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
@@ -24,7 +18,7 @@ export default function ShowClientOrder() {
 	const [hintClientList, setHintClientList] = useState([]);
 
 	const [name, setName] = useState('');
-	const [client, setClient] = useState({});
+	const [clientId, setClientId] = useState('');
 	const [clientOrders, setClientOrders] = useState([]);
 
 	// All the logic to implement the snackbar
@@ -47,7 +41,7 @@ export default function ShowClientOrder() {
 			return () => {
 				//console.log('This route is now unfocused.');
 				setName('');
-				setClient({});
+				setClientId('');
 				setClientOrders([]);
 			};
 		}, [])
@@ -62,7 +56,7 @@ export default function ShowClientOrder() {
 				const clientsName = [];
 				// biome-ignore lint/complexity/noForEach:<Method that returns iterator necessary>
 				querySnapshot.forEach((doc) => {
-					clientsName.push({ key: doc.id, name: doc.data().name });
+					clientsName.push({ id: doc.id, name: doc.data().name });
 				});
 				//console.log(clientsName);
 				setClientList(clientsName);
@@ -89,26 +83,32 @@ export default function ShowClientOrder() {
 	};
 
 	const getClient = (clientName: string) => {
-		if (client) return;
-		const currentClient = {};
+		if (clientId) return;
 
-		for (const doc of clientList) {
-			if (doc.name === clientName.trim()) {
-				currentClient.key = doc.key;
-				currentClient.name = doc.name;
-			}
-		}
-		setClient(currentClient);
-		getClientOrders(currentClient.key);
-
-		return currentClient;
+		firestore()
+			.collection('clients')
+			.where('name', '==', clientName)
+			.get()
+			.then((snapshot) => {
+				if (!snapshot.docs.length)
+					if (name) showSnackbar(t('show.clientOrder.clientNameInvalid'));
+					else showSnackbar(t('show.clientOrder.clientNameEmpty'));
+				//console.log(snapshot.docs[0].id);
+				//console.log(snapshot.docs[0].data());
+				setClientId(snapshot.docs[0].id);
+				getClientOrders(snapshot.docs[0].id);
+			})
+			.catch((e: any) => {
+				const err = e as FirebaseError;
+				console.log(`Error getting client: ${err.message}`);
+			});
 	};
 
-	const getClientOrders = async (clientKey: string) => {
-		//console.log(clientKey);
+	const getClientOrders = async (currentClientId: string) => {
+		console.log(currentClientId);
 		await firestore()
 			.collection('orders')
-			.orderBy('client.name', 'asc')
+			.where('client.id', '==', currentClientId)
 			.get()
 			.then((querySnapshot) => {
 				const orders = [];
@@ -117,25 +117,21 @@ export default function ShowClientOrder() {
 				// biome-ignore lint/complexity/noForEach:<Method that returns iterator necessary>
 				querySnapshot.forEach((doc) => {
 					//console.log(doc.data());
-					if (doc.data().client.key === clientKey) {
-						for (const order of doc.data().order) {
-							//console.log(order);
-							orders.push({
-								key: i,
-								orderId: doc.id,
-								orderKey: order.key,
-								product: order.product,
-								quantity: order.quantity,
-								weight: order.weight,
-								price: order.price,
-								notes: order.notes,
-								deliveryDateTime: new Date(
-									doc.data().deliveryDateTime.toDate()
-								),
-								status: order.status,
-							});
-							i++;
-						}
+					for (const order of doc.data().order) {
+						//console.log(order);
+						orders.push({
+							key: i,
+							orderId: doc.id,
+							orderKey: order.key,
+							product: order.product,
+							quantity: order.quantity,
+							weight: order.weight,
+							price: order.price,
+							notes: order.notes,
+							deliveryDateTime: new Date(doc.data().deliveryDateTime.toDate()),
+							status: order.status,
+						});
+						i++;
 					}
 				});
 				setClientOrders(orders);
@@ -156,8 +152,8 @@ export default function ShowClientOrder() {
 			.collection('orders')
 			.doc(item.orderId)
 			.get()
-			.then((snapshot) => {
-				updatedOrder.push(...snapshot.data().order);
+			.then((querySnapshot) => {
+				updatedOrder.push(...querySnapshot.data().order);
 			})
 			.catch((e: any) => {
 				const err = e as FirebaseError;
@@ -186,8 +182,8 @@ export default function ShowClientOrder() {
 			.collection('orders')
 			.doc(item.orderId)
 			.get()
-			.then((snapshot) => {
-				for (const order of snapshot.data().order) {
+			.then((querySnapshot) => {
+				for (const order of querySnapshot.data().order) {
 					if (order.key !== item.orderKey) {
 						updatedOrder.push(order);
 					}
@@ -206,7 +202,7 @@ export default function ShowClientOrder() {
 				.then(() => {
 					console.log('Order entry deleted because order is empty');
 					showSnackbar(t('show.clientOrder.DeletedOrder'));
-					getClientOrders(client.key);
+					getClientOrders(clientId);
 				})
 				.catch((e: any) => {
 					const err = e as FirebaseError;
@@ -220,7 +216,7 @@ export default function ShowClientOrder() {
 				.then(() => {
 					console.log('Updated');
 					showSnackbar(t('show.clientOrder.DeletedOrder'));
-					getClientOrders(client.key);
+					getClientOrders(clientId);
 				})
 				.catch((e: any) => {
 					const err = e as FirebaseError;
@@ -257,13 +253,9 @@ export default function ShowClientOrder() {
 					onPress={() => {
 						Keyboard.dismiss();
 
-						const currentClient = {};
-						currentClient.key = item.item.key;
-						currentClient.name = item.item.name;
-
 						setName(item.item.name);
-						setClient(currentClient);
-						getClientOrders(currentClient.key);
+						setClientId(item.item.id);
+						getClientOrders(item.item.id);
 						setHintClientList([]);
 					}}
 				>
@@ -296,14 +288,14 @@ export default function ShowClientOrder() {
 				}}
 				onEndEditing={() => {
 					setHintClientList([]);
-					if (!client) {
+					if (!clientId) {
 						getClient(name);
 					}
 				}}
 				renderItem={renderClientHint}
 				onClearIconPress={() => {
 					setName('');
-					setClient({});
+					setClientId('');
 					setHintClientList([]);
 					setClientOrders([]);
 				}}
@@ -317,7 +309,7 @@ export default function ShowClientOrder() {
 					data={clientOrders}
 					dataType='clientOrder'
 					defaultSort='product.name'
-					numberofItemsPerPageList={[6, 7, 8]}
+					numberofItemsPerPageList={[8, 9, 10]}
 					onLongPress={(item: object) => {
 						updateOrderStatus(item);
 					}}

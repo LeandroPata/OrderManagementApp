@@ -1,11 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import {
-	View,
-	StyleSheet,
-	KeyboardAvoidingView,
-	Keyboard,
-	ScrollView,
-} from 'react-native';
+import { StyleSheet, Keyboard, ScrollView } from 'react-native';
 import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import type { FirebaseError } from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
@@ -24,7 +18,7 @@ export default function ShowProductQuantity() {
 	const [hintProductList, setHintProductList] = useState([]);
 
 	const [name, setName] = useState('');
-	const [product, setProduct] = useState({});
+	const [productId, setProductId] = useState('');
 	const [productQuantity, setProductQuantity] = useState([]);
 
 	// All the logic to implement the snackbar
@@ -48,7 +42,7 @@ export default function ShowProductQuantity() {
 			return () => {
 				//console.log('This route is now unfocused.');
 				setName('');
-				setProduct({});
+				setProductId('');
 			};
 		}, [])
 	);
@@ -63,10 +57,8 @@ export default function ShowProductQuantity() {
 				// biome-ignore lint/complexity/noForEach:<Method that returns iterator necessary>
 				querySnapshot.forEach((doc) => {
 					productsName.push({
-						key: doc.id,
+						id: doc.id,
 						name: doc.data().name,
-						price: Number(doc.data().price),
-						priceWeight: doc.data().priceByWeight,
 					});
 				});
 				//console.log(productsName);
@@ -94,28 +86,32 @@ export default function ShowProductQuantity() {
 	};
 
 	const getProduct = (productName: string) => {
-		if (product) return;
-		const currentProduct = {};
+		if (productId) return;
 
-		for (const doc of productList) {
-			if (doc.name === productName.trim()) {
-				currentProduct.key = doc.key;
-				currentProduct.name = doc.name;
-				currentProduct.price = doc.price;
-				currentProduct.priceWeight = doc.priceWeight;
-			}
-		}
-		setProduct(currentProduct);
-		getProductCount(currentProduct.key);
-
-		return currentProduct;
+		firestore()
+			.collection('products')
+			.where('name', '==', productName)
+			.get()
+			.then((snapshot) => {
+				if (!snapshot.docs.length)
+					if (name) showSnackbar(t('show.productQuantity.productNameInvalid'));
+					else showSnackbar(t('show.productQuantity.productNameEmpty'));
+				//console.log(snapshot.docs[0].id);
+				//console.log(snapshot.docs[0].data());
+				setProductId(snapshot.docs[0].id);
+				getProductCount(snapshot.docs[0].id);
+			})
+			.catch((e: any) => {
+				const err = e as FirebaseError;
+				console.log(`Error getting product: ${err.message}`);
+			});
 	};
 
-	const getProductCount = (productKey: string) => {
-		//console.log(productKey);
+	const getProductCount = (productId: string) => {
+		//console.log(productId);
 		const filteredCount = [];
 		for (const count of productQuantity) {
-			if (count.productKey === productKey) {
+			if (count.productId === productId) {
 				filteredCount.push(count);
 			}
 		}
@@ -129,12 +125,12 @@ export default function ShowProductQuantity() {
 			.collection('orders')
 			.orderBy('client.name', 'asc')
 			.get()
-			.then((snapshot) => {
+			.then((querySnapshot) => {
 				const currentCount = [];
 				const productCount = {};
 				let i = 0;
 				// biome-ignore lint/complexity/noForEach: <explanation>
-				snapshot.forEach((doc) => {
+				querySnapshot.forEach((doc) => {
 					for (const order of doc.data().order) {
 						const existingProduct = currentCount.find(
 							(product) =>
@@ -165,7 +161,7 @@ export default function ShowProductQuantity() {
 							}
 							currentCount.push({
 								key: i,
-								productKey: order.product.key,
+								productId: order.product.id,
 								name: order.product.name,
 								quantity: order.quantity,
 								weight: order.weight,
@@ -180,7 +176,7 @@ export default function ShowProductQuantity() {
 					count.weightTotal = productCount[count.name];
 				}
 				setProductQuantity(currentCount);
-				//console.log(currentCount);
+				console.log(currentCount);
 			})
 			.catch((e: any) => {
 				const err = e as FirebaseError;
@@ -197,15 +193,9 @@ export default function ShowProductQuantity() {
 					onPress={() => {
 						Keyboard.dismiss();
 
-						const currentProduct = {};
-						currentProduct.key = item.item.key;
-						currentProduct.name = item.item.name;
-						currentProduct.price = item.item.price;
-						currentProduct.priceWeight = item.item.priceWeight;
-
 						setName(item.item.name);
-						setProduct(currentProduct);
-						getProductCount(currentProduct.key);
+						setProductId(item.item.id);
+						getProductCount(item.item.id);
 						setHintProductList([]);
 					}}
 				>
@@ -238,14 +228,14 @@ export default function ShowProductQuantity() {
 				}}
 				onEndEditing={() => {
 					setHintProductList([]);
-					if (!product) {
+					if (!productId) {
 						getProduct(name);
 					}
 				}}
 				renderItem={renderProductHint}
 				onClearIconPress={() => {
 					setName('');
-					setProduct({});
+					setProductId('');
 					setHintProductList([]);
 					getAllProductsCount();
 				}}
@@ -259,7 +249,7 @@ export default function ShowProductQuantity() {
 					data={productQuantity}
 					dataType='productQuantity'
 					defaultSort='name'
-					numberofItemsPerPageList={[6, 7, 8]}
+					numberofItemsPerPageList={[8, 9, 10]}
 					onLongPress={() => {}}
 				/>
 			</ScrollView>

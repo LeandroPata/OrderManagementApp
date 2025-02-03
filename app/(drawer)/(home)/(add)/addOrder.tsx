@@ -43,8 +43,8 @@ export default function AddOrder() {
 	const [productWeight, setProductWeight] = useState('');
 	const [notes, setNotes] = useState('');
 
-	const [client, setClient] = useState({});
-	const [product, setProduct] = useState({});
+	const [clientId, setClientId] = useState('');
+	const [productId, setProductId] = useState('');
 	const [order, setOrder] = useState([]);
 	const [deliveryDate, setDeliveryDate] = useState(new Date());
 	const [deliveryTime, setDeliveryTime] = useState(new Date(0, 0, 0));
@@ -82,7 +82,7 @@ export default function AddOrder() {
 				const clientsName = [];
 				// biome-ignore lint/complexity/noForEach:<Method that returns iterator necessary>
 				querySnapshot.forEach((doc) => {
-					clientsName.push({ key: doc.id, name: doc.data().name });
+					clientsName.push({ id: doc.id, name: doc.data().name });
 				});
 				//console.log(clientsName);
 				setClientList(clientsName);
@@ -103,10 +103,8 @@ export default function AddOrder() {
 				// biome-ignore lint/complexity/noForEach:<Method that returns iterator necessary>
 				querySnapshot.forEach((doc) => {
 					productsName.push({
-						key: doc.id,
+						id: doc.id,
 						name: doc.data().name,
-						price: Number(doc.data().price),
-						priceWeight: doc.data().priceByWeight,
 					});
 				});
 				//console.log(productsName);
@@ -161,51 +159,61 @@ export default function AddOrder() {
 	};
 
 	const getClient = (clientName: string) => {
-		if (Object.keys(client).length !== 0) return;
-		const currentClient = {};
+		if (clientId) return;
 
-		for (const doc of clientList) {
-			if (doc.name === clientName.trim()) {
-				currentClient.key = doc.key;
-				currentClient.name = doc.name;
-			}
-		}
-		setClient(currentClient);
-		console.log(currentClient);
-
-		return currentClient;
+		firestore()
+			.collection('clients')
+			.where('name', '==', clientName)
+			.get()
+			.then((snapshot) => {
+				if (!snapshot.docs.length)
+					if (name) showSnackbar(t('add.order.clientNameInvalid'));
+					else showSnackbar(t('add.order.clientNameEmpty'));
+				//console.log(snapshot.docs[0].id);
+				//console.log(snapshot.docs[0].data());
+				setClientId(snapshot.docs[0].id);
+				//getClientOrders(snapshot.docs[0].id);
+			})
+			.catch((e: any) => {
+				const err = e as FirebaseError;
+				console.log(`Error getting client: ${err.message}`);
+			});
 	};
 
 	const getProduct = (productName: string) => {
-		if (Object.keys(product).length !== 0) return;
-		const currentProduct = {};
+		if (productId) return;
 
-		for (const doc of productList) {
-			if (doc.name === productName.trim()) {
-				currentProduct.key = doc.key;
-				currentProduct.name = doc.name;
-				currentProduct.price = doc.price;
-				currentProduct.priceWeight = doc.priceWeight;
-			}
-		}
-		setProduct(currentProduct);
-		console.log(currentProduct);
-
-		return currentProduct;
+		firestore()
+			.collection('products')
+			.where('name', '==', productName)
+			.get()
+			.then((snapshot) => {
+				if (!snapshot.docs.length)
+					if (name) showSnackbar(t('add.order.productNameInvalid'));
+					else showSnackbar(t('add.order.productNameEmpty'));
+				//console.log(snapshot.docs[0].id);
+				//console.log(snapshot.docs[0].data());
+				setProductId(snapshot.docs[0].id);
+				//getProductOrders(snapshot.docs[0].id);
+			})
+			.catch((e: any) => {
+				const err = e as FirebaseError;
+				console.log(`Error getting product: ${err.message}`);
+			});
 	};
 
-	const addToOrder = () => {
+	const addToOrder = async () => {
 		Keyboard.dismiss();
 		try {
-			if (Object.keys(client).length === 0) {
-				const currentClient = getClient(name);
-				console.log(currentClient);
-				if (Object.keys(currentClient).length === 0) {
+			if (clientId === '') {
+				const currentClientId = getClient(name);
+				console.log(currentClientId);
+				if (currentClientId === '') {
 					showSnackbar(t('add.order.clientNameInvalid'));
 					console.log('No client error');
 					return;
 				}
-			} else if (Object.keys(product).length === 0) {
+			} else if (productId === '') {
 				const currentProduct = getProduct(productName);
 				console.log(!currentProduct);
 				if (Object.keys(currentProduct).length === 0) {
@@ -214,10 +222,26 @@ export default function AddOrder() {
 					return;
 				}
 			}
-			//console.log(client);
-			console.log(product);
-			console.log(product.priceWeight);
-			console.log(!productWeight.trim());
+
+			//console.log(clientId);
+			//console.log(productId);
+			const product = {};
+
+			await firestore()
+				.collection('products')
+				.doc(productId)
+				.get()
+				.then((snapshot) => {
+					product.price = snapshot.data().price;
+					product.priceWeight = snapshot.data().priceByWeight;
+				})
+				.catch((e: any) => {
+					const err = e as FirebaseError;
+					console.log(`Getting product data failed: ${err.message}`);
+				});
+			//console.log(product);
+			//console.log(product.priceWeight);
+			//console.log(!productWeight.trim());
 
 			if (product.priceWeight && !productWeight.trim()) {
 				showSnackbar(t('add.order.weightMandatory'));
@@ -241,7 +265,7 @@ export default function AddOrder() {
 			//console.log(newOrder.length);
 			newOrder.push({
 				key: newOrder.length,
-				product: product,
+				product: { id: productId, name: productName },
 				quantity: Number(productQuantity),
 				weight: weight,
 				price: Number(price.toFixed(2)),
@@ -259,7 +283,7 @@ export default function AddOrder() {
 			setProductQuantity('1');
 			setProductWeight('');
 			setNotes('');
-			setProduct({});
+			setProductId('');
 
 			showSnackbar(t('add.order.addedToOrder'));
 			console.log('Added to order');
@@ -270,7 +294,7 @@ export default function AddOrder() {
 		setLoading(true);
 		Keyboard.dismiss();
 
-		if (!name.trim() || !client || !checkClient()) {
+		if (!name.trim() || !clientId || !checkClient()) {
 			showSnackbar(t('add.order.clientNameInvalid'));
 			//setNameError(true);
 			setLoading(false);
@@ -282,11 +306,20 @@ export default function AddOrder() {
 			return;
 		}
 
+		const clientName = await (
+			await firestore().collection('clients').doc(clientId).get()
+		).data().name;
+
+		if (!clientName) {
+			console.log('Error getting client name');
+			return;
+		}
+
 		const docRef = firestore().collection('orders').doc();
 
 		docRef
 			.set({
-				client: client,
+				client: { id: clientId, name: clientName },
 				order: order,
 				deliveryDateTime: Timestamp.fromDate(
 					new Date(
@@ -303,10 +336,10 @@ export default function AddOrder() {
 				console.log('Added');
 				showSnackbar(t('add.order.addedOrder'));
 				setName('');
-				setClient({});
+				setClientId('');
 				setHintClientList([]);
 				setProductName('');
-				setProduct({});
+				setProductId('');
 				setHintProductList([]);
 				setProductQuantity('1');
 				setProductWeight('');
@@ -354,13 +387,8 @@ export default function AddOrder() {
 					onPress={() => {
 						Keyboard.dismiss();
 
-						const currentClient = {};
-						currentClient.key = item.item.key;
-						currentClient.name = item.item.name;
-
 						setName(item.item.name);
-						//console.log(currentClient);
-						setClient(currentClient);
+						setClientId(item.item.id);
 						setHintClientList([]);
 					}}
 				>
@@ -380,15 +408,9 @@ export default function AddOrder() {
 					onPress={() => {
 						Keyboard.dismiss();
 
-						const currentProduct = {};
-						currentProduct.key = item.item.key;
-						currentProduct.name = item.item.name;
-						currentProduct.price = item.item.price;
-						currentProduct.priceWeight = item.item.priceWeight;
-
 						setProductName(item.item.name);
 						//console.log(currentProduct);
-						setProduct(currentProduct);
+						setProductId(item.item.id);
 						setHintProductList([]);
 					}}
 				>
@@ -421,14 +443,14 @@ export default function AddOrder() {
 				}}
 				onEndEditing={() => {
 					setHintClientList([]);
-					if (!client) {
+					if (!clientId) {
 						getClient(name);
 					}
 				}}
 				renderItem={renderClientHint}
 				onClearIconPress={() => {
 					setName('');
-					setClient({});
+					setClientId('');
 					setOrder([]);
 					setHintClientList([]);
 				}}
@@ -448,14 +470,14 @@ export default function AddOrder() {
 				}}
 				onEndEditing={() => {
 					setHintProductList([]);
-					if (!product) {
+					if (!productId) {
 						getProduct(productName);
 					}
 				}}
 				renderItem={renderProductHint}
 				onClearIconPress={() => {
 					setProductName('');
-					setProduct({});
+					setProductId('');
 					setHintProductList([]);
 				}}
 			/>

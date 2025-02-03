@@ -1,11 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import {
-	View,
-	StyleSheet,
-	KeyboardAvoidingView,
-	Keyboard,
-	ScrollView,
-} from 'react-native';
+import { StyleSheet, Keyboard, ScrollView } from 'react-native';
 import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import type { FirebaseError } from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
@@ -24,7 +18,7 @@ export default function ShowProductOrder() {
 	const [hintProductList, setHintProductList] = useState([]);
 
 	const [name, setName] = useState('');
-	const [product, setProduct] = useState({});
+	const [productId, setProductId] = useState('');
 	const [productOrders, setProductOrders] = useState([]);
 
 	// All the logic to implement the snackbar
@@ -47,7 +41,7 @@ export default function ShowProductOrder() {
 			return () => {
 				//console.log('This route is now unfocused.');
 				setName('');
-				setProduct({});
+				setProductId('');
 				setProductOrders([]);
 			};
 		}, [])
@@ -63,10 +57,8 @@ export default function ShowProductOrder() {
 				// biome-ignore lint/complexity/noForEach:<Method that returns iterator necessary>
 				querySnapshot.forEach((doc) => {
 					productsName.push({
-						key: doc.id,
+						id: doc.id,
 						name: doc.data().name,
-						price: Number(doc.data().price),
-						priceWeight: doc.data().priceByWeight,
 					});
 				});
 				//console.log(productsName);
@@ -94,38 +86,42 @@ export default function ShowProductOrder() {
 	};
 
 	const getProduct = (productName: string) => {
-		if (product) return;
-		const currentProduct = {};
+		if (productId) return;
 
-		for (const doc of productList) {
-			if (doc.name === productName.trim()) {
-				currentProduct.key = doc.key;
-				currentProduct.name = doc.name;
-				currentProduct.price = doc.price;
-				currentProduct.priceWeight = doc.priceWeight;
-			}
-		}
-		setProduct(currentProduct);
-		getProductOrders(currentProduct.key);
-
-		return currentProduct;
+		firestore()
+			.collection('products')
+			.where('name', '==', productName)
+			.get()
+			.then((snapshot) => {
+				if (!snapshot.docs.length)
+					if (name) showSnackbar(t('show.productOrder.productNameInvalid'));
+					else showSnackbar(t('show.productOrder.productNameEmpty'));
+				//console.log(snapshot.docs[0].id);
+				//console.log(snapshot.docs[0].data());
+				setProductId(snapshot.docs[0].id);
+				getProductOrders(snapshot.docs[0].id);
+			})
+			.catch((e: any) => {
+				const err = e as FirebaseError;
+				console.log(`Error getting product: ${err.message}`);
+			});
 	};
 
-	const getProductOrders = async (productKey: string) => {
-		//console.log(productKey);
+	const getProductOrders = async (currentProductId: string) => {
+		//console.log(currentProductId);
 		await firestore()
 			.collection('orders')
 			.orderBy('client.name', 'asc')
 			.get()
-			.then((snapshot) => {
+			.then((querySnapshot) => {
 				const orders = [];
 				let i = 0;
 				// biome-ignore lint/complexity/noForEach:<Method that returns iterator necessary>
-				snapshot.forEach((doc) => {
+				querySnapshot.forEach((doc) => {
 					for (const order of doc.data().order) {
-						//console.log(`${order.product.key} : ${productKey}`);
+						//console.log(`${order.product.id} : ${currentProductId}`);
 
-						if (order.product.key === productKey) {
+						if (order.product.id === currentProductId) {
 							//console.log(order);
 							orders.push({
 								key: i,
@@ -164,8 +160,8 @@ export default function ShowProductOrder() {
 			.collection('orders')
 			.doc(item.orderId)
 			.get()
-			.then((snapshot) => {
-				updatedOrder.push(...snapshot.data().order);
+			.then((querySnapshot) => {
+				updatedOrder.push(...querySnapshot.data().order);
 			})
 			.catch((e: any) => {
 				const err = e as FirebaseError;
@@ -194,8 +190,8 @@ export default function ShowProductOrder() {
 			.collection('orders')
 			.doc(item.orderId)
 			.get()
-			.then((snapshot) => {
-				for (const order of snapshot.data().order) {
+			.then((querySnapshot) => {
+				for (const order of querySnapshot.data().order) {
 					if (order.key !== item.orderKey) {
 						updatedOrder.push(order);
 					}
@@ -214,7 +210,7 @@ export default function ShowProductOrder() {
 				.then(() => {
 					console.log('Order entry deleted because order is empty');
 					showSnackbar(t('show.productOrder.deletedOrder'));
-					getProductOrders(product.key);
+					getProductOrders(productId);
 				})
 				.catch((e: any) => {
 					const err = e as FirebaseError;
@@ -228,7 +224,7 @@ export default function ShowProductOrder() {
 				.then(() => {
 					console.log('Updated');
 					showSnackbar(t('show.productOrder.deletedOrder'));
-					getProductOrders(product.key);
+					getProductOrders(productId);
 				})
 				.catch((e: any) => {
 					const err = e as FirebaseError;
@@ -263,20 +259,12 @@ export default function ShowProductOrder() {
 				<Divider bold={true} />
 				<TouchableRipple
 					onPress={() => {
-						console.log('Pressed');
 						Keyboard.dismiss();
 
-						const currentProduct = {};
-						currentProduct.key = item.item.key;
-						currentProduct.name = item.item.name;
-						currentProduct.price = item.item.price;
-						currentProduct.priceWeight = item.item.priceWeight;
-
 						setName(item.item.name);
-						setProduct(currentProduct);
-						getProductOrders(currentProduct.key);
+						setProductId(item.item.id);
+						getProductOrders(item.item.id);
 						setHintProductList([]);
-						//console.log(currentProduct);
 					}}
 				>
 					<Text style={{ padding: 5 }}>{item.item.name}</Text>
@@ -308,14 +296,14 @@ export default function ShowProductOrder() {
 				}}
 				onEndEditing={() => {
 					setHintProductList([]);
-					if (!product) {
+					if (!productId) {
 						getProduct(name);
 					}
 				}}
 				renderItem={renderProductHint}
 				onClearIconPress={() => {
 					setName('');
-					setProduct({});
+					setProductId('');
 					setProductOrders([]);
 					setHintProductList([]);
 				}}
@@ -329,7 +317,7 @@ export default function ShowProductOrder() {
 					data={productOrders}
 					dataType='productOrder'
 					defaultSort='client.name'
-					numberofItemsPerPageList={[6, 7, 8]}
+					numberofItemsPerPageList={[8, 9, 10]}
 					onLongPress={(item: object) => {
 						updateOrderStatus(item);
 					}}
