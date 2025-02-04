@@ -791,7 +791,7 @@ export default function CustomDrawerContent(props: any) {
 					bold={true}
 				/>
 
-				<View style={{ paddingBottom: insets.bottom }}>
+				<View style={{ paddingBottom: insets.bottom + 5 }}>
 					<Text style={styles.title}>
 						{t('drawer.version')}: {Constants.expoConfig?.version}
 					</Text>

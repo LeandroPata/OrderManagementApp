@@ -26,6 +26,7 @@ type SearchListProps = ComponentPropsWithRef<typeof TextInput> & {
 	value: string;
 	onChangeText?: (query: string) => void;
 	onEndEditing?: (() => void) | undefined;
+	onSubmitEditing?: (() => void) | undefined;
 	autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters' | undefined;
 	keyboardType?: KeyboardTypeOptions | undefined;
 	placeholder?: string;
@@ -67,6 +68,7 @@ const SearchList = (props: SearchListProps) => {
 				value={props.value}
 				onChangeText={props.onChangeText}
 				onEndEditing={props.onEndEditing}
+				onSubmitEditing={props.onSubmitEditing}
 				autoCapitalize={props.autoCapitalize}
 				keyboardType={props.keyboardType}
 				placeholder={props.placeholder}
