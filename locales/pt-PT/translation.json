@@ -129,11 +129,21 @@
 		}
 	},
 	"importExport": {
-		"importMembers": "Importar Membros",
-		"importSuccess": "Importação com sucesso!",
-		"importExistingMembers": "Os membros com os seguintes números já existem na base de dados e não foram importados",
-		"exportMembers": "Exportar Membros",
-		"exportSuccess": "Exportação com sucesso!",
+		"importClients": "Importar Clientes",
+		"importProducts": "Importar Produtos",
+		"importOrders": "Importar Encomendas",
+		"importClientsSuccess": "Importação de clientes com sucesso!",
+		"importProductsSuccess": "Importação de produtos com sucesso!",
+		"importOrdersSuccess": "Importação de encomendas com sucesso!",
+		"importExistingClients": "Os clientes seguintes já existem na base de dados e não foram importados",
+		"importExistingProducts": "Os produtos seguintes já existem na base de dados e não foram importados",
+		"importExistingOrders": "As encomendas seguintes já existem na base de dados e não foram importadas",
+		"exportClients": "Exportar Clientes",
+		"exportProducts": "Exportar Produtos",
+		"exportOrders": "Exportar Encomendas",
+		"exportClientsSuccess": "Exportação de clientes com sucesso!",
+		"exportProductsSuccess": "Exportação de produtos com sucesso!",
+		"exportOrdersSuccess": "Exportação de encomendas com sucesso!",
 		"storagePermission": "Permissões de armazenamento são necessárias para importar/exportar dados!"
 	}
 }

@@ -489,10 +489,10 @@ export default function importExport() {
 			await batch.commit();
 			console.log(existingClients);
 
-			let importMsg = t('importExport.importSuccess');
+			let importMsg = t('importExport.importClientsSuccess');
 			if (existingClients.length) {
 				importMsg += `\n${t(
-					'importExport.importExistingMembers'
+					'importExport.importExistingClients'
 				)}: ${existingClients.toString()}`;
 			}
 			showSnackbar(importMsg);
@@ -556,10 +556,10 @@ export default function importExport() {
 			await batch.commit();
 			console.log(existingProducts);
 
-			let importMsg = t('importExport.importSuccess');
+			let importMsg = t('importExport.importProductsSuccess');
 			if (existingProducts.length) {
 				importMsg += `\n${t(
-					'importExport.importExistingMembers'
+					'importExport.importExistingProducts'
 				)}: ${existingProducts.toString()}`;
 			}
 			showSnackbar(importMsg);
@@ -638,10 +638,10 @@ export default function importExport() {
 		} finally {} */
 		//console.log(existingOrders);
 
-		let importMsg = t('importExport.importSuccess');
+		let importMsg = t('importExport.importOrdersSuccess');
 		/* if (existingOrders.length) {
 			importMsg += `\n${t(
-				'importExport.importExistingMembers'
+				'importExport.importExistingOrders'
 			)}: ${existingOrders.toString()}`;
 		} */
 		showSnackbar(importMsg);
@@ -710,7 +710,7 @@ export default function importExport() {
 
 			await task
 				.then(() => {
-					showSnackbar(t('importExport.exportClientSuccess'));
+					showSnackbar(t('importExport.exportClientsSuccess'));
 					console.log('Exporting clients successfull');
 				})
 				.catch((e: any) => {

@@ -135,11 +135,21 @@
 		}
 	},
 	"importExport": {
-		"importMembers": "Import Members",
-		"importSuccess": "Importing Successfull!",
-		"importExistingMembers": "The members with the following numbers already existed in the database and were not imported",
-		"exportMembers": "Export Members",
-		"exportSuccess": "Exporting successfull!",
+		"importClients": "Import Clients",
+		"importProducts": "Import Products",
+		"importOrders": "Import Orders",
+		"importClientsSuccess": "Importing clients successfull!",
+		"importProductsSuccess": "Importing products successfull!",
+		"importOrdersSuccess": "Importing orders successfull!",
+		"importExistingClients": "The following clients already existed in the database and were not imported",
+		"importExistingProducts": "The following products already existed in the database and were not imported",
+		"importExistingOrders": "The following orders already existed in the database and were not imported",
+		"exportClients": "Export Clients",
+		"exportProducts": "Export Products",
+		"exportOrders": "Export Orders",
+		"exportClientsSuccess": "Exporting clients successfull!",
+		"exportProductsSuccess": "Exporting products successfull!",
+		"exportOrdersSuccess": "Exporting orders successfull!",
 		"storagePermission": "Storage permissions are necessary to import/export data!"
 	}
 }
