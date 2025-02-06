@@ -9,7 +9,9 @@ import {
 import { Button } from 'react-native-paper';
 import type { FirebaseError } from 'firebase/app';
 import firestore, { Timestamp } from '@react-native-firebase/firestore';
-import storage from '@react-native-firebase/storage';
+import storage, {
+	type FirebaseStorageTypes,
+} from '@react-native-firebase/storage';
 import * as DocumentPicker from 'expo-document-picker';
 import { useTranslation } from 'react-i18next';
 import RNFetchBlob from 'rn-fetch-blob';
@@ -18,8 +20,12 @@ import SnackbarInfo from '@/components/SnackbarInfo';
 export default function importExport() {
 	const { t } = useTranslation();
 
-	const [importLoading, setImportLoading] = useState(false);
-	const [exportLoading, setExportLoading] = useState(false);
+	const [importClientLoading, setImportClientLoading] = useState(false);
+	const [importProductLoading, setImportProductLoading] = useState(false);
+	const [importOrderLoading, setImportOrderLoading] = useState(false);
+	const [exportClientLoading, setExportClientLoading] = useState(false);
+	const [exportProductLoading, setExportProductLoading] = useState(false);
+	const [exportOrderLoading, setExportOrderLoading] = useState(false);
 
 	// All the logic to implement the snackbar
 	const [snackbarVisible, setSnackbarVisible] = useState(false);
@@ -30,8 +36,6 @@ export default function importExport() {
 		setSnackbarVisible(true);
 	};
 	const onDismissSnackbar = () => setSnackbarVisible(false);
-
-	const reference = storage().ref('membersData.csv');
 
 	// converts date format from pt-PT locale (23/01/2024) to ISO date format (2024-01-23T00:00:00.000Z)
 	// and then converts to Firestore Timestamp format
@@ -45,37 +49,129 @@ export default function importExport() {
 	};
 
 	// formats data from database to be ordered in a specific way
-	const formatDataOrder = (data) => {
-		const orderedKeys = [
-			'name',
-			'memberNumber',
-			'email',
-			'phoneNumber',
-			'occupation',
-			'country',
-			'address',
-			'zipCode',
-			'birthDate',
-			'addedDate',
-			'endDate',
-		];
+	const formatDataOrder = (data, dataType: string, operationType: string) => {
+		try {
+			//console.log(data);
+			const orderedKeys = [];
 
-		return data.map((doc) => {
-			const orderedDoc = {};
-
-			for (const key of orderedKeys) {
-				orderedDoc[key] = doc[key] || '';
+			switch (dataType) {
+				case 'client':
+					orderedKeys.push('name', 'contact');
+					break;
+				case 'product':
+					orderedKeys.push('name', 'price', 'priceByWeight');
+					break;
+				case 'order':
+					/* orderedKeys.push(
+					'client.id',
+					'client.name',
+					'deliveryDateTime',
+					'order.key',
+					'product.id',
+					'product.name',
+					'quantity',
+					'price',
+					'weight',
+					'notes',
+					'status'
+				); */
+					break;
+				default:
+					console.log('Wrong DataType');
+					return;
 			}
+			if (dataType === 'order') {
+				switch (operationType) {
+					case 'import': {
+						//console.log(data);
+						return data.map((doc) => {
+							//console.log(doc);
 
-			for (const key of Object.keys(doc)) {
-				if (!orderedKeys.includes(key) && key !== 'profilePicture') {
-					orderedDoc[key] = doc[key];
+							const orderedDoc = {};
+							const client = {};
+							const product = {};
+							const order = {};
+							client['id'] = doc['client.id'];
+							client['name'] = doc['client.name'];
+							product['id'] = doc['product.id'];
+							product['name'] = doc['product.name'];
+							order['key'] = Number(doc['order.key']);
+							order['notes'] = doc['notes'];
+							order['price'] = Number(doc['price']);
+							order['quantity'] = Number(doc['quantity']);
+							order['status'] = doc['status'];
+							order['weight'] = Number(doc['weight']);
+							order['product'] = product;
+							orderedDoc['client'] = client;
+							orderedDoc['deliveryDateTime'] = doc['deliveryDateTime'];
+							orderedDoc['order'] = [order];
+
+							//console.log(orderedDoc);
+							return orderedDoc;
+						});
+					}
+					case 'export': {
+						const orderedDoc = [];
+						for (const doc of data) {
+							console.log(doc);
+							console.log(doc.order);
+							for (const order of doc.order) {
+								console.log(order);
+								const orderedObject = {};
+								orderedObject['client.id'] = doc.client.id || '';
+								orderedObject['client.name'] = doc.client.name || '';
+								orderedObject['order.key'] = order.key >= 0 ? order.key : '';
+								orderedObject['product.id'] = order.product.id || '';
+								orderedObject['product.name'] = order.product.name || '';
+								orderedObject['quantity'] = order.quantity || '';
+								orderedObject['price'] = order.price || '';
+								orderedObject['weight'] = order.weight || '';
+								orderedObject['notes'] = order.notes || '';
+								orderedObject['deliveryDateTime'] = doc.deliveryDateTime || '';
+								orderedObject['status'] = order.status || '';
+
+								//console.log(orderedObject);
+								orderedDoc.push(orderedObject);
+							}
+						}
+						console.log(orderedDoc);
+						return orderedDoc.map((doc) => {
+							//console.log(doc);
+							return doc;
+						});
+					}
+					default:
+						console.log('Wrong OperationType');
 				}
-			}
+			} else {
+				return data.map((doc) => {
+					//console.log(doc);
 
-			//console.log(orderedDoc);
-			return orderedDoc;
-		});
+					const orderedDoc = {};
+					for (const key of orderedKeys) {
+						orderedDoc[key] = doc[key] || '';
+					}
+
+					for (const key of Object.keys(doc)) {
+						if (!orderedKeys.includes(key)) {
+							orderedDoc[key] = doc[key];
+						}
+					}
+					//console.log(orderedDoc);
+					return orderedDoc;
+				});
+			}
+		} catch (e: any) {
+			//showSnackbar('Error importing: ' + err.message);
+			console.log(`Error importing: ${e.message}`);
+			setImportClientLoading(false);
+			setImportProductLoading(false);
+			setImportOrderLoading(false);
+			setExportClientLoading(false);
+			setExportProductLoading(false);
+			setExportOrderLoading(false);
+			return;
+		}
 	};
 
 	// formats data in order to be properly imported to the firestore database
@@ -151,7 +247,9 @@ export default function importExport() {
 		} catch (e: any) {
 			//showSnackbar('Error converting to JSON: ' + e.message);
 			console.log(`Error converting to JSON: ${e.message}`);
-			setImportLoading(false);
+			setImportClientLoading(false);
+			setImportProductLoading(false);
+			setImportOrderLoading(false);
 			return;
 		}
 	};
@@ -159,6 +257,7 @@ export default function importExport() {
 	// converts received data from the firestore database in the json format
 	// to a csv format for more readability and ease of editing if necessary
 	const convertJSONToCSV = (data) => {
+		//console.log(data);
 		try {
 			const headers = Object.keys(data[0])
 				.map((key) => `"${key}"`)
@@ -174,13 +273,18 @@ export default function importExport() {
 		} catch (e: any) {
 			//showSnackbar('Error converting to CSV: ' + e.message);
 			console.log(`Error converting to CSV: ${e.message}`);
-			setExportLoading(false);
+			setExportClientLoading(false);
+			setExportProductLoading(false);
+			setExportOrderLoading(false);
 			return;
 		}
 	};
 
-	const uploadFile = async (filePath) => {
-		const task = reference.putFile(filePath);
+	const uploadFile = async (
+		storageReference: FirebaseStorageTypes.Reference,
+		filePath: string
+	) => {
+		const task = storageReference.putFile(filePath);
 
 		task.on('state_changed', (taskSnapshot) => {
 			console.log(
@@ -197,7 +301,9 @@ export default function importExport() {
 				const err = e as FirebaseError;
 				//showSnackbar('File upload failed: ' + err.message);
 				console.log(`File upload failed: ${err.message}`);
-				setExportLoading(false);
+				setExportClientLoading(false);
+				setExportProductLoading(false);
+				setExportOrderLoading(false);
 			});
 	};
 
@@ -216,7 +322,9 @@ export default function importExport() {
 		} catch (e: any) {
 			//showSnackbar('File not chosen: ' + e.message);
 			console.log(`File not chosen: ${e.message}`);
-			setImportLoading(false);
+			setImportClientLoading(false);
+			setImportProductLoading(false);
+			setImportOrderLoading(false);
 		}
 	};
 
@@ -227,23 +335,52 @@ export default function importExport() {
 		} catch (e: any) {
 			//showSnackbar("Couldn't read file: " + e.message);
 			console.log(`Couldn't read file: ${e.message}`);
-			setImportLoading(false);
+			setImportClientLoading(false);
+			setImportProductLoading(false);
+			setImportOrderLoading(false);
 			return null;
 		}
 	};
 
-	const checkMember = async (memberData) => {
+	const checkData = async (data, dataType: string) => {
 		let check = 0;
-		await firestore()
-			.collection('members')
-			.where('memberNumber', '==', memberData.memberNumber)
-			.get()
-			.then((querySnapshot) => {
-				if (!querySnapshot.empty) {
-					check = 1;
-				}
-			});
-		return check;
+		switch (dataType) {
+			case 'client':
+				await firestore()
+					.collection('clients')
+					.where('name', '==', data.name)
+					.get()
+					.then((querySnapshot) => {
+						if (!querySnapshot.empty) {
+							check = 1;
+						}
+					});
+				return check;
+			case 'product':
+				await firestore()
+					.collection('products')
+					.where('name', '==', data.name)
+					.get()
+					.then((querySnapshot) => {
+						if (!querySnapshot.empty) {
+							check = 1;
+						}
+					});
+				return check;
+			case 'order':
+				await firestore()
+					.collection('orders')
+					.where('memberNumber', '==', data.memberNumber)
+					.get()
+					.then((querySnapshot) => {
+						if (!querySnapshot.empty) {
+							check = 1;
+						}
+					});
+				return check;
+			default:
+				console.log('Wrong Datatype');
+		}
 	};
 
 	const checkPermissions = async () => {
@@ -291,25 +428,27 @@ export default function importExport() {
 		} catch (e: any) {
 			//showSnackbar('Error with permissions: ' + e.message);
 			console.log(`Error with permissions: ${e.message}`);
-			setImportLoading(false);
+			setImportClientLoading(false);
+			setImportProductLoading(false);
+			setImportOrderLoading(false);
 		}
 	};
 
-	const importMembers = async () => {
-		setImportLoading(true);
+	const importClients = async () => {
+		setImportClientLoading(true);
 
 		if (Number(Platform.Version) < 33) {
 			const permissionsCheck = await checkPermissions();
 
 			if (!permissionsCheck) {
-				setImportLoading(false);
+				setImportClientLoading(false);
 				return;
 			}
 		}
 
 		const file = await pickFile();
 		if (!file || file.canceled) {
-			setImportLoading(false);
+			setImportClientLoading(false);
 			return;
 		}
 
@@ -319,98 +458,236 @@ export default function importExport() {
 		const data = await convertCSVtoJSON(fileContent);
 		//console.log(data);
 
-		const membersData = await formatDataOrder(data);
-		//console.log(membersData);
+		const clientsData = await formatDataOrder(data, 'client', 'import');
+		//console.log(clientsData);
 
 		// to ensure proper import
-		formatDataToImport(membersData);
+		formatDataToImport(clientsData);
 
 		const batch = firestore().batch();
 
-		const existingMembers = [];
+		const existingClients = [];
 
 		try {
-			for (const member of membersData) {
-				const check = await checkMember(member);
+			for (const client of clientsData) {
+				const check = await checkData(client, 'client');
 				if (!check) {
-					const memberRef = firestore().collection('members').doc();
+					const clientRef = firestore().collection('clients').doc();
 
-					// set profilePicture to field to an existing picture if it exists
-					// or the default one if it doesn't
-					// which I now realize will never happen and will always be the default,
-					// because the document ID is completely new, oh well
-					/* const url = await storage()
-						.ref('profilePicture/' + memberRef + '.jpg')
-						.getDownloadURL();
-          console.log(url); */
-
-					member.profilePicture =
-						process.env.EXPO_PUBLIC_PLACEHOLDER_PICTURE_URL;
-
-					batch.set(memberRef, member);
+					batch.set(clientRef, client);
 				} else {
-					existingMembers.push(member.memberNumber);
+					existingClients.push(client.name);
 				}
 			}
 		} catch (e: any) {
 			const err = e as FirebaseError;
 			//showSnackbar('Error importing: ' + err.message);
 			console.log(`Error importing: ${err.message}`);
-			setImportLoading(false);
+			setImportClientLoading(false);
 			return;
 		} finally {
 			await batch.commit();
-			console.log(existingMembers);
+			console.log(existingClients);
 
 			let importMsg = t('importExport.importSuccess');
-			if (existingMembers.length) {
+			if (existingClients.length) {
 				importMsg += `\n${t(
 					'importExport.importExistingMembers'
-				)}: ${existingMembers.toString()}`;
+				)}: ${existingClients.toString()}`;
 			}
 			showSnackbar(importMsg);
 			console.log(importMsg);
-			setImportLoading(false);
+			setImportClientLoading(false);
 		}
 	};
 
-	const exportMembers = async () => {
-		setExportLoading(true);
+	const importProducts = async () => {
+		setImportProductLoading(true);
 
 		if (Number(Platform.Version) < 33) {
 			const permissionsCheck = await checkPermissions();
 
 			if (!permissionsCheck) {
-				setExportLoading(false);
+				setImportProductLoading(false);
+				return;
+			}
+		}
+
+		const file = await pickFile();
+		if (!file || file.canceled) {
+			setImportProductLoading(false);
+			return;
+		}
+
+		const fileContent = await readFile(file.assets[0].uri);
+		//console.log(fileContent);
+
+		const data = await convertCSVtoJSON(fileContent);
+		//console.log(data);
+
+		const productsData = await formatDataOrder(data, 'product', 'import');
+		//console.log(productsData);
+
+		// to ensure proper import
+		formatDataToImport(productsData);
+
+		const batch = firestore().batch();
+
+		const existingProducts = [];
+
+		try {
+			for (const product of productsData) {
+				const check = await checkData(product, 'product');
+				if (!check) {
+					const productRef = firestore().collection('products').doc();
+
+					batch.set(productRef, product);
+				} else {
+					existingProducts.push(product.name);
+				}
+			}
+		} catch (e: any) {
+			const err = e as FirebaseError;
+			//showSnackbar('Error importing: ' + err.message);
+			console.log(`Error importing: ${err.message}`);
+			setImportProductLoading(false);
+			return;
+		} finally {
+			await batch.commit();
+			console.log(existingProducts);
+
+			let importMsg = t('importExport.importSuccess');
+			if (existingProducts.length) {
+				importMsg += `\n${t(
+					'importExport.importExistingMembers'
+				)}: ${existingProducts.toString()}`;
+			}
+			showSnackbar(importMsg);
+			console.log(importMsg);
+			setImportProductLoading(false);
+		}
+	};
+
+	const importOrders = async () => {
+		setImportOrderLoading(true);
+
+		if (Number(Platform.Version) < 33) {
+			const permissionsCheck = await checkPermissions();
+
+			if (!permissionsCheck) {
+				setImportOrderLoading(false);
+				return;
+			}
+		}
+
+		const file = await pickFile();
+		if (!file || file.canceled) {
+			setImportOrderLoading(false);
+			return;
+		}
+
+		const fileContent = await readFile(file.assets[0].uri);
+		//console.log(fileContent);
+
+		const data = await convertCSVtoJSON(fileContent);
+		//console.log(data);
+
+		const ordersData = await formatDataOrder(data, 'order', 'import');
+		console.log(ordersData);
+
+		// to ensure proper import
+		formatDataToImport(ordersData);
+
+		const batch = firestore().batch();
+
+		try {
+			for (const order of ordersData) {
+				const orderRef = firestore().collection('orders').doc();
+
+				batch.set(orderRef, order);
+			}
+		} catch (e: any) {
+			const err = e as FirebaseError;
+			//showSnackbar('Error importing: ' + err.message);
+			console.log(`Error importing: ${err.message}`);
+			setImportOrderLoading(false);
+			return;
+		} finally {
+			await batch.commit();
+		}
+
+		/* const existingOrders = [];
+
+		try {
+			for (const order of ordersData) {
+				const check = await checkMember(order);
+				if (!check) {
+					const orderRef = firestore().collection('orders').doc();
+
+					batch.set(orderRef, order);
+				} else {
+					existingOrders.push(order.memberNumber);
+				}
+			}
+		} catch (e: any) {
+			const err = e as FirebaseError;
+			//showSnackbar('Error importing: ' + err.message);
+			console.log(`Error importing: ${err.message}`);
+			setImportOrderLoading(false);
+			return;
+		} finally {} */
+		//console.log(existingOrders);
+
+		let importMsg = t('importExport.importSuccess');
+		/* if (existingOrders.length) {
+			importMsg += `\n${t(
+				'importExport.importExistingMembers'
+			)}: ${existingOrders.toString()}`;
+		} */
+		showSnackbar(importMsg);
+		console.log(importMsg);
+		setImportOrderLoading(false);
+	};
+
+	const exportClients = async () => {
+		setExportClientLoading(true);
+
+		if (Number(Platform.Version) < 33) {
+			const permissionsCheck = await checkPermissions();
+
+			if (!permissionsCheck) {
+				setExportClientLoading(false);
 				return;
 			}
 		}
 
 		try {
 			const snapshot = await firestore()
-				.collection('members')
-				.orderBy('memberNumber', 'asc')
+				.collection('clients')
+				.orderBy('name', 'asc')
 				.get();
 
 			const rawData = snapshot.docs.map((doc) => doc.data());
 			//console.log(rawData);
 
-			const membersData = formatDataOrder(rawData);
+			const clientsData = formatDataOrder(rawData, 'client', 'export');
 
 			// to ensure proper export
-			formatDataToExport(membersData);
+			formatDataToExport(clientsData);
 
-			const file = convertJSONToCSV(membersData);
+			const file = convertJSONToCSV(clientsData);
 			//console.log(file);
 
-			const filePath = `${RNFetchBlob.fs.dirs.CacheDir}/membersData.csv`;
+			const filePath = `${RNFetchBlob.fs.dirs.CacheDir}/clientsData.csv`;
 			//console.log(filePath);
+
+			const reference = storage().ref('data/clientsData.csv');
 
 			await RNFetchBlob.fs.writeFile(filePath, file);
 
-			await uploadFile(filePath);
+			await uploadFile(reference, filePath);
 
-			let docPath = `${RNFetchBlob.fs.dirs.DownloadDir}/membersData.csv`;
+			let docPath = `${RNFetchBlob.fs.dirs.DownloadDir}/clientsData.csv`;
 			//console.log(docPath);
 
 			let i = 1;
@@ -418,7 +695,7 @@ export default function importExport() {
 			while (await RNFetchBlob.fs.exists(docPath)) {
 				docPath = `${
 					RNFetchBlob.fs.dirs.DownloadDir
-				}/membersData${i.toString()}.csv`;
+				}/clientsData${i.toString()}.csv`;
 				console.log(docPath);
 				i++;
 			}
@@ -433,23 +710,186 @@ export default function importExport() {
 
 			await task
 				.then(() => {
-					showSnackbar(t('importExport.exportSuccess'));
-					console.log('Exporting successfull!');
+					showSnackbar(t('importExport.exportClientSuccess'));
+					console.log('Exporting clients successfull');
 				})
 				.catch((e: any) => {
 					const err = e as FirebaseError;
 					//showSnackbar('Data download failed: ' + err.message);
 					console.log(`Data download failed: ${err.message}`);
-					setExportLoading(false);
+					setExportClientLoading(false);
 				});
 		} catch (e: any) {
 			const err = e as FirebaseError;
-			console.log(`Exporting members failed: ${err.message}`);
-			//showSnackbar('Exporting members failed: ' + err.message);
-			setExportLoading(false);
+			console.log(`Exporting clients failed: ${err.message}`);
+			//showSnackbar('Exporting clients failed: ' + err.message);
+			setExportClientLoading(false);
 			return;
 		} finally {
-			setExportLoading(false);
+			setExportClientLoading(false);
+		}
+	};
+
+	const exportProducts = async () => {
+		setExportProductLoading(true);
+
+		if (Number(Platform.Version) < 33) {
+			const permissionsCheck = await checkPermissions();
+
+			if (!permissionsCheck) {
+				setExportProductLoading(false);
+				return;
+			}
+		}
+
+		try {
+			const snapshot = await firestore()
+				.collection('products')
+				.orderBy('name', 'asc')
+				.get();
+
+			const rawData = snapshot.docs.map((doc) => doc.data());
+			//console.log(rawData);
+
+			const productsData = formatDataOrder(rawData, 'product', 'export');
+
+			// to ensure proper export
+			formatDataToExport(productsData);
+
+			const file = convertJSONToCSV(productsData);
+			//console.log(file);
+
+			const filePath = `${RNFetchBlob.fs.dirs.CacheDir}/productsData.csv`;
+			//console.log(filePath);
+
+			const reference = storage().ref('data/productsData.csv');
+
+			await RNFetchBlob.fs.writeFile(filePath, file);
+
+			await uploadFile(reference, filePath);
+
+			let docPath = `${RNFetchBlob.fs.dirs.DownloadDir}/productsData.csv`;
+			//console.log(docPath);
+
+			let i = 1;
+
+			while (await RNFetchBlob.fs.exists(docPath)) {
+				docPath = `${
+					RNFetchBlob.fs.dirs.DownloadDir
+				}/productsData${i.toString()}.csv`;
+				console.log(docPath);
+				i++;
+			}
+
+			const task = reference.writeToFile(docPath);
+
+			task.on('state_changed', (taskSnapshot) => {
+				console.log(
+					`${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`
+				);
+			});
+
+			await task
+				.then(() => {
+					showSnackbar(t('importExport.exportProductsSuccess'));
+					console.log('Exporting products successfull');
+				})
+				.catch((e: any) => {
+					const err = e as FirebaseError;
+					//showSnackbar('Data download failed: ' + err.message);
+					console.log(`Data download failed: ${err.message}`);
+					setExportProductLoading(false);
+				});
+		} catch (e: any) {
+			const err = e as FirebaseError;
+			console.log(`Exporting products failed: ${err.message}`);
+			//showSnackbar('Exporting products failed: ' + err.message);
+			setExportProductLoading(false);
+			return;
+		} finally {
+			setExportProductLoading(false);
+		}
+	};
+
+	const exportOrders = async () => {
+		setExportOrderLoading(true);
+
+		if (Number(Platform.Version) < 33) {
+			const permissionsCheck = await checkPermissions();
+
+			if (!permissionsCheck) {
+				setExportOrderLoading(false);
+				return;
+			}
+		}
+
+		try {
+			const snapshot = await firestore()
+				.collection('orders')
+				.orderBy('client.name', 'asc')
+				.get();
+
+			const rawData = snapshot.docs.map((doc) => doc.data());
+			//console.log(rawData);
+
+			const ordersData = formatDataOrder(rawData, 'order', 'export');
+			//console.log(ordersData);
+
+			// to ensure proper export
+			formatDataToExport(ordersData);
+
+			const file = convertJSONToCSV(ordersData);
+			//console.log(file);
+
+			const filePath = `${RNFetchBlob.fs.dirs.CacheDir}/ordersData.csv`;
+			//console.log(filePath);
+
+			const reference = storage().ref('data/ordersData.csv');
+
+			await RNFetchBlob.fs.writeFile(filePath, file);
+
+			await uploadFile(reference, filePath);
+
+			let docPath = `${RNFetchBlob.fs.dirs.DownloadDir}/ordersData.csv`;
+			//console.log(docPath);
+
+			let i = 1;
+
+			while (await RNFetchBlob.fs.exists(docPath)) {
+				docPath = `${
+					RNFetchBlob.fs.dirs.DownloadDir
+				}/ordersData${i.toString()}.csv`;
+				console.log(docPath);
+				i++;
+			}
+
+			const task = reference.writeToFile(docPath);
+
+			task.on('state_changed', (taskSnapshot) => {
+				console.log(
+					`${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`
+				);
+			});
+
+			await task
+				.then(() => {
+					showSnackbar(t('importExport.exportOrdersSuccess'));
+					console.log('Exporting orders successfull');
+				})
+				.catch((e: any) => {
+					const err = e as FirebaseError;
+					//showSnackbar('Data download failed: ' + err.message);
+					console.log(`Data download failed: ${err.message}`);
+					setExportOrderLoading(false);
+				});
+		} catch (e: any) {
+			const err = e as FirebaseError;
+			console.log(`Exporting orders failed: ${err.message}`);
+			//showSnackbar('Exporting orders failed: ' + err.message);
+			setExportOrderLoading(false);
+			return;
+		} finally {
+			setExportOrderLoading(false);
 		}
 	};
 
@@ -461,7 +901,10 @@ export default function importExport() {
 				onDismiss={onDismissSnackbar}
 			/>
 
-			<ScrollView contentContainerStyle={styles.scrollContainer}>
+			<ScrollView
+				contentContainerStyle={styles.scrollContainer}
+				keyboardShouldPersistTaps='handled'
+			>
 				<View style={styles.buttonContainer}>
 					<Button
 						style={styles.button}
@@ -469,10 +912,32 @@ export default function importExport() {
 						labelStyle={styles.buttonText}
 						icon='database-import'
 						mode='elevated'
-						loading={importLoading}
-						onPress={importMembers}
+						loading={importClientLoading}
+						onPress={importClients}
 					>
-						{t('importExport.importMembers')}
+						{t('importExport.importClients')}
+					</Button>
+					<Button
+						style={styles.button}
+						contentStyle={styles.buttonContent}
+						labelStyle={styles.buttonText}
+						icon='database-import'
+						mode='elevated'
+						loading={importProductLoading}
+						onPress={importProducts}
+					>
+						{t('importExport.importProducts')}
+					</Button>
+					<Button
+						style={styles.button}
+						contentStyle={styles.buttonContent}
+						labelStyle={styles.buttonText}
+						icon='database-import'
+						mode='elevated'
+						loading={importOrderLoading}
+						onPress={importOrders}
+					>
+						{t('importExport.importOrders')}
 					</Button>
 					<Button
 						style={styles.button}
@@ -480,10 +945,32 @@ export default function importExport() {
 						labelStyle={styles.buttonText}
 						icon='database-export'
 						mode='elevated'
-						loading={exportLoading}
-						onPress={exportMembers}
+						loading={exportClientLoading}
+						onPress={exportClients}
 					>
-						{t('importExport.exportMembers')}
+						{t('importExport.exportClients')}
+					</Button>
+					<Button
+						style={styles.button}
+						contentStyle={styles.buttonContent}
+						labelStyle={styles.buttonText}
+						icon='database-export'
+						mode='elevated'
+						loading={exportProductLoading}
+						onPress={exportProducts}
+					>
+						{t('importExport.exportProducts')}
+					</Button>
+					<Button
+						style={styles.button}
+						contentStyle={styles.buttonContent}
+						labelStyle={styles.buttonText}
+						icon='database-export'
+						mode='elevated'
+						loading={exportOrderLoading}
+						onPress={exportOrders}
+					>
+						{t('importExport.exportOrders')}
 					</Button>
 				</View>
 			</ScrollView>
