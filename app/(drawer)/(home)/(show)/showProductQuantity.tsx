@@ -43,6 +43,7 @@ export default function ShowProductQuantity() {
 				//console.log('This route is now unfocused.');
 				setName('');
 				setProductId('');
+				//setProductQuantity([]);
 			};
 		}, [])
 	);
@@ -132,40 +133,36 @@ export default function ShowProductQuantity() {
 				// biome-ignore lint/complexity/noForEach: <explanation>
 				querySnapshot.forEach((doc) => {
 					for (const order of doc.data().order) {
+						//console.log(order);
 						const existingProduct = currentCount.find(
 							(product) =>
-								order.product.name === product.name &&
+								order.product.id === product.id &&
 								order.weight === product.weight
 						);
-
-						//console.log(existingProduct);
+						console.log(existingProduct);
+						console.log(
+							`${order.product.name}: ${productCount[order.product.id]}`
+						);
 						if (existingProduct) {
 							existingProduct.quantity += order.quantity;
-							if (
-								productCount[existingProduct.name] &&
-								order.product.priceWeight &&
-								order.weight
-							) {
-								productCount[existingProduct.name] +=
+							if (productCount[existingProduct.id] && order.weight) {
+								productCount[existingProduct.id] +=
 									order.quantity * order.weight;
-								existingProduct.weightTotal =
-									productCount[existingProduct.name];
+								existingProduct.weightTotal = productCount[existingProduct.id];
 							}
 						} else {
-							if (!productCount[order.product.name])
-								productCount[order.product.name] =
-									order.weight * order.quantity;
+							if (!productCount[order.product.id])
+								productCount[order.product.id] = order.weight * order.quantity;
 							else {
-								productCount[order.product.name] +=
-									order.weight * order.quantity;
+								productCount[order.product.id] += order.weight * order.quantity;
 							}
 							currentCount.push({
 								key: i,
-								productId: order.product.id,
+								id: order.product.id,
 								name: order.product.name,
 								quantity: order.quantity,
 								weight: order.weight,
-								weightTotal: productCount[order.product.name],
+								weightTotal: productCount[order.product.id],
 								status: order.status,
 							});
 							i++;
@@ -173,10 +170,10 @@ export default function ShowProductQuantity() {
 					}
 				});
 				for (const count of currentCount) {
-					count.weightTotal = productCount[count.name];
+					count.weightTotal = productCount[count.id];
 				}
 				setProductQuantity(currentCount);
-				console.log(currentCount);
+				//console.log(currentCount);
 			})
 			.catch((e: any) => {
 				const err = e as FirebaseError;
