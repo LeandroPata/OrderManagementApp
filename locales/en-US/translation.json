@@ -143,7 +143,7 @@
 		"importOrdersSuccess": "Importing orders successfull!",
 		"importExistingClients": "The following clients already existed in the database and were not imported",
 		"importExistingProducts": "The following products already existed in the database and were not imported",
-		"importExistingOrders": "The following orders already existed in the database and were not imported",
+		"importExistingOrders": "Some orders already existed in the database and were not imported",
 		"exportClients": "Export Clients",
 		"exportProducts": "Export Products",
 		"exportOrders": "Export Orders",

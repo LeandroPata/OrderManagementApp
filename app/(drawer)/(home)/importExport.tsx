@@ -95,7 +95,7 @@ export default function importExport() {
 							client['name'] = doc['client.name'];
 							product['id'] = doc['product.id'];
 							product['name'] = doc['product.name'];
-							order['key'] = Number(doc['order.key']);
+							order['id'] = doc['order.id'];
 							order['notes'] = doc['notes'];
 							order['price'] = Number(doc['price']);
 							order['quantity'] = Number(doc['quantity']);
@@ -104,40 +104,30 @@ export default function importExport() {
 							order['product'] = product;
 							orderedDoc['client'] = client;
 							orderedDoc['deliveryDateTime'] = doc['deliveryDateTime'];
-							orderedDoc['order'] = [order];
+							orderedDoc['order'] = order;
 
 							//console.log(orderedDoc);
 							return orderedDoc;
 						});
 					}
 					case 'export': {
-						const orderedDoc = [];
-						for (const doc of data) {
+						return data.map((doc) => {
 							console.log(doc);
-							console.log(doc.order);
-							for (const order of doc.order) {
-								console.log(order);
-								const orderedObject = {};
-								orderedObject['client.id'] = doc.client.id || '';
-								orderedObject['client.name'] = doc.client.name || '';
-								orderedObject['order.key'] = order.key >= 0 ? order.key : '';
-								orderedObject['product.id'] = order.product.id || '';
-								orderedObject['product.name'] = order.product.name || '';
-								orderedObject['quantity'] = order.quantity || '';
-								orderedObject['price'] = order.price || '';
-								orderedObject['weight'] = order.weight || '';
-								orderedObject['notes'] = order.notes || '';
-								orderedObject['deliveryDateTime'] = doc.deliveryDateTime || '';
-								orderedObject['status'] = order.status || '';
+							const orderedDoc = {};
+							orderedDoc['client.id'] = doc.client.id || '';
+							orderedDoc['client.name'] = doc.client.name || '';
+							orderedDoc['order.id'] = doc.order.id || '';
+							orderedDoc['product.id'] = doc.order.product.id || '';
+							orderedDoc['product.name'] = doc.order.product.name || '';
+							orderedDoc['quantity'] = doc.order.quantity || '';
+							orderedDoc['price'] = doc.order.price || '';
+							orderedDoc['weight'] = doc.order.weight || '';
+							orderedDoc['notes'] = doc.order.notes || '';
+							orderedDoc['deliveryDateTime'] = doc.deliveryDateTime || '';
+							orderedDoc['status'] = doc.order.status || '';
 
-								//console.log(orderedObject);
-								orderedDoc.push(orderedObject);
-							}
-						}
-						console.log(orderedDoc);
-						return orderedDoc.map((doc) => {
-							//console.log(doc);
-							return doc;
+							console.log(orderedDoc);
+							return orderedDoc;
 						});
 					}
 					default:
@@ -162,8 +152,8 @@ export default function importExport() {
 				});
 			}
 		} catch (e: any) {
-			//showSnackbar('Error importing: ' + err.message);
-			console.log(`Error importing: ${e.message}`);
+			//showSnackbar('Error formatting: ' + err.message);
+			console.log(`Error formatting: ${e.message}`);
 			setImportClientLoading(false);
 			setImportProductLoading(false);
 			setImportOrderLoading(false);
@@ -370,7 +360,7 @@ export default function importExport() {
 			case 'order':
 				await firestore()
 					.collection('orders')
-					.where('memberNumber', '==', data.memberNumber)
+					.where('order.id', '==', data.order.id)
 					.get()
 					.then((querySnapshot) => {
 						if (!querySnapshot.empty) {
@@ -599,12 +589,19 @@ export default function importExport() {
 		formatDataToImport(ordersData);
 
 		const batch = firestore().batch();
+		let existingOrders = 0;
 
 		try {
 			for (const order of ordersData) {
-				const orderRef = firestore().collection('orders').doc();
+				console.log(order);
+				const check = await checkData(order, 'order');
+				if (!check) {
+					const orderRef = firestore().collection('orders').doc(order.order.id);
 
-				batch.set(orderRef, order);
+					batch.set(orderRef, order);
+				} else {
+					existingOrders += 1;
+				}
 			}
 		} catch (e: any) {
 			const err = e as FirebaseError;
@@ -616,34 +613,10 @@ export default function importExport() {
 			await batch.commit();
 		}
 
-		/* const existingOrders = [];
-
-		try {
-			for (const order of ordersData) {
-				const check = await checkMember(order);
-				if (!check) {
-					const orderRef = firestore().collection('orders').doc();
-
-					batch.set(orderRef, order);
-				} else {
-					existingOrders.push(order.memberNumber);
-				}
-			}
-		} catch (e: any) {
-			const err = e as FirebaseError;
-			//showSnackbar('Error importing: ' + err.message);
-			console.log(`Error importing: ${err.message}`);
-			setImportOrderLoading(false);
-			return;
-		} finally {} */
-		//console.log(existingOrders);
-
 		let importMsg = t('importExport.importOrdersSuccess');
-		/* if (existingOrders.length) {
-			importMsg += `\n${t(
-				'importExport.importExistingOrders'
-			)}: ${existingOrders.toString()}`;
-		} */
+		if (existingOrders) {
+			importMsg += `\n${t('importExport.importExistingOrders')}`;
+		}
 		showSnackbar(importMsg);
 		console.log(importMsg);
 		setImportOrderLoading(false);

@@ -204,11 +204,12 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 
 						{data.slice(from, to).map((item) => (
 							<DataTable.Row
-								key={item.key}
+								key={item.id}
 								onLongPress={() => {
 									itemStatusChange(item);
 								}}
 								onPress={() => {
+									console.log(item);
 									showItemModal(item);
 								}}
 							>

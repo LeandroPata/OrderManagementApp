@@ -137,7 +137,7 @@
 		"importOrdersSuccess": "Importação de encomendas com sucesso!",
 		"importExistingClients": "Os clientes seguintes já existem na base de dados e não foram importados",
 		"importExistingProducts": "Os produtos seguintes já existem na base de dados e não foram importados",
-		"importExistingOrders": "As encomendas seguintes já existem na base de dados e não foram importadas",
+		"importExistingOrders": "Algumas encomendas já existem na base de dados e não foram importadas",
 		"exportClients": "Exportar Clientes",
 		"exportProducts": "Exportar Produtos",
 		"exportOrders": "Exportar Encomendas",

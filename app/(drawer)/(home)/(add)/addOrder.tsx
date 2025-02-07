@@ -45,7 +45,7 @@ export default function AddOrder() {
 
 	const [clientId, setClientId] = useState('');
 	const [productId, setProductId] = useState('');
-	const [order, setOrder] = useState([]);
+	const [orders, setOrders] = useState([]);
 	const [deliveryDate, setDeliveryDate] = useState(new Date());
 	const [deliveryTime, setDeliveryTime] = useState(new Date(0, 0, 0));
 
@@ -261,10 +261,12 @@ export default function AddOrder() {
 					: Number(productQuantity) * product.price;
 			//console.log(price);
 
-			const newOrder = order;
-			//console.log(newOrder.length);
+			const newOrder = orders;
+
+			const newOrderRef = firestore().collection('orders').doc();
+			console.log(newOrderRef.id);
 			newOrder.push({
-				key: newOrder.length,
+				id: newOrderRef.id,
 				product: { id: productId, name: productName },
 				quantity: Number(productQuantity),
 				weight: weight,
@@ -273,7 +275,7 @@ export default function AddOrder() {
 				status: 'Incomplete',
 			});
 			//console.log(newOrder);
-			setOrder(newOrder);
+			setOrders(newOrder);
 		} catch {
 			(e: any) => {
 				console.log(`Error adding to order: ${e.message}`);
@@ -299,7 +301,7 @@ export default function AddOrder() {
 			//setNameError(true);
 			setLoading(false);
 			return;
-		} else if (!order.length) {
+		} else if (!orders.length) {
 			showSnackbar(t('add.order.orderEmpty'));
 			console.log('Order empty');
 			setLoading(false);
@@ -315,63 +317,64 @@ export default function AddOrder() {
 			return;
 		}
 
-		const docRef = firestore().collection('orders').doc();
+		try {
+			const batch = firestore().batch();
+			for (const order of orders) {
+				console.log(order);
+				const orderRef = firestore().collection('orders').doc(order.id);
+				//console.log(orderRef);
+				const orderDB = {
+					client: { id: clientId, name: clientName },
+					order: order,
+					deliveryDateTime: Timestamp.fromDate(
+						new Date(
+							deliveryDate.getFullYear(),
+							deliveryDate.getMonth(),
+							deliveryDate.getDate(),
+							deliveryTime.getHours(),
+							deliveryTime.getMinutes(),
+							deliveryTime.getSeconds()
+						)
+					),
+				};
+				console.log(orderDB);
+				batch.set(orderRef, orderDB);
+			}
+			await batch.commit();
 
-		docRef
-			.set({
-				client: { id: clientId, name: clientName },
-				order: order,
-				deliveryDateTime: Timestamp.fromDate(
-					new Date(
-						deliveryDate.getFullYear(),
-						deliveryDate.getMonth(),
-						deliveryDate.getDate(),
-						deliveryTime.getHours(),
-						deliveryTime.getMinutes(),
-						deliveryTime.getSeconds()
-					)
-				),
-			})
-			.then(() => {
-				console.log('Added');
-				showSnackbar(t('add.order.addedOrder'));
-				setName('');
-				setClientId('');
-				setHintClientList([]);
-				setProductName('');
-				setProductId('');
-				setHintProductList([]);
-				setProductQuantity('1');
-				setProductWeight('');
-				setOrder([]);
-			})
-			.catch((e: any) => {
-				const err = e as FirebaseError;
-				console.log(`Adding order failed: ${err.message}`);
-				setLoading(false);
-			})
-			.finally(() => {
-				setLoading(false);
-			});
+			console.log('Added');
+			showSnackbar(t('add.order.addedOrder'));
+			setName('');
+			setClientId('');
+			setHintClientList([]);
+			setProductName('');
+			setProductId('');
+			setHintProductList([]);
+			setProductQuantity('1');
+			setProductWeight('');
+			setOrders([]);
+		} catch (e: any) {
+			const err = e as FirebaseError;
+			console.log(`Adding order failed: ${err.message}`);
+			setLoading(false);
+			return;
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	const deleteOrder = async (item: object) => {
 		console.log(item);
-		const updatedOrder = [];
-		let i = 0;
 
 		try {
-			for (const singleOrder of order) {
-				console.log(singleOrder);
-				if (singleOrder.key !== item.key) {
-					singleOrder.key = i;
-					updatedOrder.push(singleOrder);
-					i++;
-				}
-			}
+			const orderIndex = orders.findIndex((order) => order.id === item.id);
+			console.log(orderIndex);
 
+			console.log(orders);
+			const updatedOrder = orders.toSpliced(orderIndex, 1);
 			console.log(updatedOrder);
-			setOrder(updatedOrder);
+			setOrders(updatedOrder);
+
 			showSnackbar(t('add.order.deleted'));
 		} catch (e: any) {
 			console.log(`Deleting order failed: ${e.message}`);
@@ -451,7 +454,7 @@ export default function AddOrder() {
 				onClearIconPress={() => {
 					setName('');
 					setClientId('');
-					setOrder([]);
+					setOrders([]);
 					setHintClientList([]);
 				}}
 			/>
@@ -613,7 +616,7 @@ export default function AddOrder() {
 				</KeyboardAvoidingView>
 				<View>
 					<DataTableOrder
-						data={order}
+						data={orders}
 						dataType='newOrder'
 						defaultSort='product.name'
 						numberofItemsPerPageList={[2, 3, 4]}
