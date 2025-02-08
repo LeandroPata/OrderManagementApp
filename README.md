@@ -1,50 +1,56 @@
-# Welcome to your Expo app 👋
+# Order Management App Project
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This is a personal project created to improve order management.
 
-## Get started
+It was developed with the intent to accurately, quickly and easily check current orders, what orders are not completed yet, are ready to be delivered or already delivered, what products are needed to fulfill current orders and other features.
 
-1. Install dependencies
+## Features
 
-   ```bash
-   npm install
-   ```
+### Main Features
 
-2. Start the app
+- Add Clients, Products and Orders to a database
+- Show orders from a specific client
+- Show orders of a specific product
+- Show the quantities of all products currently ordered
+- Import/Export of clients, products and orders databases to/from .csv files in order to facilitate sharing and/or editing
 
-   ```bash
-    npx expo start
-   ```
+### General Features
 
-In the output, you'll find options to open the app in a
+- Authentication to allow only trusted accounts to access the information (ability to freely create an account would be removed in a real world implementation or require email/account verification before allowing login)
+- Changing Password
+- Translation to different languages
+- Light/Dark Theme
+- Checking for updates (as it is a personal project, publishing in App Stores isn't feasible, so a different update checking system was implemented, not possible for iOS)
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Tecnical Notes
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- All searchs of clients/products have a "fuzzy searching" implementation with a "hint" list to help the user find the intended client/product
+- Update checking was implemented by having the APKs stored in Firebase Storage and then cross-checking the app's current version and the stored APKs version, downloading and updating if a more recent version is available (this isn't possible in iOS, as it doesn't allow sideloading)
+- Environment variables are used, so in any reproduction of this project setting them in a .env file (to run locally) and/or Expo (or other building framework) will be necessary. This is an .env example:
 
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+# Firebase Config Files
+GOOGLE_SERVICES_JSON='./google-services.json'
+GOOGLE_SERVICES_PLIST='./GoogleService-Info.plist'
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Tech used
 
-## Learn more
+This project was developed with the [React Native](https://reactnative.dev/) [Expo](https://expo.dev/) framework, using a mix of Typescript, CSS and some Javascript.
 
-To learn more about developing your project with Expo, look at the following resources:
+All cloud features are build using [Firebase](https://firebase.google.com/). The main Firebase features used are:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- [Firebase Authentication](https://firebase.google.com/products/auth) for user accounts authentication
+- [Firestore](https://firebase.google.com/products/firestore) as a NoSQL DataBase to store data documents
+- [Firebase Cloud Storage](https://firebase.google.com/products/storage) to store larger files (data exports and updates)
 
-## Join the community
+Some of the main packages used are:
 
-Join our community of developers creating universal apps.
+- [Fuse.js](https://www.fusejs.io/) for fuzzy search
+- [i18next](https://www.i18next.com/) for translation implementation
+- [React Native Paper](https://reactnativepaper.com/) for theming and appearance customization
+- All other packages are present in package.json
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Developed by
+
+- [Leandro Pata](https://github.com/LeandroPata)
