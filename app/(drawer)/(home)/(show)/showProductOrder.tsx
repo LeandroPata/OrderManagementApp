@@ -112,34 +112,22 @@ export default function ShowProductOrder() {
 		await firestore()
 			.collection('orders')
 			.orderBy('client.name', 'asc')
+			.where('order.product.id', '==', currentProductId)
 			.get()
 			.then((querySnapshot) => {
 				const orders = [];
-				let i = 0;
 				// biome-ignore lint/complexity/noForEach:<Method that returns iterator necessary>
 				querySnapshot.forEach((doc) => {
-					for (const order of doc.data().order) {
-						//console.log(`${order.product.id} : ${currentProductId}`);
-
-						if (order.product.id === currentProductId) {
-							//console.log(order);
-							orders.push({
-								key: i,
-								orderId: doc.id,
-								orderKey: order.key,
-								client: doc.data().client,
-								quantity: order.quantity,
-								weight: order.weight,
-								price: order.price,
-								status: order.status,
-								notes: order.notes,
-								deliveryDateTime: new Date(
-									doc.data().deliveryDateTime.toDate()
-								),
-							});
-							i++;
-						}
-					}
+					orders.push({
+						id: doc.id,
+						client: doc.data().client,
+						quantity: doc.data().order.quantity,
+						weight: doc.data().order.weight,
+						price: doc.data().order.price,
+						status: doc.data().order.status,
+						notes: doc.data().order.notes,
+						deliveryDateTime: new Date(doc.data().deliveryDateTime.toDate()),
+					});
 				});
 
 				setProductOrders(orders);
@@ -151,29 +139,13 @@ export default function ShowProductOrder() {
 			});
 	};
 
-	// I don't like having to copy the whole order to change one variable,
-	// but can't figure out how to do it dynamically (the index is varible = orderKey)
-	// on a map nested in an array
-	const updateOrderDatabase = async (item: object) => {
-		const updatedOrder = [];
-		await firestore()
-			.collection('orders')
-			.doc(item.orderId)
-			.get()
-			.then((querySnapshot) => {
-				updatedOrder.push(...querySnapshot.data().order);
-			})
-			.catch((e: any) => {
-				const err = e as FirebaseError;
-				console.log(`Error getting order: ${err.message}`);
-			});
-
-		updatedOrder[item.orderKey].status = item.status;
-
+	// Because of the database changes, directly changing the
+	// status variable of the order is now possible
+	const updateOrderDatabase = (item: object) => {
 		firestore()
 			.collection('orders')
-			.doc(item.orderId)
-			.update({ order: updatedOrder })
+			.doc(item.id)
+			.update({ 'order.status': item.status })
 			.then(() => {
 				console.log('Updated');
 				showSnackbar(t('show.productOrder.updatedStatus'));
@@ -184,53 +156,20 @@ export default function ShowProductOrder() {
 			});
 	};
 
-	const deleteOrder = async (item: object) => {
-		const updatedOrder = [];
-		await firestore()
+	const deleteOrder = (item: object) => {
+		firestore()
 			.collection('orders')
-			.doc(item.orderId)
-			.get()
-			.then((querySnapshot) => {
-				for (const order of querySnapshot.data().order) {
-					if (order.key !== item.orderKey) {
-						updatedOrder.push(order);
-					}
-				}
+			.doc(item.id)
+			.delete()
+			.then(() => {
+				console.log('Order entry deleted because order is empty');
+				showSnackbar(t('show.productOrder.deletedOrder'));
+				getProductOrders(productId);
 			})
 			.catch((e: any) => {
 				const err = e as FirebaseError;
-				console.log(`Error getting order: ${err.message}`);
+				console.log(`Error deleting order: ${err.message}`);
 			});
-
-		if (updatedOrder.length <= 0) {
-			firestore()
-				.collection('orders')
-				.doc(item.orderId)
-				.delete()
-				.then(() => {
-					console.log('Order entry deleted because order is empty');
-					showSnackbar(t('show.productOrder.deletedOrder'));
-					getProductOrders(productId);
-				})
-				.catch((e: any) => {
-					const err = e as FirebaseError;
-					console.log(`Error deleting order: ${err.message}`);
-				});
-		} else {
-			firestore()
-				.collection('orders')
-				.doc(item.orderId)
-				.update({ order: updatedOrder })
-				.then(() => {
-					console.log('Updated');
-					showSnackbar(t('show.productOrder.deletedOrder'));
-					getProductOrders(productId);
-				})
-				.catch((e: any) => {
-					const err = e as FirebaseError;
-					console.log(`Error updating order: ${err.message}`);
-				});
-		}
 	};
 
 	const updateOrderStatus = (item: object) => {

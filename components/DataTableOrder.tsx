@@ -341,7 +341,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 						</DataTable.Header>
 						{data.slice(from, to).map((item) => (
 							<DataTable.Row
-								key={item.key}
+								key={item.id}
 								onLongPress={() => {
 									itemStatusChange(item);
 								}}
@@ -456,7 +456,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 						</DataTable.Header>
 						{data.slice(from, to).map((item) => (
 							<DataTable.Row
-								key={item.key}
+								key={item.id}
 								onLongPress={() => {
 									itemStatusChange(item);
 								}}
@@ -559,7 +559,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 						</DataTable.Header>
 						{data.slice(from, to).map((item) => (
 							<DataTable.Row
-								key={item.key}
+								key={item.id}
 								onPress={() => {
 									showItemModal(item);
 								}}

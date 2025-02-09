@@ -108,31 +108,25 @@ export default function ShowClientOrder() {
 		console.log(currentClientId);
 		await firestore()
 			.collection('orders')
+			.orderBy('order.product.name', 'asc')
 			.where('client.id', '==', currentClientId)
 			.get()
 			.then((querySnapshot) => {
 				const orders = [];
-				let i = 0;
 
 				// biome-ignore lint/complexity/noForEach:<Method that returns iterator necessary>
 				querySnapshot.forEach((doc) => {
-					//console.log(doc.data());
-					for (const order of doc.data().order) {
-						//console.log(order);
-						orders.push({
-							key: i,
-							orderId: doc.id,
-							orderKey: order.key,
-							product: order.product,
-							quantity: order.quantity,
-							weight: order.weight,
-							price: order.price,
-							notes: order.notes,
-							deliveryDateTime: new Date(doc.data().deliveryDateTime.toDate()),
-							status: order.status,
-						});
-						i++;
-					}
+					//console.log(doc.data().order);
+					orders.push({
+						id: doc.id,
+						product: doc.data().order.product,
+						quantity: doc.data().order.quantity,
+						weight: doc.data().order.weight,
+						price: doc.data().order.price,
+						notes: doc.data().order.notes,
+						deliveryDateTime: new Date(doc.data().deliveryDateTime.toDate()),
+						status: doc.data().order.status,
+					});
 				});
 				setClientOrders(orders);
 				//console.log(orders);
@@ -143,29 +137,13 @@ export default function ShowClientOrder() {
 			});
 	};
 
-	// I don't like having to copy the whole order to change one variable,
-	// but can't figure out how to do it dynamically (the index is varible = orderKey)
-	// on a map nested in an array
+	// Because of the database changes, directly changing the
+	// status variable of the order is now possible
 	const updateOrderDatabase = async (item: object) => {
-		const updatedOrder = [];
-		await firestore()
-			.collection('orders')
-			.doc(item.orderId)
-			.get()
-			.then((querySnapshot) => {
-				updatedOrder.push(...querySnapshot.data().order);
-			})
-			.catch((e: any) => {
-				const err = e as FirebaseError;
-				console.log(`Error getting order: ${err.message}`);
-			});
-
-		updatedOrder[item.orderKey].status = item.status;
-
 		firestore()
 			.collection('orders')
-			.doc(item.orderId)
-			.update({ order: updatedOrder })
+			.doc(item.id)
+			.update({ 'order.status': item.status })
 			.then(() => {
 				console.log('Updated status');
 				showSnackbar(t('show.clientOrder.updatedStatus'));
@@ -177,52 +155,19 @@ export default function ShowClientOrder() {
 	};
 
 	const deleteOrder = async (item: object) => {
-		const updatedOrder = [];
-		await firestore()
+		firestore()
 			.collection('orders')
-			.doc(item.orderId)
-			.get()
-			.then((querySnapshot) => {
-				for (const order of querySnapshot.data().order) {
-					if (order.key !== item.orderKey) {
-						updatedOrder.push(order);
-					}
-				}
+			.doc(item.id)
+			.delete()
+			.then(() => {
+				console.log('Order deleted');
+				showSnackbar(t('show.clientOrder.DeletedOrder'));
+				getClientOrders(clientId);
 			})
 			.catch((e: any) => {
 				const err = e as FirebaseError;
-				console.log(`Error getting order: ${err.message}`);
+				console.log(`Error deleting order: ${err.message}`);
 			});
-
-		if (updatedOrder.length <= 0) {
-			firestore()
-				.collection('orders')
-				.doc(item.orderId)
-				.delete()
-				.then(() => {
-					console.log('Order entry deleted because order is empty');
-					showSnackbar(t('show.clientOrder.DeletedOrder'));
-					getClientOrders(clientId);
-				})
-				.catch((e: any) => {
-					const err = e as FirebaseError;
-					console.log(`Error deleting order: ${err.message}`);
-				});
-		} else {
-			firestore()
-				.collection('orders')
-				.doc(item.orderId)
-				.update({ order: updatedOrder })
-				.then(() => {
-					console.log('Updated');
-					showSnackbar(t('show.clientOrder.DeletedOrder'));
-					getClientOrders(clientId);
-				})
-				.catch((e: any) => {
-					const err = e as FirebaseError;
-					console.log(`Error updating order: ${err.message}`);
-				});
-		}
 	};
 
 	const updateOrderStatus = (item: object) => {

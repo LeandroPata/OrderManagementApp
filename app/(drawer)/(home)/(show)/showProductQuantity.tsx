@@ -112,7 +112,7 @@ export default function ShowProductQuantity() {
 		//console.log(productId);
 		const filteredCount = [];
 		for (const count of productQuantity) {
-			if (count.productId === productId) {
+			if (count.id === productId) {
 				filteredCount.push(count);
 			}
 		}
@@ -130,43 +130,45 @@ export default function ShowProductQuantity() {
 				const currentCount = [];
 				const productCount = {};
 				let i = 0;
-				// biome-ignore lint/complexity/noForEach: <explanation>
+				// biome-ignore lint/complexity/noForEach: <Method that returns iterator necessary>
 				querySnapshot.forEach((doc) => {
-					for (const order of doc.data().order) {
-						//console.log(order);
-						const existingProduct = currentCount.find(
-							(product) =>
-								order.product.id === product.id &&
-								order.weight === product.weight
-						);
-						console.log(existingProduct);
-						console.log(
-							`${order.product.name}: ${productCount[order.product.id]}`
-						);
-						if (existingProduct) {
-							existingProduct.quantity += order.quantity;
-							if (productCount[existingProduct.id] && order.weight) {
-								productCount[existingProduct.id] +=
-									order.quantity * order.weight;
-								existingProduct.weightTotal = productCount[existingProduct.id];
-							}
-						} else {
-							if (!productCount[order.product.id])
-								productCount[order.product.id] = order.weight * order.quantity;
-							else {
-								productCount[order.product.id] += order.weight * order.quantity;
-							}
-							currentCount.push({
-								key: i,
-								id: order.product.id,
-								name: order.product.name,
-								quantity: order.quantity,
-								weight: order.weight,
-								weightTotal: productCount[order.product.id],
-								status: order.status,
-							});
-							i++;
+					//console.log(doc.data().order);
+					const existingProduct = currentCount.find(
+						(product) =>
+							doc.data().order.product.id === product.id &&
+							doc.data().order.weight === product.weight
+					);
+					console.log(existingProduct);
+					console.log(
+						`${doc.data().order.product.name}: ${
+							productCount[doc.data().order.product.id]
+						}`
+					);
+					if (existingProduct) {
+						existingProduct.quantity += doc.data().order.quantity;
+						if (productCount[existingProduct.id] && doc.data().order.weight) {
+							productCount[existingProduct.id] +=
+								doc.data().order.quantity * doc.data().order.weight;
+							existingProduct.weightTotal = productCount[existingProduct.id];
 						}
+					} else {
+						if (!productCount[doc.data().order.product.id])
+							productCount[doc.data().order.product.id] =
+								doc.data().order.weight * doc.data().order.quantity;
+						else {
+							productCount[doc.data().order.product.id] +=
+								doc.data().order.weight * doc.data().order.quantity;
+						}
+						currentCount.push({
+							key: i,
+							id: doc.data().order.product.id,
+							name: doc.data().order.product.name,
+							quantity: doc.data().order.quantity,
+							weight: doc.data().order.weight,
+							weightTotal: productCount[doc.data().order.product.id],
+							status: doc.data().order.status,
+						});
+						i++;
 					}
 				});
 				for (const count of currentCount) {
