@@ -75,6 +75,7 @@ export default function CustomDrawerContent(props: any) {
 			if (!firstTimeCount) {
 				setFirstTimeCount(1);
 				checkUpdates(true);
+				checkLeftoverFiles();
 			}
 
 			// Screen unfocused in return
@@ -188,6 +189,23 @@ export default function CustomDrawerContent(props: any) {
 		return false;
 	};
 
+	const checkLeftoverFiles = async () => {
+		RNFetchBlob.fs
+			.ls(RNFetchBlob.fs.dirs.CacheDir)
+			.then((files) => {
+				console.log(files);
+				for (const file of files) {
+					if (file.endsWith('.apk')) {
+						console.log(file);
+						deleteFile(`${RNFetchBlob.fs.dirs.CacheDir}/${file}`);
+					}
+				}
+			})
+			.catch((e: any) => {
+				console.log(`Listing files failed: ${e.message}`);
+			});
+	};
+
 	const checkUpdates = async (passive = false) => {
 		setCheckUpdateConfirmationVisible(false);
 		setUpdateDownloadProgress(0);
@@ -229,6 +247,17 @@ export default function CustomDrawerContent(props: any) {
 			});
 	};
 
+	const deleteFile = async (filePath: string) => {
+		await RNFetchBlob.fs
+			.unlink(filePath)
+			.then(() => {
+				console.log('File Deleted');
+			})
+			.catch((e: any) => {
+				console.log(`Deleting file failed: ${e.message}`);
+			});
+	};
+
 	const downloadUpdate = async (updateFolderName: string) => {
 		setRunUpdateConfirmationVisible(false);
 
@@ -245,6 +274,10 @@ export default function CustomDrawerContent(props: any) {
 						updateFileName = ref.name;
 					}
 				}
+			})
+			.catch((e: any) => {
+				const err = e as FirebaseError;
+				console.log(`Getting file name failed: ${err.message}`);
 			});
 
 		const updateStorageRef = storage().ref(
@@ -253,7 +286,7 @@ export default function CustomDrawerContent(props: any) {
 
 		console.log(`updates/${updateFolderName}/${updateFileName}`);
 
-		const apkPath = `${RNFetchBlob.fs.dirs.DownloadDir}/${updateFileName}`;
+		const apkPath = `${RNFetchBlob.fs.dirs.CacheDir}/${updateFileName}`;
 
 		const task = updateStorageRef.writeToFile(apkPath);
 		setUpdateDownloadProgressVisible(true);
@@ -281,16 +314,14 @@ export default function CustomDrawerContent(props: any) {
 	const installUpdate = async (apkPath: string) => {
 		setUpdateDownloadProgressVisible(false);
 		console.log(`Installing: ${apkPath}`);
-		try {
-			await RNFetchBlob.android.actionViewIntent(
-				apkPath,
-				'application/vnd.android.package-archive'
-			);
-		} catch (e: any) {
-			console.log(`Installing apk failed: ${e}`);
-		} finally {
-			console.log('Finished');
-		}
+		await RNFetchBlob.android
+			.actionViewIntent(apkPath, 'application/vnd.android.package-archive')
+			.then(() => {
+				console.log('Finished');
+			})
+			.catch((e: any) => {
+				console.log(`Installing apk failed: ${e}`);
+			});
 	};
 
 	const onChangePasswordModalDismiss = () => {

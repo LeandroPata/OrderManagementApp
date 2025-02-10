@@ -39,3 +39,8 @@ GoogleService-Info.plist
 
 # Typescript
 *.tsbuildinfo
+
+# Native folders (because no custom changes are made,
+# it is only prebuild to run locally)
+android/
+ios/
