@@ -105,7 +105,7 @@ export default function ShowClientOrder() {
 	};
 
 	const getClientOrders = async (currentClientId: string) => {
-		console.log(currentClientId);
+		//console.log(currentClientId);
 		await firestore()
 			.collection('orders')
 			.orderBy('order.product.name', 'asc')
@@ -145,7 +145,7 @@ export default function ShowClientOrder() {
 			.doc(item.id)
 			.update({ 'order.status': item.status })
 			.then(() => {
-				console.log('Updated status');
+				//console.log('Updated status');
 				showSnackbar(t('show.clientOrder.updatedStatus'));
 			})
 			.catch((e: any) => {
@@ -160,7 +160,7 @@ export default function ShowClientOrder() {
 			.doc(item.id)
 			.delete()
 			.then(() => {
-				console.log('Order deleted');
+				//console.log('Order deleted');
 				showSnackbar(t('show.clientOrder.DeletedOrder'));
 				getClientOrders(clientId);
 			})

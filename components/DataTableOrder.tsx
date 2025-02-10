@@ -559,7 +559,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 						</DataTable.Header>
 						{data.slice(from, to).map((item) => (
 							<DataTable.Row
-								key={item.id}
+								key={item.key}
 								onPress={() => {
 									showItemModal(item);
 								}}

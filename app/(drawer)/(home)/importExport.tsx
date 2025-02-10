@@ -175,11 +175,6 @@ export default function importExport() {
 					//console.log(doc[key]);
 					doc[key] = convertToTimestamp(doc[key]);
 					//console.log(doc[key]);
-				} else if (key === 'memberNumber') {
-					//console.log(key);
-					//console.log(typeof doc[key]);
-					doc[key] = Number(doc[key]);
-					//console.log(typeof doc[key]);
 				}
 			}
 		}

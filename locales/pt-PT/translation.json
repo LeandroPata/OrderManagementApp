@@ -40,6 +40,10 @@
 		"signOutDialog": "Sair da conta?",
 		"version": "Versão"
 	},
+	"dialog": {
+		"yes": "Sim",
+		"no": "Não"
+	},
 	"dataTableOrder": {
 		"of": "de",
 		"rowsPerPage": "Linhas por página",

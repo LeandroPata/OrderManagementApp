@@ -33,8 +33,8 @@ const DialogConfirmation = (props: DialogConfirmationProps) => {
 					<Text style={{ fontSize: 15 }}>{props.text}</Text>
 				</Dialog.Content>
 				<Dialog.Actions>
-					<Button onPress={props.onConfirmation}>{t('profile.yes')}</Button>
-					<Button onPress={props.onDismiss}>{t('profile.no')}</Button>
+					<Button onPress={props.onConfirmation}>{t('dialog.yes')}</Button>
+					<Button onPress={props.onDismiss}>{t('dialog.no')}</Button>
 				</Dialog.Actions>
 			</Dialog>
 		</Portal>

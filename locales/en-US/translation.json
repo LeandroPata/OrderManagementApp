@@ -40,6 +40,10 @@
 		"signOutDialog": "Sign Out?",
 		"version": "Version"
 	},
+	"dialog": {
+		"yes": "Yes",
+		"no": "No"
+	},
 	"dataTableOrder": {
 		"of": "of",
 		"rowsPerPage": "Rows per page",

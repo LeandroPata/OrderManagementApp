@@ -138,12 +138,12 @@ export default function ShowProductQuantity() {
 							doc.data().order.product.id === product.id &&
 							doc.data().order.weight === product.weight
 					);
-					console.log(existingProduct);
+					/* console.log(existingProduct);
 					console.log(
 						`${doc.data().order.product.name}: ${
 							productCount[doc.data().order.product.id]
 						}`
-					);
+					); */
 					if (existingProduct) {
 						existingProduct.quantity += doc.data().order.quantity;
 						if (productCount[existingProduct.id] && doc.data().order.weight) {

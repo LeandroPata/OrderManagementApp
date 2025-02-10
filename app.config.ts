@@ -4,7 +4,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 	...config,
 	name: 'OrderManagementApp',
 	slug: 'OrderManagementApp',
-	version: '0.12.5',
+	version: '0.12.7',
 	orientation: 'default',
 	icon: './assets/images/iconReact.png',
 	scheme: 'myapp',
@@ -24,7 +24,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 		package: 'com.leandropata.ordermanagementapp',
 		permissions: [
 			'android.permission.READ_EXTERNAL_STORAGE',
-			'android.permission.WRITE_EXTERNAL_STORAGE',
 			'android.permission.REQUEST_INSTALL_PACKAGES',
 		],
 		intentFilters: [

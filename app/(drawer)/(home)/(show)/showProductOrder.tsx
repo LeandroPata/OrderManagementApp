@@ -147,7 +147,7 @@ export default function ShowProductOrder() {
 			.doc(item.id)
 			.update({ 'order.status': item.status })
 			.then(() => {
-				console.log('Updated');
+				//console.log('Updated');
 				showSnackbar(t('show.productOrder.updatedStatus'));
 			})
 			.catch((e: any) => {
@@ -162,7 +162,7 @@ export default function ShowProductOrder() {
 			.doc(item.id)
 			.delete()
 			.then(() => {
-				console.log('Order entry deleted because order is empty');
+				//console.log('Order entry deleted because order is empty');
 				showSnackbar(t('show.productOrder.deletedOrder'));
 				getProductOrders(productId);
 			})
