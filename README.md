@@ -10,31 +10,41 @@ It was developed with the intent to accurately, quickly and easily check current
 
 - Add Clients, Products and Orders to a cloud database;
 
-<img src='assets/samples/addClient.png' alt = 'AddClient' width=190>
-<img src='assets/samples/addProduct.png' alt = 'AddProduct' width=190>
-<img src='assets/samples/addOrder.png' alt = 'AddOrder' width=190>
+<p align='middle'>
+  <img align='top' src='assets/samples/addClient.png' alt = 'AddClient' width=190>
+  <img align='top' src='assets/samples/addProduct.png' alt = 'AddProduct' width=190>
+  <img align='top' src='assets/samples/addOrder.png' alt = 'AddOrder' width=190>
+</p>
 
 - Show orders from a specific client;
 
-<img src='assets/samples/showClientOrder.png' alt = 'ShowClientOrder' width=190>
-<img src='assets/samples/showOrderDetails.png' alt = 'ShowOrderDetails' width=190>
+<p align='middle'>
+  <img align='top' src='assets/samples/showClientOrder.png' alt = 'ShowClientOrder' width=190>
+  <img align='top' src='assets/samples/showOrderDetails.png' alt = 'ShowOrderDetails' width=190>
+</p>
 
 - Show orders of a specific product;
 
-<img src='assets/samples/showProductOrder.png' alt = 'ShowProductOrder' width=190>
-<img src='assets/samples/showProductOrderLandscape.png' alt = 'ShowProductOrderLandscape' height=350>
+<p align='middle'>
+  <img align='top' src='assets/samples/showProductOrder.png' alt = 'ShowProductOrder' width=190>
+  <img align='top' src='assets/samples/showProductOrderLandscape.png' alt = 'ShowProductOrderLandscape' height=350>
+</p>
 
 - Show the quantities of all products currently ordered;
 
-<img src='assets/samples/showProductQuantity.png' alt = 'ShowProductQuantity' width=190>
+<p align='middle'>
+  <img align='top' src='assets/samples/showProductQuantity.png' alt = 'ShowProductQuantity' width=190>
+</p>
 
 - Updating a order's status(long pressing on a DataTable's row);
 - Import/Export of clients, products and orders databases to/from .csv files in order to facilitate sharing and/or editing;
 
-<img src='assets/samples/mainMenu.png' alt = 'MainMenu' width=190>
-<img src='assets/samples/addMenu.png' alt = 'AddMenu' width=190>
-<img src='assets/samples/showMenu.png' alt = 'ShowMenu' width=190>
-<img src='assets/samples/importExport.png' alt = 'ImportExportMenu' width=190>
+<p align='middle'>
+  <img align='top' src='assets/samples/mainMenu.png' alt = 'MainMenu' width=190>
+  <img align='top' src='assets/samples/addMenu.png' alt = 'AddMenu' width=190>
+  <img align='top' src='assets/samples/showMenu.png' alt = 'ShowMenu' width=190>
+  <img align='top' src='assets/samples/importExport.png' alt = 'ImportExportMenu' width=190>
+</p>
 
 ### General Features
 
@@ -44,8 +54,10 @@ It was developed with the intent to accurately, quickly and easily check current
 - Light/Dark Theme;
 - Checking for updates (as it is a personal project, publishing in App Stores isn't feasible, so a different update checking system was implemented, not possible for iOS);
 
-<img src='assets/samples/drawerLight.png' alt = 'DrawerLight' width=190>
-<img src='assets/samples/drawerDark.png' alt = 'DrawerDark' width=190>
+<p align='middle'>
+  <img align='top' src='assets/samples/drawerLight.png' alt = 'DrawerLight' width=190>
+  <img align='top' src='assets/samples/drawerDark.png' alt = 'DrawerDark' width=190>
+</p>
 
 ## Tecnical Notes
 
