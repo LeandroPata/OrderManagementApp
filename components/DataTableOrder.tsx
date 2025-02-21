@@ -209,7 +209,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 									itemStatusChange(item);
 								}}
 								onPress={() => {
-									console.log(item);
+									//console.log(item);
 									showItemModal(item);
 								}}
 							>

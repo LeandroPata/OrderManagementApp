@@ -207,7 +207,7 @@ export default function AddOrder() {
 		try {
 			if (clientId === '') {
 				const currentClientId = getClient(name);
-				console.log(currentClientId);
+				//console.log(currentClientId);
 				if (currentClientId === '') {
 					showSnackbar(t('add.order.clientNameInvalid'));
 					console.log('No client error');
@@ -215,7 +215,7 @@ export default function AddOrder() {
 				}
 			} else if (productId === '') {
 				const currentProduct = getProduct(productName);
-				console.log(!currentProduct);
+				//console.log(!currentProduct);
 				if (Object.keys(currentProduct).length === 0) {
 					showSnackbar(t('add.order.productNameInvalid'));
 					console.log('No product error');
@@ -264,7 +264,7 @@ export default function AddOrder() {
 			const newOrder = orders;
 
 			const newOrderRef = firestore().collection('orders').doc();
-			console.log(newOrderRef.id);
+			//console.log(newOrderRef.id);
 			newOrder.push({
 				id: newOrderRef.id,
 				product: { id: productId, name: productName },
@@ -320,7 +320,7 @@ export default function AddOrder() {
 		try {
 			const batch = firestore().batch();
 			for (const order of orders) {
-				console.log(order);
+				//console.log(order);
 				const orderRef = firestore().collection('orders').doc(order.id);
 				//console.log(orderRef);
 				const orderDB = {
@@ -337,7 +337,7 @@ export default function AddOrder() {
 						)
 					),
 				};
-				console.log(orderDB);
+				//console.log(orderDB);
 				batch.set(orderRef, orderDB);
 			}
 			await batch.commit();
@@ -364,15 +364,15 @@ export default function AddOrder() {
 	};
 
 	const deleteOrder = async (item: object) => {
-		console.log(item);
+		//console.log(item);
 
 		try {
 			const orderIndex = orders.findIndex((order) => order.id === item.id);
-			console.log(orderIndex);
+			//console.log(orderIndex);
 
-			console.log(orders);
+			//console.log(orders);
 			const updatedOrder = orders.toSpliced(orderIndex, 1);
-			console.log(updatedOrder);
+			//console.log(updatedOrder);
 			setOrders(updatedOrder);
 
 			showSnackbar(t('add.order.deleted'));

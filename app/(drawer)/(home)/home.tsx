@@ -1,5 +1,11 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import {
+	View,
+	StyleSheet,
+	ScrollView,
+	Image,
+	useWindowDimensions,
+} from 'react-native';
 import { Button } from 'react-native-paper';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +18,23 @@ export default function Home() {
 			contentContainerStyle={styles.scrollContainer}
 			keyboardShouldPersistTaps='handled'
 		>
+			<View
+				style={[
+					styles.imageContainer,
+					{
+						width: useWindowDimensions().width * 0.5,
+						height: useWindowDimensions().height * 0.3,
+					},
+				]}
+			>
+				<View style={{ height: '100%', width: '100%' }}>
+					<Image
+						source={require('@/assets/images/logoReact.png')}
+						style={styles.image}
+						resizeMode='contain'
+					/>
+				</View>
+			</View>
 			<View style={styles.buttonContainer}>
 				<Button
 					style={styles.button}
@@ -56,7 +79,7 @@ export default function Home() {
 const styles = StyleSheet.create({
 	scrollContainer: {
 		flexGrow: 1,
-		justifyContent: 'center',
+		//justifyContent: 'center',
 	},
 	buttonContainer: {
 		marginHorizontal: 20,
@@ -75,5 +98,14 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		overflow: 'visible',
 		paddingTop: 10,
+	},
+	imageContainer: {
+		//backgroundColor: 'blue',
+		alignSelf: 'center',
+	},
+	image: {
+		flex: 1,
+		maxWidth: '100%',
+		maxHeight: '100%',
 	},
 });

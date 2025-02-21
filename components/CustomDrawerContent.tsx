@@ -193,10 +193,10 @@ export default function CustomDrawerContent(props: any) {
 		RNFetchBlob.fs
 			.ls(RNFetchBlob.fs.dirs.CacheDir)
 			.then((files) => {
-				console.log(files);
+				//console.log(files);
 				for (const file of files) {
 					if (file.endsWith('.apk')) {
-						console.log(file);
+						//console.log(file);
 						deleteFile(`${RNFetchBlob.fs.dirs.CacheDir}/${file}`);
 					}
 				}
@@ -220,7 +220,7 @@ export default function CustomDrawerContent(props: any) {
 					if (compareVersions(ref.name)) {
 						update = true;
 						setUpdateVersion(ref.name);
-						console.log(ref.name);
+						//console.log(ref.name);
 					}
 				}
 			})
@@ -284,7 +284,7 @@ export default function CustomDrawerContent(props: any) {
 			`updates/${updateFolderName}/${updateFileName}`
 		);
 
-		console.log(`updates/${updateFolderName}/${updateFileName}`);
+		//console.log(`updates/${updateFolderName}/${updateFileName}`);
 
 		const apkPath = `${RNFetchBlob.fs.dirs.CacheDir}/${updateFileName}`;
 

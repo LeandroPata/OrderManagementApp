@@ -112,7 +112,7 @@ export default function importExport() {
 					}
 					case 'export': {
 						return data.map((doc) => {
-							console.log(doc);
+							//console.log(doc);
 							const orderedDoc = {};
 							orderedDoc['client.id'] = doc.client.id || '';
 							orderedDoc['client.name'] = doc.client.name || '';
@@ -126,7 +126,7 @@ export default function importExport() {
 							orderedDoc['deliveryDateTime'] = doc.deliveryDateTime || '';
 							orderedDoc['status'] = doc.order.status || '';
 
-							console.log(orderedDoc);
+							//console.log(orderedDoc);
 							return orderedDoc;
 						});
 					}
@@ -472,7 +472,7 @@ export default function importExport() {
 			return;
 		} finally {
 			await batch.commit();
-			console.log(existingClients);
+			//console.log(existingClients);
 
 			let importMsg = t('importExport.importClientsSuccess');
 			if (existingClients.length) {
@@ -481,7 +481,7 @@ export default function importExport() {
 				)}: ${existingClients.toString()}`;
 			}
 			showSnackbar(importMsg);
-			console.log(importMsg);
+			//(importMsg);
 			setImportClientLoading(false);
 		}
 	};
@@ -548,7 +548,7 @@ export default function importExport() {
 				)}: ${existingProducts.toString()}`;
 			}
 			showSnackbar(importMsg);
-			console.log(importMsg);
+			//console.log(importMsg);
 			setImportProductLoading(false);
 		}
 	};
@@ -578,7 +578,7 @@ export default function importExport() {
 		//console.log(data);
 
 		const ordersData = await formatDataOrder(data, 'order', 'import');
-		console.log(ordersData);
+		//console.log(ordersData);
 
 		// to ensure proper import
 		formatDataToImport(ordersData);
@@ -588,7 +588,7 @@ export default function importExport() {
 
 		try {
 			for (const order of ordersData) {
-				console.log(order);
+				//console.log(order);
 				const check = await checkData(order, 'order');
 				if (!check) {
 					const orderRef = firestore().collection('orders').doc(order.order.id);
@@ -613,7 +613,7 @@ export default function importExport() {
 			importMsg += `\n${t('importExport.importExistingOrders')}`;
 		}
 		showSnackbar(importMsg);
-		console.log(importMsg);
+		//console.log(importMsg);
 		setImportOrderLoading(false);
 	};
 
@@ -664,7 +664,7 @@ export default function importExport() {
 				docPath = `${
 					RNFetchBlob.fs.dirs.DownloadDir
 				}/clientsData${i.toString()}.csv`;
-				console.log(docPath);
+				//console.log(docPath);
 				i++;
 			}
 
@@ -745,7 +745,7 @@ export default function importExport() {
 				docPath = `${
 					RNFetchBlob.fs.dirs.DownloadDir
 				}/productsData${i.toString()}.csv`;
-				console.log(docPath);
+				//console.log(docPath);
 				i++;
 			}
 
@@ -827,7 +827,7 @@ export default function importExport() {
 				docPath = `${
 					RNFetchBlob.fs.dirs.DownloadDir
 				}/ordersData${i.toString()}.csv`;
-				console.log(docPath);
+				//console.log(docPath);
 				i++;
 			}
 
