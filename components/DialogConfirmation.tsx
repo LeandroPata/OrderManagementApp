@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Dialog, Portal, Text } from 'react-native-paper';
+import { globalStyles } from '@/styles/global';
 
 /* // All the logic to implemet DialogConfirmation
   const [dialogConfirmationVisible, setDialogConfirmationVisible] =
@@ -30,7 +31,7 @@ const DialogConfirmation = (props: DialogConfirmationProps) => {
 				onDismiss={props.onDismiss}
 			>
 				<Dialog.Content>
-					<Text style={{ fontSize: 15 }}>{props.text}</Text>
+					<Text style={globalStyles.text.dialog}>{props.text}</Text>
 				</Dialog.Content>
 				<Dialog.Actions>
 					<Button onPress={props.onConfirmation}>{t('dialog.yes')}</Button>

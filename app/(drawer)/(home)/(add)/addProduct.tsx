@@ -17,6 +17,7 @@ import type { FirebaseError } from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
 import { useTranslation } from 'react-i18next';
 import SnackbarInfo from '@/components/SnackbarInfo';
+import { globalStyles } from '@/styles/global';
 
 export default function AddProduct() {
 	const { t } = useTranslation();
@@ -101,12 +102,12 @@ export default function AddProduct() {
 			/>
 
 			<ScrollView
-				contentContainerStyle={styles.scrollContainer}
+				contentContainerStyle={globalStyles.scrollContainer.global}
 				keyboardShouldPersistTaps='handled'
 			>
 				<KeyboardAvoidingView style={{ paddingHorizontal: 10 }}>
 					<TextInput
-						style={styles.input}
+						style={globalStyles.input}
 						value={name}
 						onChangeText={setName}
 						onEndEditing={() => {
@@ -124,7 +125,7 @@ export default function AddProduct() {
 						<HelperText
 							type='error'
 							visible={nameError}
-							style={styles.errorHelper}
+							style={globalStyles.text.errorHelper}
 						>
 							{t('add.product.nameInvalid')}
 						</HelperText>
@@ -138,7 +139,7 @@ export default function AddProduct() {
 						}}
 					>
 						<TextInput
-							style={[styles.input, { width: '50%' }]}
+							style={[globalStyles.input, { width: '50%' }]}
 							value={price}
 							onChangeText={(input) => {
 								setPrice(input.replace(/[^0-9.,]/g, ''));
@@ -156,16 +157,18 @@ export default function AddProduct() {
 								status={priceWeightChecked ? 'checked' : 'unchecked'}
 								onPress={() => setPriceWeightChecked(!priceWeightChecked)}
 							/>
-							<Text style={styles.title}>{t('add.product.priceWeight')}</Text>
+							<Text style={globalStyles.text.global}>
+								{t('add.product.priceWeight')}
+							</Text>
 						</View>
 					</View>
 				</KeyboardAvoidingView>
 
-				<View style={styles.buttonContainer}>
+				<View style={globalStyles.buttonContainer.global}>
 					<Button
-						style={styles.button}
-						contentStyle={styles.buttonContent}
-						labelStyle={styles.buttonText}
+						style={globalStyles.button}
+						contentStyle={globalStyles.buttonContent.global}
+						labelStyle={globalStyles.buttonText}
 						icon='account-plus'
 						mode='elevated'
 						loading={loading}
@@ -179,7 +182,7 @@ export default function AddProduct() {
 	);
 }
 
-const styles = StyleSheet.create({
+/* const styles = StyleSheet.create({
 	scrollContainer: {
 		flexGrow: 1,
 		justifyContent: 'center',
@@ -214,4 +217,4 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		fontSize: 15,
 	},
-});
+}); */

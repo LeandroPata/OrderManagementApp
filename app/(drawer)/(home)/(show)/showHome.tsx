@@ -3,20 +3,21 @@ import { View, StyleSheet, ScrollView } from 'react-native';
 import { Button } from 'react-native-paper';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { globalStyles } from '@/styles/global';
 
 export default function ShowHome() {
 	const { t } = useTranslation();
 
 	return (
 		<ScrollView
-			contentContainerStyle={styles.scrollContainer}
+			contentContainerStyle={globalStyles.scrollContainer.global}
 			keyboardShouldPersistTaps='handled'
 		>
-			<View style={styles.buttonContainer}>
+			<View style={globalStyles.buttonContainer.global}>
 				<Button
-					style={styles.button}
-					contentStyle={styles.buttonContent}
-					labelStyle={styles.buttonText}
+					style={globalStyles.button}
+					contentStyle={globalStyles.buttonContent.global}
+					labelStyle={globalStyles.buttonText}
 					icon='account-search'
 					mode='elevated'
 					//loading={loginLoading}
@@ -26,9 +27,9 @@ export default function ShowHome() {
 				</Button>
 
 				<Button
-					style={styles.button}
-					contentStyle={styles.buttonContent}
-					labelStyle={styles.buttonText}
+					style={globalStyles.button}
+					contentStyle={globalStyles.buttonContent.global}
+					labelStyle={globalStyles.buttonText}
 					icon='cake-variant'
 					mode='elevated'
 					//loading={loginLoading}
@@ -40,9 +41,9 @@ export default function ShowHome() {
 				</Button>
 
 				<Button
-					style={styles.button}
-					contentStyle={styles.buttonContent}
-					labelStyle={styles.buttonText}
+					style={globalStyles.button}
+					contentStyle={globalStyles.buttonContent.global}
+					labelStyle={globalStyles.buttonText}
 					icon='cake-layered'
 					mode='elevated'
 					//loading={loginLoading}
@@ -57,7 +58,7 @@ export default function ShowHome() {
 	);
 }
 
-const styles = StyleSheet.create({
+/* const styles = StyleSheet.create({
 	scrollContainer: {
 		flexGrow: 1,
 		justifyContent: 'center',
@@ -80,4 +81,4 @@ const styles = StyleSheet.create({
 		overflow: 'visible',
 		paddingTop: 10,
 	},
-});
+}); */

@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import {
-	StyleSheet,
-	KeyboardAvoidingView,
-	View,
-	Keyboard,
-	Image,
-} from 'react-native';
+import { KeyboardAvoidingView, View, Keyboard, Image } from 'react-native';
 import {
 	Portal,
 	Modal,
@@ -19,6 +13,7 @@ import type { FirebaseError } from 'firebase/app';
 import auth from '@react-native-firebase/auth';
 import { useTranslation } from 'react-i18next';
 import SnackbarInfo from '@/components/SnackbarInfo';
+import { globalStyles } from '@/styles/global';
 
 export default function Index() {
 	const insets = useSafeAreaInsets();
@@ -180,14 +175,14 @@ export default function Index() {
 						setLoginLoading(false);
 						setShowModal(false);
 					}}
-					style={styles.modalContainer}
+					style={globalStyles.modalContainer.global}
 					contentContainerStyle={[
-						styles.modalContentContainer,
+						globalStyles.modalContentContainer.global,
 						{ backgroundColor: theme.colors.primaryContainer },
 					]}
 				>
 					<TextInput
-						style={styles.input}
+						style={globalStyles.input}
 						value={confirmPassword}
 						onChangeText={setConfirmPassword}
 						onEndEditing={() => {
@@ -205,15 +200,17 @@ export default function Index() {
 						<HelperText
 							type='error'
 							visible={confirmPasswordError}
-							style={styles.errorHelper}
+							style={globalStyles.text.errorHelper}
 						>
 							{t('index.confirmPasswordError')}
 						</HelperText>
 					) : null}
 
-					<View style={[styles.buttonContainer, { marginTop: 15 }]}>
+					<View
+						style={[globalStyles.buttonContainer.global, { marginTop: 15 }]}
+					>
 						<Button
-							style={styles.button}
+							style={globalStyles.button}
 							contentStyle={{ minWidth: 150, minHeight: 30 }}
 							labelStyle={{
 								fontSize: 15,
@@ -237,14 +234,14 @@ export default function Index() {
 				onDismiss={onDismissSnackbar}
 			/>
 
-			<View style={[styles.container, { paddingTop: insets.top }]}>
+			<View style={[globalStyles.container.home, { paddingTop: insets.top }]}>
 				<KeyboardAvoidingView
 					style={{ flex: 1, marginHorizontal: 20 }}
 					behavior='padding'
 				>
-					<View style={styles.imageContainer}>
+					<View style={globalStyles.container.image}>
 						<Image
-							style={styles.image}
+							style={globalStyles.image.global}
 							source={require('@/assets/images/logoReact.png')}
 						/>
 					</View>
@@ -254,7 +251,7 @@ export default function Index() {
 						}}
 					>
 						<TextInput
-							style={styles.input}
+							style={globalStyles.input}
 							value={email}
 							onChangeText={setEmail}
 							onEndEditing={() => {
@@ -272,13 +269,13 @@ export default function Index() {
 							<HelperText
 								type='error'
 								visible={emailError}
-								style={styles.errorHelper}
+								style={globalStyles.text.errorHelper}
 							>
 								{t('index.emailError')}
 							</HelperText>
 						) : null}
 						<TextInput
-							style={styles.input}
+							style={globalStyles.input}
 							value={password}
 							onChangeText={setPassword}
 							onEndEditing={() => {
@@ -297,7 +294,7 @@ export default function Index() {
 							<HelperText
 								type='error'
 								visible={passwordError}
-								style={styles.errorHelper}
+								style={globalStyles.text.errorHelper}
 							>
 								{t('index.passwordError')}
 							</HelperText>
@@ -305,11 +302,11 @@ export default function Index() {
 					</View>
 				</KeyboardAvoidingView>
 
-				<View style={styles.buttonContainer}>
+				<View style={globalStyles.buttonContainer.global}>
 					<Button
-						style={styles.button}
-						contentStyle={styles.buttonContent}
-						labelStyle={styles.buttonText}
+						style={globalStyles.button}
+						contentStyle={globalStyles.buttonContent.global}
+						labelStyle={globalStyles.buttonText}
 						icon='login'
 						mode='elevated'
 						loading={loginLoading}
@@ -320,9 +317,9 @@ export default function Index() {
 						{t('index.login')}
 					</Button>
 					<Button
-						style={styles.button}
-						contentStyle={styles.buttonContent}
-						labelStyle={styles.buttonText}
+						style={globalStyles.button}
+						contentStyle={globalStyles.buttonContent.global}
+						labelStyle={globalStyles.buttonText}
 						icon='briefcase-plus'
 						mode='elevated'
 						loading={signupLoading}
@@ -336,7 +333,7 @@ export default function Index() {
 	);
 }
 
-const styles = StyleSheet.create({
+/* const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 	},
@@ -381,4 +378,4 @@ const styles = StyleSheet.create({
 		width: '100%',
 		height: '100%',
 	},
-});
+}); */

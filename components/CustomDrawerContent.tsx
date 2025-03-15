@@ -47,6 +47,7 @@ import Constants from 'expo-constants';
 import getFlagEmoji from './GetCountryFlag';
 import SnackbarInfo from './SnackbarInfo';
 import DialogConfirmation from './DialogConfirmation';
+import { globalStyles } from '@/styles/global';
 
 export default function CustomDrawerContent(props: any) {
 	const theme = useTheme();
@@ -454,9 +455,9 @@ export default function CustomDrawerContent(props: any) {
 				<Modal
 					visible={changePasswordModal}
 					onDismiss={onChangePasswordModalDismiss}
-					style={styles.modalContainer}
+					style={globalStyles.modalContainer.global}
 					contentContainerStyle={[
-						styles.modalContentContainer,
+						globalStyles.modalContentContainer.drawer,
 						{
 							backgroundColor: theme.colors.primaryContainer,
 							minHeight: useWindowDimensions().height / 2,
@@ -471,7 +472,7 @@ export default function CustomDrawerContent(props: any) {
 					>
 						<View>
 							<TextInput
-								style={styles.input}
+								style={globalStyles.input}
 								value={currentPassword}
 								onChangeText={setCurrentPassword}
 								onEndEditing={() => {
@@ -491,7 +492,7 @@ export default function CustomDrawerContent(props: any) {
 								<HelperText
 									type='error'
 									visible={currentPasswordError}
-									style={styles.errorHelper}
+									style={globalStyles.text.errorHelper}
 								>
 									{t('drawer.currentPasswordError')}
 								</HelperText>
@@ -499,7 +500,7 @@ export default function CustomDrawerContent(props: any) {
 						</View>
 						<View>
 							<TextInput
-								style={styles.input}
+								style={globalStyles.input}
 								value={newPassword}
 								onChangeText={setNewPassword}
 								onEndEditing={() => {
@@ -519,7 +520,7 @@ export default function CustomDrawerContent(props: any) {
 								<HelperText
 									type='error'
 									visible={newPasswordError}
-									style={styles.errorHelper}
+									style={globalStyles.text.errorHelper}
 								>
 									{t('drawer.newPasswordError')}
 								</HelperText>
@@ -527,7 +528,7 @@ export default function CustomDrawerContent(props: any) {
 						</View>
 						<View>
 							<TextInput
-								style={styles.input}
+								style={globalStyles.input}
 								value={confirmNewPassword}
 								onChangeText={setConfirmNewPassword}
 								onEndEditing={() => {
@@ -549,7 +550,7 @@ export default function CustomDrawerContent(props: any) {
 								<HelperText
 									type='error'
 									visible={confirmNewPasswordError}
-									style={styles.errorHelper}
+									style={globalStyles.text.errorHelper}
 								>
 									{t('drawer.confirmNewPasswordError')}
 								</HelperText>
@@ -557,9 +558,9 @@ export default function CustomDrawerContent(props: any) {
 						</View>
 					</View>
 					<Button
-						style={styles.button}
-						contentStyle={styles.buttonContent}
-						labelStyle={styles.buttonText}
+						style={globalStyles.button}
+						contentStyle={globalStyles.buttonContent.modal}
+						labelStyle={globalStyles.buttonText}
 						icon='check-bold'
 						mode='elevated'
 						onPress={changePassword}
@@ -586,7 +587,7 @@ export default function CustomDrawerContent(props: any) {
 					<View style={{ flex: 1, justifyContent: 'flex-start' }}>
 						<Image
 							style={[
-								styles.image,
+								globalStyles.image.drawer,
 								{
 									height: useWindowDimensions().height / 10,
 									marginTop: -insets.top,
@@ -734,7 +735,7 @@ export default function CustomDrawerContent(props: any) {
 							/>
 						</TouchableOpacity>
 
-						<Animated.View style={[styles.content, animatedStyle]}>
+						<Animated.View style={[globalStyles.content, animatedStyle]}>
 							<View
 								style={{
 									width: '80%',
@@ -823,7 +824,7 @@ export default function CustomDrawerContent(props: any) {
 				/>
 
 				<View style={{ paddingBottom: insets.bottom + 5 }}>
-					<Text style={styles.title}>
+					<Text style={globalStyles.text.footer}>
 						{t('drawer.version')}: {Constants.expoConfig?.version}
 					</Text>
 				</View>
@@ -832,7 +833,7 @@ export default function CustomDrawerContent(props: any) {
 	);
 }
 
-const styles = StyleSheet.create({
+/* const styles = StyleSheet.create({
 	content: {
 		overflow: 'hidden',
 	},
@@ -861,8 +862,8 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 	},
 	buttonContent: {
-		minWidth: 50,
-		minHeight: 20,
+		minWidth: 150,
+		minHeight: 30,
 	},
 	buttonText: {
 		fontSize: 25,
@@ -875,4 +876,4 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		textAlignVertical: 'center',
 	},
-});
+}); */

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text } from 'react-native';
 import { Portal, Snackbar } from 'react-native-paper';
+import { globalStyles } from '@/styles/global';
 
 /* // All the logic to implement the snackbar
 const [snackbarVisible, setSnackbarVisible] = useState(false);
@@ -33,7 +34,7 @@ const SnackbarInfo = (props: SnackbarInfoProps) => {
 				onIconPress={props.onDismiss}
 				duration={5000}
 			>
-				<Text style={{ fontSize: 15 }}>{props.text}</Text>
+				<Text style={globalStyles.text.snackbarInfo}>{props.text}</Text>
 			</Snackbar>
 		</Portal>
 	);

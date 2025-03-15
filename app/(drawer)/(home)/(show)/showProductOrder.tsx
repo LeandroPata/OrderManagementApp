@@ -9,6 +9,7 @@ import Fuse from 'fuse.js';
 import SnackbarInfo from '@/components/SnackbarInfo';
 import SearchList from '@/components/SearchList';
 import DataTableOrder from '@/components/DataTableOrder';
+import { globalStyles } from '@/styles/global';
 
 export default function ShowProductOrder() {
 	const theme = useTheme();
@@ -222,7 +223,7 @@ export default function ShowProductOrder() {
 			/>
 
 			<SearchList
-				style={styles.searchList}
+				style={globalStyles.searchList}
 				icon='cake-variant'
 				value={name}
 				placeholder={t('show.productOrder.productSearch')}
@@ -249,7 +250,7 @@ export default function ShowProductOrder() {
 			/>
 
 			<ScrollView
-				contentContainerStyle={styles.scrollContainer}
+				contentContainerStyle={globalStyles.scrollContainer.show}
 				keyboardShouldPersistTaps='handled'
 			>
 				<DataTableOrder
@@ -266,7 +267,7 @@ export default function ShowProductOrder() {
 	);
 }
 
-const styles = StyleSheet.create({
+/* const styles = StyleSheet.create({
 	scrollContainer: {
 		flexGrow: 1,
 	},
@@ -281,4 +282,4 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		fontSize: 15,
 	},
-});
+}); */

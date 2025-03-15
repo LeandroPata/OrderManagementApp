@@ -23,6 +23,7 @@ import DatePicker from 'react-native-date-picker';
 import SnackbarInfo from '@/components/SnackbarInfo';
 import SearchList from '@/components/SearchList';
 import DataTableOrder from '@/components/DataTableOrder';
+import { globalStyles } from '@/styles/global';
 
 export default function AddOrder() {
 	const theme = useTheme();
@@ -433,7 +434,7 @@ export default function AddOrder() {
 			/>
 
 			<SearchList
-				style={styles.searchList}
+				style={globalStyles.searchList}
 				icon='account'
 				value={name}
 				placeholder={t('add.order.clientSearch')}
@@ -460,7 +461,7 @@ export default function AddOrder() {
 			/>
 
 			<SearchList
-				style={styles.searchList}
+				style={globalStyles.searchList}
 				icon='cake-variant'
 				value={productName}
 				placeholder={t('add.order.productSearch')}
@@ -486,7 +487,7 @@ export default function AddOrder() {
 			/>
 
 			<ScrollView
-				contentContainerStyle={styles.scrollContainer}
+				contentContainerStyle={globalStyles.scrollContainer.global}
 				keyboardShouldPersistTaps='handled'
 			>
 				<KeyboardAvoidingView style={{ paddingHorizontal: 10 }}>
@@ -599,7 +600,7 @@ export default function AddOrder() {
 						</View>
 					</View>
 					<TextInput
-						style={styles.input}
+						style={globalStyles.input}
 						value={notes}
 						onChangeText={setNotes}
 						autoCapitalize='sentences'
@@ -607,8 +608,11 @@ export default function AddOrder() {
 						label={t('add.order.notes')}
 					/>
 					<Button
-						style={[styles.button, { width: '50%', alignSelf: 'center' }]}
-						labelStyle={[styles.buttonText, { fontSize: 20, paddingTop: 5 }]}
+						style={[globalStyles.button, { width: '50%', alignSelf: 'center' }]}
+						labelStyle={[
+							globalStyles.buttonText,
+							{ fontSize: 20, paddingTop: 5 },
+						]}
 						onPress={addToOrder}
 					>
 						{t('add.order.addToOrder')}
@@ -633,12 +637,17 @@ export default function AddOrder() {
 							marginTop: 10,
 						}}
 					>
-						<Text style={[styles.title, { color: theme.colors.primary }]}>
+						<Text
+							style={[
+								globalStyles.text.deliveryDate,
+								{ color: theme.colors.primary },
+							]}
+						>
 							{t('add.order.deliveryDate')}
 						</Text>
 
 						<Button
-							labelStyle={styles.dateText}
+							labelStyle={globalStyles.text.date}
 							onPress={() => setDeliveryDateModal(true)}
 						>
 							{deliveryDate.toLocaleDateString('pt-pt')}
@@ -662,7 +671,7 @@ export default function AddOrder() {
 						/>
 
 						<Button
-							labelStyle={styles.dateText}
+							labelStyle={globalStyles.text.date}
 							onPress={() => setDeliveryTimeModal(true)}
 						>
 							{deliveryTime.toLocaleTimeString('pt-pt')}
@@ -687,11 +696,11 @@ export default function AddOrder() {
 					</View>
 				</View>
 
-				<View style={styles.buttonContainer}>
+				<View style={globalStyles.buttonContainer.order}>
 					<Button
-						style={styles.button}
-						contentStyle={styles.buttonContent}
-						labelStyle={styles.buttonText}
+						style={globalStyles.button}
+						contentStyle={globalStyles.buttonContent.global}
+						labelStyle={globalStyles.buttonText}
 						icon='package-variant-closed'
 						mode='elevated'
 						loading={loading}
@@ -705,7 +714,7 @@ export default function AddOrder() {
 	);
 }
 
-const styles = StyleSheet.create({
+/* const styles = StyleSheet.create({
 	scrollContainer: {
 		flexGrow: 1,
 		justifyContent: 'center',
@@ -750,4 +759,4 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		fontSize: 15,
 	},
-});
+}); */

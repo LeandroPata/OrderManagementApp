@@ -9,18 +9,19 @@ import {
 import { Button } from 'react-native-paper';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { globalStyles } from '@/styles/global';
 
 export default function Home() {
 	const { t } = useTranslation();
 
 	return (
 		<ScrollView
-			contentContainerStyle={styles.scrollContainer}
+			contentContainerStyle={globalStyles.scrollContainer.home}
 			keyboardShouldPersistTaps='handled'
 		>
 			<View
 				style={[
-					styles.imageContainer,
+					globalStyles.container.image,
 					{
 						width: useWindowDimensions().width * 0.5,
 						height: useWindowDimensions().height * 0.3,
@@ -30,16 +31,16 @@ export default function Home() {
 				<View style={{ height: '100%', width: '100%' }}>
 					<Image
 						source={require('@/assets/images/logoReact.png')}
-						style={styles.image}
+						style={globalStyles.image.global}
 						resizeMode='contain'
 					/>
 				</View>
 			</View>
-			<View style={styles.buttonContainer}>
+			<View style={globalStyles.buttonContainer.global}>
 				<Button
-					style={styles.button}
-					contentStyle={styles.buttonContent}
-					labelStyle={styles.buttonText}
+					style={globalStyles.button}
+					contentStyle={globalStyles.buttonContent.global}
+					labelStyle={globalStyles.buttonText}
 					icon='account-plus'
 					mode='elevated'
 					//loading={loginLoading}
@@ -49,9 +50,9 @@ export default function Home() {
 				</Button>
 
 				<Button
-					style={styles.button}
-					contentStyle={styles.buttonContent}
-					labelStyle={styles.buttonText}
+					style={globalStyles.button}
+					contentStyle={globalStyles.buttonContent.global}
+					labelStyle={globalStyles.buttonText}
 					icon='account-search'
 					mode='elevated'
 					//loading={loginLoading}
@@ -61,9 +62,9 @@ export default function Home() {
 				</Button>
 
 				<Button
-					style={styles.button}
-					contentStyle={styles.buttonContent}
-					labelStyle={styles.buttonText}
+					style={globalStyles.button}
+					contentStyle={globalStyles.buttonContent.global}
+					labelStyle={globalStyles.buttonText}
 					icon='database'
 					mode='elevated'
 					//loading={loginLoading}
@@ -76,7 +77,7 @@ export default function Home() {
 	);
 }
 
-const styles = StyleSheet.create({
+/* const styles = StyleSheet.create({
 	scrollContainer: {
 		flexGrow: 1,
 		//justifyContent: 'center',
@@ -100,12 +101,14 @@ const styles = StyleSheet.create({
 		paddingTop: 10,
 	},
 	imageContainer: {
-		//backgroundColor: 'blue',
+		justifyContent: 'center',
 		alignSelf: 'center',
+		width: '50%',
+		height: '35%',
 	},
 	image: {
-		flex: 1,
-		maxWidth: '100%',
-		maxHeight: '100%',
+		resizeMode: 'contain',
+		width: '100%',
+		height: '100%',
 	},
-});
+}); */

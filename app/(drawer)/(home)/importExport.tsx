@@ -16,6 +16,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import { useTranslation } from 'react-i18next';
 import RNFetchBlob from 'rn-fetch-blob';
 import SnackbarInfo from '@/components/SnackbarInfo';
+import { globalStyles } from '@/styles/global';
 
 export default function importExport() {
 	const { t } = useTranslation();
@@ -870,14 +871,14 @@ export default function importExport() {
 			/>
 
 			<ScrollView
-				contentContainerStyle={styles.scrollContainer}
+				contentContainerStyle={globalStyles.scrollContainer.global}
 				keyboardShouldPersistTaps='handled'
 			>
-				<View style={styles.buttonContainer}>
+				<View style={globalStyles.buttonContainer.global}>
 					<Button
-						style={styles.button}
-						contentStyle={styles.buttonContent}
-						labelStyle={styles.buttonText}
+						style={globalStyles.button}
+						contentStyle={globalStyles.buttonContent.global}
+						labelStyle={globalStyles.buttonText}
 						icon='database-import'
 						mode='elevated'
 						loading={importClientLoading}
@@ -886,9 +887,9 @@ export default function importExport() {
 						{t('importExport.importClients')}
 					</Button>
 					<Button
-						style={styles.button}
-						contentStyle={styles.buttonContent}
-						labelStyle={styles.buttonText}
+						style={globalStyles.button}
+						contentStyle={globalStyles.buttonContent.global}
+						labelStyle={globalStyles.buttonText}
 						icon='database-import'
 						mode='elevated'
 						loading={importProductLoading}
@@ -897,9 +898,9 @@ export default function importExport() {
 						{t('importExport.importProducts')}
 					</Button>
 					<Button
-						style={styles.button}
-						contentStyle={styles.buttonContent}
-						labelStyle={styles.buttonText}
+						style={globalStyles.button}
+						contentStyle={globalStyles.buttonContent.global}
+						labelStyle={globalStyles.buttonText}
 						icon='database-import'
 						mode='elevated'
 						loading={importOrderLoading}
@@ -908,9 +909,9 @@ export default function importExport() {
 						{t('importExport.importOrders')}
 					</Button>
 					<Button
-						style={styles.button}
-						contentStyle={styles.buttonContent}
-						labelStyle={styles.buttonText}
+						style={globalStyles.button}
+						contentStyle={globalStyles.buttonContent.global}
+						labelStyle={globalStyles.buttonText}
 						icon='database-export'
 						mode='elevated'
 						loading={exportClientLoading}
@@ -919,9 +920,9 @@ export default function importExport() {
 						{t('importExport.exportClients')}
 					</Button>
 					<Button
-						style={styles.button}
-						contentStyle={styles.buttonContent}
-						labelStyle={styles.buttonText}
+						style={globalStyles.button}
+						contentStyle={globalStyles.buttonContent.global}
+						labelStyle={globalStyles.buttonText}
 						icon='database-export'
 						mode='elevated'
 						loading={exportProductLoading}
@@ -930,9 +931,9 @@ export default function importExport() {
 						{t('importExport.exportProducts')}
 					</Button>
 					<Button
-						style={styles.button}
-						contentStyle={styles.buttonContent}
-						labelStyle={styles.buttonText}
+						style={globalStyles.button}
+						contentStyle={globalStyles.buttonContent.global}
+						labelStyle={globalStyles.buttonText}
 						icon='database-export'
 						mode='elevated'
 						loading={exportOrderLoading}
@@ -946,7 +947,7 @@ export default function importExport() {
 	);
 }
 
-const styles = StyleSheet.create({
+/* const styles = StyleSheet.create({
 	scrollContainer: {
 		flexGrow: 1,
 		justifyContent: 'center',
@@ -969,4 +970,4 @@ const styles = StyleSheet.create({
 		overflow: 'visible',
 		paddingTop: 10,
 	},
-});
+}); */

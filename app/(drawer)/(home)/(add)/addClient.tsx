@@ -11,6 +11,7 @@ import type { FirebaseError } from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
 import { useTranslation } from 'react-i18next';
 import SnackbarInfo from '@/components/SnackbarInfo';
+import { globalStyles } from '@/styles/global';
 
 export default function AddClient() {
 	const { t } = useTranslation();
@@ -95,12 +96,12 @@ export default function AddClient() {
 			/>
 
 			<ScrollView
-				contentContainerStyle={styles.scrollContainer}
+				contentContainerStyle={globalStyles.scrollContainer.global}
 				keyboardShouldPersistTaps='handled'
 			>
 				<KeyboardAvoidingView style={{ paddingHorizontal: 10 }}>
 					<TextInput
-						style={styles.input}
+						style={globalStyles.input}
 						value={name}
 						onChangeText={setName}
 						onEndEditing={() => {
@@ -118,14 +119,14 @@ export default function AddClient() {
 						<HelperText
 							type='error'
 							visible={nameError}
-							style={styles.errorHelper}
+							style={globalStyles.text.errorHelper}
 						>
 							{t('add.client.nameInvalid')}
 						</HelperText>
 					) : null}
 
 					<TextInput
-						style={styles.input}
+						style={globalStyles.input}
 						value={contact}
 						onChangeText={(input) => {
 							setContact(input.replace(/[^0-9+\-\s]/g, ''));
@@ -140,11 +141,11 @@ export default function AddClient() {
 					/>
 				</KeyboardAvoidingView>
 
-				<View style={styles.buttonContainer}>
+				<View style={globalStyles.buttonContainer.global}>
 					<Button
-						style={styles.button}
-						contentStyle={styles.buttonContent}
-						labelStyle={styles.buttonText}
+						style={globalStyles.button}
+						contentStyle={globalStyles.buttonContent.global}
+						labelStyle={globalStyles.buttonText}
 						icon='account-plus'
 						mode='elevated'
 						loading={loading}
@@ -158,7 +159,7 @@ export default function AddClient() {
 	);
 }
 
-const styles = StyleSheet.create({
+/* const styles = StyleSheet.create({
 	scrollContainer: {
 		flexGrow: 1,
 		justifyContent: 'center',
@@ -188,4 +189,4 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		fontSize: 15,
 	},
-});
+}); */

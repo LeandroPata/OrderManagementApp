@@ -9,6 +9,7 @@ import Fuse from 'fuse.js';
 import SnackbarInfo from '@/components/SnackbarInfo';
 import SearchList from '@/components/SearchList';
 import DataTableOrder from '@/components/DataTableOrder';
+import { globalStyles } from '@/styles/global';
 
 export default function ShowClientOrder() {
 	const theme = useTheme();
@@ -220,7 +221,7 @@ export default function ShowClientOrder() {
 			/>
 
 			<SearchList
-				style={styles.searchList}
+				style={globalStyles.searchList}
 				icon='account'
 				value={name}
 				placeholder={t('show.clientOrder.clientSearch')}
@@ -247,7 +248,7 @@ export default function ShowClientOrder() {
 			/>
 
 			<ScrollView
-				contentContainerStyle={styles.scrollContainer}
+				contentContainerStyle={globalStyles.scrollContainer.show}
 				keyboardShouldPersistTaps='handled'
 			>
 				<DataTableOrder
@@ -264,7 +265,7 @@ export default function ShowClientOrder() {
 	);
 }
 
-const styles = StyleSheet.create({
+/* const styles = StyleSheet.create({
 	scrollContainer: {
 		flexGrow: 1,
 	},
@@ -279,4 +280,4 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		fontSize: 15,
 	},
-});
+}); */
