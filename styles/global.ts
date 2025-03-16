@@ -251,6 +251,10 @@ export const globalStyles = StyleSheet.create({
 			fontSize: 15,
 			fontWeight: 'bold',
 		},
+		drawer: {
+			fontSize: 15,
+			fontWeight: 'bold',
+		},
 	},
 	content: {
 		overflow: 'hidden',

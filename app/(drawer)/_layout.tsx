@@ -49,7 +49,7 @@ const DrawerLayout = () => {
 					backgroundColor: theme.colors.background,
 					paddingTop: insets.top,
 				},
-				drawerLabelStyle: { fontSize: 15, fontWeight: 'bold' },
+				drawerLabelStyle: globalStyles.text.drawer,
 				drawerActiveTintColor: theme.colors.primary,
 				drawerInactiveTintColor: theme.colors.onBackground,
 				drawerInactiveBackgroundColor: 'transparent',
