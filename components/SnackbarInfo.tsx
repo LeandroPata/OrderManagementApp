@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text } from 'react-native';
-import { Portal, Snackbar } from 'react-native-paper';
+import { Portal, Snackbar, useTheme } from 'react-native-paper';
 import { globalStyles } from '@/styles/global';
 
 /* // All the logic to implement the snackbar
@@ -26,6 +26,8 @@ type SnackbarInfoProps = {
 };
 
 const SnackbarInfo = (props: SnackbarInfoProps) => {
+	const theme = useTheme();
+
 	return (
 		<Portal>
 			<Snackbar
@@ -34,7 +36,14 @@ const SnackbarInfo = (props: SnackbarInfoProps) => {
 				onIconPress={props.onDismiss}
 				duration={5000}
 			>
-				<Text style={globalStyles.text.snackbarInfo}>{props.text}</Text>
+				<Text
+					style={[
+						globalStyles.text.snackbarInfo,
+						{ color: theme.colors.inverseOnSurface },
+					]}
+				>
+					{props.text}
+				</Text>
 			</Snackbar>
 		</Portal>
 	);

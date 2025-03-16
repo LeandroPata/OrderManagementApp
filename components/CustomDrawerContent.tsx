@@ -3,7 +3,6 @@ import {
 	Platform,
 	UIManager,
 	View,
-	StyleSheet,
 	TouchableOpacity,
 	Image,
 	useWindowDimensions,
@@ -296,7 +295,7 @@ export default function CustomDrawerContent(props: any) {
 			const downloadProgress =
 				(taskSnapshot.bytesTransferred * 100) / taskSnapshot.totalBytes / 100;
 			setUpdateDownloadProgress(Number(downloadProgress.toFixed(2)));
-			console.log(Number(downloadProgress.toFixed(2)));
+			//console.log(Number(downloadProgress.toFixed(2)));
 		});
 
 		await task
@@ -452,6 +451,7 @@ export default function CustomDrawerContent(props: any) {
 						/>
 					</Dialog.Content>
 				</Dialog>
+
 				<Modal
 					visible={changePasswordModal}
 					onDismiss={onChangePasswordModalDismiss}
@@ -560,7 +560,7 @@ export default function CustomDrawerContent(props: any) {
 					<Button
 						style={globalStyles.button}
 						contentStyle={globalStyles.buttonContent.modal}
-						labelStyle={globalStyles.buttonText}
+						labelStyle={globalStyles.buttonText.modal}
 						icon='check-bold'
 						mode='elevated'
 						onPress={changePassword}
@@ -604,7 +604,7 @@ export default function CustomDrawerContent(props: any) {
 						<DrawerItem
 							labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
 							label={t('drawer.home')}
-							style={{ minHeight: 10 }}
+							style={globalStyles.drawerStyle}
 							icon={({ focused, size, color }) => (
 								<Ionicons
 									name={focused ? 'home' : 'home-outline'}
@@ -623,7 +623,7 @@ export default function CustomDrawerContent(props: any) {
 						<DrawerItem
 							labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
 							label={t('drawer.add')}
-							style={{ minHeight: 10 }}
+							style={globalStyles.drawerStyle}
 							icon={({ focused, size, color }) => (
 								<Ionicons
 									name={focused ? 'person-add' : 'person-add-outline'}
@@ -642,7 +642,7 @@ export default function CustomDrawerContent(props: any) {
 						<DrawerItem
 							labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
 							label={t('drawer.show')}
-							style={{ minHeight: 10 }}
+							style={globalStyles.drawerStyle}
 							icon={({ focused, size, color }) => (
 								<Ionicons
 									name={focused ? 'search' : 'search-outline'}
@@ -663,7 +663,7 @@ export default function CustomDrawerContent(props: any) {
 						<DrawerItem
 							labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
 							label={t('drawer.importExport')}
-							style={{ minHeight: 10 }}
+							style={globalStyles.drawerStyle}
 							icon={({ focused, size, color }) => (
 								<Ionicons
 									name={focused ? 'server' : 'server-outline'}
@@ -740,7 +740,6 @@ export default function CustomDrawerContent(props: any) {
 								style={{
 									width: '80%',
 									justifyContent: 'center',
-
 									alignSelf: 'center',
 								}}
 							>
@@ -764,7 +763,7 @@ export default function CustomDrawerContent(props: any) {
 						<DrawerItem
 							labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
 							label={t('drawer.checkUpdate')}
-							style={{ minHeight: 10 }}
+							style={globalStyles.drawerStyle}
 							icon={({ color }) => (
 								<Ionicons
 									name={'cloud-download-outline'}
@@ -782,7 +781,7 @@ export default function CustomDrawerContent(props: any) {
 						<DrawerItem
 							labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
 							label={t('drawer.changePassword')}
-							style={{ minHeight: 10 }}
+							style={globalStyles.drawerStyle}
 							icon={({ color }) => (
 								<Ionicons
 									name={'lock-open-outline'}
@@ -800,7 +799,7 @@ export default function CustomDrawerContent(props: any) {
 						<DrawerItem
 							labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
 							label={t('drawer.signOut')}
-							style={{ minHeight: 10 }}
+							style={globalStyles.drawerStyle}
 							icon={({ color }) => (
 								<Ionicons
 									name={'log-out-outline'}
@@ -832,48 +831,3 @@ export default function CustomDrawerContent(props: any) {
 		</>
 	);
 }
-
-/* const styles = StyleSheet.create({
-	content: {
-		overflow: 'hidden',
-	},
-	image: {
-		alignSelf: 'center',
-		resizeMode: 'contain',
-	},
-	modalContainer: {
-		marginHorizontal: 30,
-	},
-	modalContentContainer: {
-		paddingVertical: 5,
-		paddingHorizontal: 15,
-		borderRadius: 20,
-		justifyContent: 'center',
-	},
-	input: {
-		marginVertical: 2,
-	},
-	errorHelper: {
-		fontWeight: 'bold',
-		fontSize: 15,
-	},
-	button: {
-		marginVertical: 8,
-		justifyContent: 'center',
-	},
-	buttonContent: {
-		minWidth: 150,
-		minHeight: 30,
-	},
-	buttonText: {
-		fontSize: 25,
-		fontWeight: 'bold',
-		overflow: 'visible',
-		paddingTop: 10,
-	},
-	title: {
-		fontSize: 13,
-		textAlign: 'center',
-		textAlignVertical: 'center',
-	},
-}); */

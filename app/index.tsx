@@ -211,12 +211,8 @@ export default function Index() {
 					>
 						<Button
 							style={globalStyles.button}
-							contentStyle={{ minWidth: 150, minHeight: 30 }}
-							labelStyle={{
-								fontSize: 15,
-								fontWeight: 'bold',
-								overflow: 'visible',
-							}}
+							contentStyle={globalStyles.buttonContent.modal}
+							labelStyle={globalStyles.buttonText.modal}
 							icon='check'
 							mode='elevated'
 							loading={confirmSignupLoading}
@@ -306,7 +302,7 @@ export default function Index() {
 					<Button
 						style={globalStyles.button}
 						contentStyle={globalStyles.buttonContent.global}
-						labelStyle={globalStyles.buttonText}
+						labelStyle={globalStyles.buttonText.global}
 						icon='login'
 						mode='elevated'
 						loading={loginLoading}
@@ -319,7 +315,7 @@ export default function Index() {
 					<Button
 						style={globalStyles.button}
 						contentStyle={globalStyles.buttonContent.global}
-						labelStyle={globalStyles.buttonText}
+						labelStyle={globalStyles.buttonText.global}
 						icon='briefcase-plus'
 						mode='elevated'
 						loading={signupLoading}
@@ -332,50 +328,3 @@ export default function Index() {
 		</>
 	);
 }
-
-/* const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-	},
-	modalContainer: {
-		marginHorizontal: 30,
-	},
-	modalContentContainer: {
-		paddingVertical: 10,
-		paddingHorizontal: 15,
-		borderRadius: 20,
-	},
-	buttonContainer: {
-		marginHorizontal: 20,
-		alignItems: 'center',
-	},
-	button: {
-		marginVertical: 8,
-		justifyContent: 'center',
-	},
-	buttonContent: { minWidth: 250, minHeight: 80 },
-	buttonText: {
-		fontSize: 25,
-		fontWeight: 'bold',
-		overflow: 'visible',
-		paddingTop: 10,
-	},
-	input: {
-		marginVertical: 2,
-	},
-	errorHelper: {
-		fontWeight: 'bold',
-		fontSize: 15,
-	},
-	imageContainer: {
-		justifyContent: 'center',
-		alignSelf: 'center',
-		width: '50%',
-		height: '35%',
-	},
-	image: {
-		resizeMode: 'contain',
-		width: '100%',
-		height: '100%',
-	},
-}); */

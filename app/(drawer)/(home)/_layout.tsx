@@ -4,6 +4,7 @@ import { Stack } from 'expo-router';
 
 const HomeLayout = () => {
 	const theme = useTheme();
+
 	return (
 		<Stack
 			screenOptions={{

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import {
 	DataTable,
 	Divider,
@@ -148,7 +148,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 									justifyContent: 'center',
 									flex: 2,
 								}}
-								textStyle={{ fontWeight: 'bold' }}
+								textStyle={globalStyles.text.dataTable.title}
 								sortDirection={
 									sortedColumn === 'product.name' ? sortDirection : undefined
 								}
@@ -160,7 +160,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								style={{
 									justifyContent: 'center',
 								}}
-								textStyle={{ fontWeight: 'bold' }}
+								textStyle={globalStyles.text.dataTable.title}
 								sortDirection={
 									sortedColumn === 'quantity' ? sortDirection : undefined
 								}
@@ -172,7 +172,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								style={{
 									justifyContent: 'center',
 								}}
-								textStyle={{ fontWeight: 'bold' }}
+								textStyle={globalStyles.text.dataTable.title}
 							>
 								{t('dataTableOrder.weight')}
 							</DataTable.Title>
@@ -181,7 +181,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 									justifyContent: 'center',
 									flex: 2,
 								}}
-								textStyle={{ fontWeight: 'bold' }}
+								textStyle={globalStyles.text.dataTable.title}
 							>
 								{t('dataTableOrder.weightTotal')}
 							</DataTable.Title>
@@ -189,7 +189,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								style={{
 									justifyContent: 'center',
 								}}
-								textStyle={{ fontWeight: 'bold' }}
+								textStyle={globalStyles.text.dataTable.title}
 							>
 								{t('dataTableOrder.price')}
 							</DataTable.Title>
@@ -197,7 +197,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								style={{
 									justifyContent: 'center',
 								}}
-								textStyle={{ fontWeight: 'bold' }}
+								textStyle={globalStyles.text.dataTable.title}
 							>
 								{t('dataTableOrder.notes')}
 							</DataTable.Title>
@@ -280,7 +280,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 									justifyContent: 'center',
 									flex: 2,
 								}}
-								textStyle={{ fontWeight: 'bold' }}
+								textStyle={globalStyles.text.dataTable.title}
 								sortDirection={
 									sortedColumn === 'product.name' ? sortDirection : undefined
 								}
@@ -290,7 +290,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 							</DataTable.Title>
 							<DataTable.Title
 								style={{ justifyContent: 'center' }}
-								textStyle={{ fontWeight: 'bold' }}
+								textStyle={globalStyles.text.dataTable.title}
 								sortDirection={
 									sortedColumn === 'quantity' ? sortDirection : undefined
 								}
@@ -300,7 +300,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 							</DataTable.Title>
 							<DataTable.Title
 								style={{ justifyContent: 'center' }}
-								textStyle={{ fontWeight: 'bold' }}
+								textStyle={globalStyles.text.dataTable.title}
 								sortDirection={
 									sortedColumn === 'weight' ? sortDirection : undefined
 								}
@@ -310,7 +310,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 							</DataTable.Title>
 							<DataTable.Title
 								style={{ justifyContent: 'center' }}
-								textStyle={{ fontWeight: 'bold' }}
+								textStyle={globalStyles.text.dataTable.title}
 								sortDirection={
 									sortedColumn === 'price' ? sortDirection : undefined
 								}
@@ -323,7 +323,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 									justifyContent: 'center',
 									flex: 2,
 								}}
-								textStyle={{ fontWeight: 'bold' }}
+								textStyle={globalStyles.text.dataTable.title}
 								sortDirection={
 									sortedColumn === 'deliveryDateTime'
 										? sortDirection
@@ -335,7 +335,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 							</DataTable.Title>
 							<DataTable.Title
 								style={{ justifyContent: 'center' }}
-								textStyle={{ fontWeight: 'bold' }}
+								textStyle={globalStyles.text.dataTable.title}
 							>
 								{t('dataTableOrder.status')}
 							</DataTable.Title>
@@ -395,7 +395,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 									justifyContent: 'center',
 									flex: 2,
 								}}
-								textStyle={{ fontWeight: 'bold' }}
+								textStyle={globalStyles.text.dataTable.title}
 								sortDirection={
 									sortedColumn === 'client.name' ? sortDirection : undefined
 								}
@@ -405,7 +405,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 							</DataTable.Title>
 							<DataTable.Title
 								style={{ justifyContent: 'center' }}
-								textStyle={{ fontWeight: 'bold' }}
+								textStyle={globalStyles.text.dataTable.title}
 								sortDirection={
 									sortedColumn === 'quantity' ? sortDirection : undefined
 								}
@@ -415,7 +415,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 							</DataTable.Title>
 							<DataTable.Title
 								style={{ justifyContent: 'center' }}
-								textStyle={{ fontWeight: 'bold' }}
+								textStyle={globalStyles.text.dataTable.title}
 								sortDirection={
 									sortedColumn === 'weight' ? sortDirection : undefined
 								}
@@ -425,7 +425,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 							</DataTable.Title>
 							<DataTable.Title
 								style={{ justifyContent: 'center' }}
-								textStyle={{ fontWeight: 'bold' }}
+								textStyle={globalStyles.text.dataTable.title}
 								sortDirection={
 									sortedColumn === 'price' ? sortDirection : undefined
 								}
@@ -438,7 +438,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 									justifyContent: 'center',
 									flex: 2,
 								}}
-								textStyle={{ fontWeight: 'bold' }}
+								textStyle={globalStyles.text.dataTable.title}
 								sortDirection={
 									sortedColumn === 'deliveryDateTime'
 										? sortDirection
@@ -450,7 +450,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 							</DataTable.Title>
 							<DataTable.Title
 								style={{ justifyContent: 'center' }}
-								textStyle={{ fontWeight: 'bold' }}
+								textStyle={globalStyles.text.dataTable.title}
 							>
 								{t('dataTableOrder.status')}
 							</DataTable.Title>
@@ -509,7 +509,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								style={{
 									justifyContent: 'center',
 								}}
-								textStyle={{ fontWeight: 'bold' }}
+								textStyle={globalStyles.text.dataTable.title}
 								sortDirection={
 									sortedColumn === 'name' ? sortDirection : undefined
 								}
@@ -519,7 +519,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 							</DataTable.Title>
 							<DataTable.Title
 								style={{ justifyContent: 'center' }}
-								textStyle={{ fontWeight: 'bold' }}
+								textStyle={globalStyles.text.dataTable.title}
 								sortDirection={
 									sortedColumn === 'quantity' ? sortDirection : undefined
 								}
@@ -529,7 +529,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 							</DataTable.Title>
 							<DataTable.Title
 								style={{ justifyContent: 'center' }}
-								textStyle={{ fontWeight: 'bold' }}
+								textStyle={globalStyles.text.dataTable.title}
 								sortDirection={
 									sortedColumn === 'weight' ? sortDirection : undefined
 								}
@@ -539,7 +539,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 							</DataTable.Title>
 							<DataTable.Title
 								style={{ justifyContent: 'center' }}
-								textStyle={{ fontWeight: 'bold' }}
+								textStyle={globalStyles.text.dataTable.title}
 								sortDirection={
 									sortedColumn === 'weightTotal' ? sortDirection : undefined
 								}
@@ -549,7 +549,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 							</DataTable.Title>
 							<DataTable.Title
 								style={{ justifyContent: 'center' }}
-								textStyle={{ fontWeight: 'bold' }}
+								textStyle={globalStyles.text.dataTable.title}
 								sortDirection={
 									sortedColumn === 'status' ? sortDirection : undefined
 								}
@@ -611,7 +611,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 					<>
 						{Object.keys(item).length !== 0 ? (
 							<View style={globalStyles.container.item}>
-								<Text style={globalStyles.text.dataTable}>
+								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.name')}:
 								</Text>
 								<Text style={globalStyles.item}>{item.product.name}</Text>
@@ -622,7 +622,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={globalStyles.text.dataTable}>
+								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.quantity')}:
 								</Text>
 								<Text style={globalStyles.item}>{item.quantity}</Text>
@@ -633,7 +633,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={globalStyles.text.dataTable}>
+								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.weight')}:
 								</Text>
 								<Text style={globalStyles.item}>
@@ -646,7 +646,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={globalStyles.text.dataTable}>
+								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.weightTotal')}:
 								</Text>
 								<Text style={globalStyles.item}>
@@ -659,7 +659,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={globalStyles.text.dataTable}>
+								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.price')}:
 								</Text>
 								<Text style={globalStyles.item}>{item.price.toFixed(2)}</Text>
@@ -670,7 +670,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={globalStyles.text.dataTable}>
+								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.status')}:
 								</Text>
 								<Text style={globalStyles.item}>
@@ -683,7 +683,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={globalStyles.text.dataTable}>
+								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.notes')}:
 								</Text>
 								<Text style={globalStyles.item}>{item.notes}</Text>
@@ -698,7 +698,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 					<>
 						{Object.keys(item).length !== 0 ? (
 							<View style={globalStyles.container.item}>
-								<Text style={globalStyles.text.dataTable}>
+								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.name')}:
 								</Text>
 								<Text style={globalStyles.item}>{item.product.name}</Text>
@@ -709,7 +709,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={globalStyles.text.dataTable}>
+								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.quantity')}:
 								</Text>
 								<Text style={globalStyles.item}>{item.quantity}</Text>
@@ -720,7 +720,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={globalStyles.text.dataTable}>
+								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.weight')}:
 								</Text>
 								<Text style={globalStyles.item}>
@@ -733,7 +733,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={globalStyles.text.dataTable}>
+								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.weightTotal')}:
 								</Text>
 								<Text style={globalStyles.item}>
@@ -746,7 +746,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={globalStyles.text.dataTable}>
+								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.price')}:
 								</Text>
 								<Text style={globalStyles.item}>{item.price.toFixed(2)}</Text>
@@ -757,7 +757,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={globalStyles.text.dataTable}>
+								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.deliveryDate')}:
 								</Text>
 								<Text style={globalStyles.item}>
@@ -770,7 +770,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={globalStyles.text.dataTable}>
+								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.status')}:
 								</Text>
 								<Text style={globalStyles.item}>
@@ -783,7 +783,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={globalStyles.text.dataTable}>
+								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.notes')}:
 								</Text>
 								<Text style={globalStyles.item}>{item.notes}</Text>
@@ -798,7 +798,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 					<>
 						{Object.keys(item).length !== 0 ? (
 							<View style={globalStyles.container.item}>
-								<Text style={globalStyles.text.dataTable}>
+								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.name')}:
 								</Text>
 								<Text style={globalStyles.item}>{item.client.name}</Text>
@@ -809,7 +809,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={globalStyles.text.dataTable}>
+								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.quantity')}:
 								</Text>
 								<Text style={globalStyles.item}>{item.quantity}</Text>
@@ -820,7 +820,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={globalStyles.text.dataTable}>
+								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.weight')}:
 								</Text>
 								<Text style={globalStyles.item}>
@@ -833,7 +833,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={globalStyles.text.dataTable}>
+								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.weightTotal')}:
 								</Text>
 								<Text style={globalStyles.item}>
@@ -846,7 +846,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={globalStyles.text.dataTable}>
+								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.price')}:
 								</Text>
 								<Text style={globalStyles.item}>{item.price.toFixed(2)}</Text>
@@ -857,7 +857,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={globalStyles.text.dataTable}>
+								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.deliveryDate')}:
 								</Text>
 								<Text style={globalStyles.item}>
@@ -870,7 +870,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={globalStyles.text.dataTable}>
+								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.status')}:
 								</Text>
 								<Text style={globalStyles.item}>
@@ -883,7 +883,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={globalStyles.text.dataTable}>
+								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.notes')}:
 								</Text>
 								<Text style={globalStyles.item}>{item.notes}</Text>
@@ -898,7 +898,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 					<>
 						{Object.keys(item).length !== 0 ? (
 							<View style={globalStyles.container.item}>
-								<Text style={globalStyles.text.dataTable}>
+								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.name')}:
 								</Text>
 								<Text style={globalStyles.item}>{item.name}</Text>
@@ -909,7 +909,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={globalStyles.text.dataTable}>
+								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.quantity')}:
 								</Text>
 								<Text style={globalStyles.item}>{item.quantity}</Text>
@@ -920,7 +920,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={globalStyles.text.dataTable}>
+								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.weight')}:
 								</Text>
 								<Text style={globalStyles.item}>
@@ -933,7 +933,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={globalStyles.text.dataTable}>
+								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.weightTotal')}:
 								</Text>
 								<Text style={globalStyles.item}>
@@ -946,7 +946,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 										backgroundColor: theme.colors.outline,
 									}}
 								/>
-								<Text style={globalStyles.text.dataTable}>
+								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.status')}:
 								</Text>
 								<Text style={globalStyles.item}>
@@ -998,33 +998,3 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 };
 
 export default DataTableOrder;
-
-/* const styles = StyleSheet.create({
-	modalContainer: {
-		marginHorizontal: 30,
-		alignItems: 'center',
-	},
-	modalContentContainer: {
-		paddingVertical: 10,
-		paddingHorizontal: 15,
-		borderRadius: 20,
-		borderWidth: 2,
-	},
-	itemContainer: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		flexWrap: 'wrap',
-		maxWidth: '90%',
-	},
-	title: {
-		textAlign: 'center',
-		textAlignVertical: 'center',
-		fontWeight: 'bold',
-		fontSize: 18,
-	},
-	item: {
-		textAlign: 'center',
-		textAlignVertical: 'center',
-		fontSize: 15,
-	},
-}); */

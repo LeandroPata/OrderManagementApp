@@ -1,12 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useColorScheme, View } from 'react-native';
-import {
-	PaperProvider,
-	Portal,
-	ActivityIndicator,
-	MD3LightTheme as DefaultLightTheme,
-	MD3DarkTheme as DefaultDarkTheme,
-} from 'react-native-paper';
+import { PaperProvider, Portal, ActivityIndicator } from 'react-native-paper';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import auth, { type FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { Stack, useRouter, useSegments } from 'expo-router';

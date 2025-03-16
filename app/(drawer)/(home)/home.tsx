@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-	View,
-	StyleSheet,
-	ScrollView,
-	Image,
-	useWindowDimensions,
-} from 'react-native';
+import { View, ScrollView, Image, useWindowDimensions } from 'react-native';
 import { Button } from 'react-native-paper';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -40,7 +34,7 @@ export default function Home() {
 				<Button
 					style={globalStyles.button}
 					contentStyle={globalStyles.buttonContent.global}
-					labelStyle={globalStyles.buttonText}
+					labelStyle={globalStyles.buttonText.global}
 					icon='account-plus'
 					mode='elevated'
 					//loading={loginLoading}
@@ -52,7 +46,7 @@ export default function Home() {
 				<Button
 					style={globalStyles.button}
 					contentStyle={globalStyles.buttonContent.global}
-					labelStyle={globalStyles.buttonText}
+					labelStyle={globalStyles.buttonText.global}
 					icon='account-search'
 					mode='elevated'
 					//loading={loginLoading}
@@ -64,7 +58,7 @@ export default function Home() {
 				<Button
 					style={globalStyles.button}
 					contentStyle={globalStyles.buttonContent.global}
-					labelStyle={globalStyles.buttonText}
+					labelStyle={globalStyles.buttonText.global}
 					icon='database'
 					mode='elevated'
 					//loading={loginLoading}
@@ -76,39 +70,3 @@ export default function Home() {
 		</ScrollView>
 	);
 }
-
-/* const styles = StyleSheet.create({
-	scrollContainer: {
-		flexGrow: 1,
-		//justifyContent: 'center',
-	},
-	buttonContainer: {
-		marginHorizontal: 20,
-		alignItems: 'center',
-	},
-	button: {
-		marginVertical: 8,
-		justifyContent: 'center',
-	},
-	buttonContent: {
-		minWidth: 280,
-		minHeight: 80,
-	},
-	buttonText: {
-		fontSize: 25,
-		fontWeight: 'bold',
-		overflow: 'visible',
-		paddingTop: 10,
-	},
-	imageContainer: {
-		justifyContent: 'center',
-		alignSelf: 'center',
-		width: '50%',
-		height: '35%',
-	},
-	image: {
-		resizeMode: 'contain',
-		width: '100%',
-		height: '100%',
-	},
-}); */

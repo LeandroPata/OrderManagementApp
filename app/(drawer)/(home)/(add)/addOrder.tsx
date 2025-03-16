@@ -1,11 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import {
-	View,
-	StyleSheet,
-	KeyboardAvoidingView,
-	Keyboard,
-	ScrollView,
-} from 'react-native';
+import { View, KeyboardAvoidingView, Keyboard, ScrollView } from 'react-native';
 import {
 	Button,
 	Divider,
@@ -506,13 +500,7 @@ export default function AddOrder() {
 							}}
 						>
 							<TouchableRipple
-								style={{
-									marginRight: 5,
-									width: '15%',
-									paddingVertical: 5,
-									paddingHorizontal: 10,
-									borderRadius: 15,
-								}}
+								style={globalStyles.quantityButtonStyle}
 								borderless={true}
 								onPress={() => {
 									if (Number(productQuantity) > 1)
@@ -522,15 +510,12 @@ export default function AddOrder() {
 								}}
 							>
 								<Text
-									style={{
-										color: theme.colors.primary,
-										fontSize: 20,
-										fontWeight: 'bold',
-										paddingTop: 5,
-										paddingBottom: 5,
-										textAlign: 'center',
-										textAlignVertical: 'center',
-									}}
+									style={[
+										globalStyles.quantityButtonText,
+										{
+											color: theme.colors.primary,
+										},
+									]}
 								>
 									-
 								</Text>
@@ -552,28 +537,19 @@ export default function AddOrder() {
 								label={t('add.order.productQuantity')}
 							/>
 							<TouchableRipple
-								style={{
-									marginHorizontal: 5,
-									width: '15%',
-									paddingVertical: 5,
-									paddingHorizontal: 10,
-									borderRadius: 15,
-								}}
+								style={globalStyles.quantityButtonStyle}
 								borderless={true}
 								onPress={() => {
 									setProductQuantity((Number(productQuantity) + 1).toString());
 								}}
 							>
 								<Text
-									style={{
-										color: theme.colors.primary,
-										fontSize: 20,
-										fontWeight: 'bold',
-										paddingTop: 5,
-										paddingBottom: 5,
-										textAlign: 'center',
-										textAlignVertical: 'center',
-									}}
+									style={[
+										globalStyles.quantityButtonText,
+										{
+											color: theme.colors.primary,
+										},
+									]}
 								>
 									+
 								</Text>
@@ -610,7 +586,7 @@ export default function AddOrder() {
 					<Button
 						style={[globalStyles.button, { width: '50%', alignSelf: 'center' }]}
 						labelStyle={[
-							globalStyles.buttonText,
+							globalStyles.buttonText.global,
 							{ fontSize: 20, paddingTop: 5 },
 						]}
 						onPress={addToOrder}
@@ -631,7 +607,6 @@ export default function AddOrder() {
 					<View
 						style={{
 							flexDirection: 'row',
-							//alignItems: 'center',
 							justifyContent: 'center',
 							alignContent: 'center',
 							marginTop: 10,
@@ -700,7 +675,7 @@ export default function AddOrder() {
 					<Button
 						style={globalStyles.button}
 						contentStyle={globalStyles.buttonContent.global}
-						labelStyle={globalStyles.buttonText}
+						labelStyle={globalStyles.buttonText.global}
 						icon='package-variant-closed'
 						mode='elevated'
 						loading={loading}
@@ -713,50 +688,3 @@ export default function AddOrder() {
 		</>
 	);
 }
-
-/* const styles = StyleSheet.create({
-	scrollContainer: {
-		flexGrow: 1,
-		justifyContent: 'center',
-	},
-	buttonContainer: {
-		flex: 1,
-		justifyContent: 'flex-end',
-		marginHorizontal: 20,
-		alignItems: 'center',
-	},
-	button: {
-		marginVertical: 8,
-		justifyContent: 'center',
-	},
-	buttonContent: {
-		minWidth: 280,
-		minHeight: 80,
-	},
-	buttonText: {
-		fontSize: 25,
-		fontWeight: 'bold',
-		overflow: 'visible',
-		paddingTop: 10,
-	},
-	searchList: {
-		paddingHorizontal: 10,
-		marginBottom: 10,
-	},
-	input: {
-		marginVertical: 2,
-	},
-	title: {
-		fontSize: 20,
-		fontWeight: 'bold',
-	},
-	dateText: {
-		fontWeight: 'bold',
-		fontSize: 20,
-		marginVertical: 6,
-	},
-	errorHelper: {
-		fontWeight: 'bold',
-		fontSize: 15,
-	},
-}); */

@@ -4,13 +4,11 @@ import { useTheme } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Drawer } from 'expo-router/drawer';
 import { Ionicons } from '@expo/vector-icons';
-import { useTranslation } from 'react-i18next';
 import CustomDrawerContent from '@/components/CustomDrawerContent';
 
 const DrawerLayout = () => {
 	const theme = useTheme();
 	const insets = useSafeAreaInsets();
-	const { t } = useTranslation();
 
 	return (
 		<Drawer

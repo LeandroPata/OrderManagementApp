@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import { Button } from 'react-native-paper';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -17,7 +17,7 @@ export default function ShowHome() {
 				<Button
 					style={globalStyles.button}
 					contentStyle={globalStyles.buttonContent.global}
-					labelStyle={globalStyles.buttonText}
+					labelStyle={globalStyles.buttonText.global}
 					icon='account-search'
 					mode='elevated'
 					//loading={loginLoading}
@@ -29,7 +29,7 @@ export default function ShowHome() {
 				<Button
 					style={globalStyles.button}
 					contentStyle={globalStyles.buttonContent.global}
-					labelStyle={globalStyles.buttonText}
+					labelStyle={globalStyles.buttonText.global}
 					icon='cake-variant'
 					mode='elevated'
 					//loading={loginLoading}
@@ -43,7 +43,7 @@ export default function ShowHome() {
 				<Button
 					style={globalStyles.button}
 					contentStyle={globalStyles.buttonContent.global}
-					labelStyle={globalStyles.buttonText}
+					labelStyle={globalStyles.buttonText.global}
 					icon='cake-layered'
 					mode='elevated'
 					//loading={loginLoading}
@@ -57,28 +57,3 @@ export default function ShowHome() {
 		</ScrollView>
 	);
 }
-
-/* const styles = StyleSheet.create({
-	scrollContainer: {
-		flexGrow: 1,
-		justifyContent: 'center',
-	},
-	buttonContainer: {
-		marginHorizontal: 20,
-		alignItems: 'center',
-	},
-	button: {
-		marginVertical: 8,
-		justifyContent: 'center',
-	},
-	buttonContent: {
-		minWidth: 280,
-		minHeight: 80,
-	},
-	buttonText: {
-		fontSize: 25,
-		fontWeight: 'bold',
-		overflow: 'visible',
-		paddingTop: 10,
-	},
-}); */

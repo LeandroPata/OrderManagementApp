@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import {
-	View,
-	StyleSheet,
-	KeyboardAvoidingView,
-	Keyboard,
-	ScrollView,
-} from 'react-native';
+import { View, KeyboardAvoidingView, Keyboard, ScrollView } from 'react-native';
 import { Button, TextInput, HelperText } from 'react-native-paper';
 import type { FirebaseError } from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
@@ -145,7 +139,7 @@ export default function AddClient() {
 					<Button
 						style={globalStyles.button}
 						contentStyle={globalStyles.buttonContent.global}
-						labelStyle={globalStyles.buttonText}
+						labelStyle={globalStyles.buttonText.global}
 						icon='account-plus'
 						mode='elevated'
 						loading={loading}
@@ -158,35 +152,3 @@ export default function AddClient() {
 		</>
 	);
 }
-
-/* const styles = StyleSheet.create({
-	scrollContainer: {
-		flexGrow: 1,
-		justifyContent: 'center',
-	},
-	buttonContainer: {
-		marginHorizontal: 20,
-		alignItems: 'center',
-	},
-	button: {
-		marginVertical: 8,
-		justifyContent: 'center',
-	},
-	buttonContent: {
-		minWidth: 280,
-		minHeight: 80,
-	},
-	buttonText: {
-		fontSize: 25,
-		fontWeight: 'bold',
-		overflow: 'visible',
-		paddingTop: 10,
-	},
-	input: {
-		marginVertical: 2,
-	},
-	errorHelper: {
-		fontWeight: 'bold',
-		fontSize: 15,
-	},
-}); */

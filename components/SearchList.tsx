@@ -18,7 +18,6 @@ import {
 } from 'react-native';
 import { Searchbar, useTheme } from 'react-native-paper';
 import type { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
-import { globalStyles } from '@/styles/global';
 
 type SearchListProps = ComponentPropsWithRef<typeof TextInput> & {
 	icon?: IconSource;

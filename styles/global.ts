@@ -169,11 +169,28 @@ export const globalStyles = StyleSheet.create({
 		marginVertical: 8,
 		justifyContent: 'center',
 	},
+	buttonContent: {
+		global: {
+			minWidth: 280,
+			minHeight: 80,
+		},
+		modal: {
+			minWidth: 150,
+			minHeight: 30,
+		},
+	},
 	buttonText: {
-		fontSize: 25,
-		fontWeight: 'bold',
-		overflow: 'visible',
-		paddingTop: 10,
+		global: {
+			fontSize: 25,
+			fontWeight: 'bold',
+			overflow: 'visible',
+			paddingTop: 10,
+		},
+		modal: {
+			fontSize: 15,
+			fontWeight: 'bold',
+			overflow: 'visible',
+		},
 	},
 	input: {
 		marginVertical: 2,
@@ -187,16 +204,6 @@ export const globalStyles = StyleSheet.create({
 		drawer: {
 			alignSelf: 'center',
 			resizeMode: 'contain',
-		},
-	},
-	buttonContent: {
-		global: {
-			minWidth: 280,
-			minHeight: 80,
-		},
-		modal: {
-			minWidth: 150,
-			minHeight: 30,
 		},
 	},
 	searchList: {
@@ -224,10 +231,15 @@ export const globalStyles = StyleSheet.create({
 			textAlignVertical: 'center',
 		},
 		dataTable: {
-			fontSize: 18,
-			fontWeight: 'bold',
-			textAlign: 'center',
-			textAlignVertical: 'center',
+			title: {
+				fontWeight: 'bold',
+			},
+			row: {
+				fontSize: 18,
+				fontWeight: 'bold',
+				textAlign: 'center',
+				textAlignVertical: 'center',
+			},
 		},
 		dialog: {
 			fontSize: 15,
@@ -245,6 +257,24 @@ export const globalStyles = StyleSheet.create({
 	},
 	item: {
 		fontSize: 15,
+		textAlign: 'center',
+		textAlignVertical: 'center',
+	},
+	drawerStyle: {
+		minHeight: 10,
+	},
+	quantityButtonStyle: {
+		marginRight: 5,
+		width: '15%',
+		paddingVertical: 5,
+		paddingHorizontal: 10,
+		borderRadius: 15,
+	},
+	quantityButtonText: {
+		fontSize: 20,
+		fontWeight: 'bold',
+		paddingTop: 5,
+		paddingBottom: 5,
 		textAlign: 'center',
 		textAlignVertical: 'center',
 	},

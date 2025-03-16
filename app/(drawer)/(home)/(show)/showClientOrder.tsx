@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
-import { StyleSheet, Keyboard, ScrollView } from 'react-native';
-import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { Keyboard, ScrollView } from 'react-native';
+import { Divider, Text, TouchableRipple } from 'react-native-paper';
 import type { FirebaseError } from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
 import { useFocusEffect } from 'expo-router';
@@ -12,7 +12,6 @@ import DataTableOrder from '@/components/DataTableOrder';
 import { globalStyles } from '@/styles/global';
 
 export default function ShowClientOrder() {
-	const theme = useTheme();
 	const { t } = useTranslation();
 
 	const [clientList, setClientList] = useState([]);
@@ -264,20 +263,3 @@ export default function ShowClientOrder() {
 		</>
 	);
 }
-
-/* const styles = StyleSheet.create({
-	scrollContainer: {
-		flexGrow: 1,
-	},
-	searchList: {
-		paddingHorizontal: 10,
-		marginBottom: 10,
-	},
-	input: {
-		marginVertical: 2,
-	},
-	errorHelper: {
-		fontWeight: 'bold',
-		fontSize: 15,
-	},
-}); */
