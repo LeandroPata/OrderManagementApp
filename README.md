@@ -2,7 +2,7 @@
 
 This is a personal project created to improve order management.
 
-It was developed with the intent to accurately, quickly and easily check current orders, what orders are not completed yet, are ready to be delivered or already delivered, what products are needed to fulfill current orders and other features, while making the information available anywhere by storing it in a cloud database.
+It was developed with the intent to accurately, quickly and easily check current orders, what orders are not completed yet, are ready to be delivered or already delivered, the quantity of specific products needed to fulfill current orders and other features, while making the information available anywhere by storing it in a cloud database.
 
 ## Features
 
@@ -59,13 +59,13 @@ It was developed with the intent to accurately, quickly and easily check current
   <img align='top' src='assets/samples/drawerDark.png' alt = 'DrawerDark' width=190>
 </p>
 
-## Tecnical Notes
+## Technical Notes
 
 - Both portrait and landscape layouts are supported, as landscape layout significantly improves viewing information from the DataTables;
-- As a common smartphone's screen width isn't enough to fully display the information from a DataTable's row, a solution was implemented where clicking a DataTable's row will display all that row's information;
-- All searchs of clients/products have a "fuzzy searching" implementation with a "hint" list to help the user find the intended client/product;
+- As a common smartphone's screen width might not be enough to fully display the information from a DataTable's row, an alternative was implemented where clicking a DataTable's row will display all that row's information;
+- All searches of clients/products have a "fuzzy searching" implementation with a "hint" list to help the user find the intended client/product;
 - Update checking was implemented by having the APKs stored in Firebase Storage and then cross-checking the app's current version and the stored APKs version, downloading and updating if a more recent version is available (this isn't possible in iOS, as it doesn't allow sideloading);
-- As all cloud functionalities (as is) require Firebase, in any reproduction of this project will require setting up Firebase (more specifically the modules detailed in the next section) and adding both config files (google-services.json and GoogleService-Info.plist) to the project;
+- As all cloud functionalities (as is) require Firebase, any reproduction of this project will require setting up Firebase (more specifically the modules detailed in the next section) and adding both config files (google-services.json and GoogleService-Info.plist) to the project;
 - Environment variables are used, so in any reproduction of this project setting them in a .env file (to run locally) and/or Expo (or other building framework) will be necessary. This is an .env example:
 
 ```

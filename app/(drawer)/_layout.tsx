@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Drawer } from 'expo-router/drawer';
 import { Ionicons } from '@expo/vector-icons';
 import CustomDrawerContent from '@/components/CustomDrawerContent';
+import { globalStyles } from '@/styles/global';
 
 const DrawerLayout = () => {
 	const theme = useTheme();
