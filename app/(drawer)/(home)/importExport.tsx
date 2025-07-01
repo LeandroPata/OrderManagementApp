@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { View, PermissionsAndroid, Platform, ScrollView } from 'react-native';
-import { Button } from 'react-native-paper';
-import type { FirebaseError } from 'firebase/app';
 import firestore, { Timestamp } from '@react-native-firebase/firestore';
 import storage, {
 	type FirebaseStorageTypes,
 } from '@react-native-firebase/storage';
 import * as DocumentPicker from 'expo-document-picker';
+import type { FirebaseError } from 'firebase/app';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { PermissionsAndroid, Platform, ScrollView, View } from 'react-native';
+import { Button } from 'react-native-paper';
 import RNFetchBlob from 'rn-fetch-blob';
-import SnackbarInfo from '@/components/SnackbarInfo';
+import { useSnackbar } from '@/context/SnackbarContext';
 import { globalStyles } from '@/styles/global';
 
 export default function importExport() {
@@ -23,14 +23,7 @@ export default function importExport() {
 	const [exportOrderLoading, setExportOrderLoading] = useState(false);
 
 	// All the logic to implement the snackbar
-	const [snackbarVisible, setSnackbarVisible] = useState(false);
-	const [snackbarText, setSnackbarText] = useState('');
-
-	const showSnackbar = (text: string) => {
-		setSnackbarText(text);
-		setSnackbarVisible(true);
-	};
-	const onDismissSnackbar = () => setSnackbarVisible(false);
+	const { showSnackbar } = useSnackbar();
 
 	// converts date format from pt-PT locale (23/01/2024) to ISO date format (2024-01-23T00:00:00.000Z)
 	// and then converts to Firestore Timestamp format
@@ -857,86 +850,78 @@ export default function importExport() {
 	};
 
 	return (
-		<>
-			<SnackbarInfo
-				text={snackbarText}
-				visible={snackbarVisible}
-				onDismiss={onDismissSnackbar}
-			/>
-
-			<ScrollView
-				contentContainerStyle={globalStyles.scrollContainer.global}
-				keyboardShouldPersistTaps='handled'
-			>
-				<View style={globalStyles.buttonContainer.global}>
-					<Button
-						style={globalStyles.button}
-						contentStyle={globalStyles.buttonContent.global}
-						labelStyle={globalStyles.buttonText.global}
-						icon='database-import'
-						mode='elevated'
-						loading={importClientLoading}
-						onPress={importClients}
-					>
-						{t('importExport.importClients')}
-					</Button>
-					<Button
-						style={globalStyles.button}
-						contentStyle={globalStyles.buttonContent.global}
-						labelStyle={globalStyles.buttonText.global}
-						icon='database-import'
-						mode='elevated'
-						loading={importProductLoading}
-						onPress={importProducts}
-					>
-						{t('importExport.importProducts')}
-					</Button>
-					<Button
-						style={globalStyles.button}
-						contentStyle={globalStyles.buttonContent.global}
-						labelStyle={globalStyles.buttonText.global}
-						icon='database-import'
-						mode='elevated'
-						loading={importOrderLoading}
-						onPress={importOrders}
-					>
-						{t('importExport.importOrders')}
-					</Button>
-					<Button
-						style={globalStyles.button}
-						contentStyle={globalStyles.buttonContent.global}
-						labelStyle={globalStyles.buttonText.global}
-						icon='database-export'
-						mode='elevated'
-						loading={exportClientLoading}
-						onPress={exportClients}
-					>
-						{t('importExport.exportClients')}
-					</Button>
-					<Button
-						style={globalStyles.button}
-						contentStyle={globalStyles.buttonContent.global}
-						labelStyle={globalStyles.buttonText.global}
-						icon='database-export'
-						mode='elevated'
-						loading={exportProductLoading}
-						onPress={exportProducts}
-					>
-						{t('importExport.exportProducts')}
-					</Button>
-					<Button
-						style={globalStyles.button}
-						contentStyle={globalStyles.buttonContent.global}
-						labelStyle={globalStyles.buttonText.global}
-						icon='database-export'
-						mode='elevated'
-						loading={exportOrderLoading}
-						onPress={exportOrders}
-					>
-						{t('importExport.exportOrders')}
-					</Button>
-				</View>
-			</ScrollView>
-		</>
+		<ScrollView
+			contentContainerStyle={globalStyles.scrollContainer.global}
+			keyboardShouldPersistTaps='handled'
+		>
+			<View style={globalStyles.buttonContainer.global}>
+				<Button
+					style={globalStyles.button}
+					contentStyle={globalStyles.buttonContent.global}
+					labelStyle={globalStyles.buttonText.global}
+					icon='database-import'
+					mode='elevated'
+					loading={importClientLoading}
+					onPress={importClients}
+				>
+					{t('importExport.importClients')}
+				</Button>
+				<Button
+					style={globalStyles.button}
+					contentStyle={globalStyles.buttonContent.global}
+					labelStyle={globalStyles.buttonText.global}
+					icon='database-import'
+					mode='elevated'
+					loading={importProductLoading}
+					onPress={importProducts}
+				>
+					{t('importExport.importProducts')}
+				</Button>
+				<Button
+					style={globalStyles.button}
+					contentStyle={globalStyles.buttonContent.global}
+					labelStyle={globalStyles.buttonText.global}
+					icon='database-import'
+					mode='elevated'
+					loading={importOrderLoading}
+					onPress={importOrders}
+				>
+					{t('importExport.importOrders')}
+				</Button>
+				<Button
+					style={globalStyles.button}
+					contentStyle={globalStyles.buttonContent.global}
+					labelStyle={globalStyles.buttonText.global}
+					icon='database-export'
+					mode='elevated'
+					loading={exportClientLoading}
+					onPress={exportClients}
+				>
+					{t('importExport.exportClients')}
+				</Button>
+				<Button
+					style={globalStyles.button}
+					contentStyle={globalStyles.buttonContent.global}
+					labelStyle={globalStyles.buttonText.global}
+					icon='database-export'
+					mode='elevated'
+					loading={exportProductLoading}
+					onPress={exportProducts}
+				>
+					{t('importExport.exportProducts')}
+				</Button>
+				<Button
+					style={globalStyles.button}
+					contentStyle={globalStyles.buttonContent.global}
+					labelStyle={globalStyles.buttonText.global}
+					icon='database-export'
+					mode='elevated'
+					loading={exportOrderLoading}
+					onPress={exportOrders}
+				>
+					{t('importExport.exportOrders')}
+				</Button>
+			</View>
+		</ScrollView>
 	);
 }

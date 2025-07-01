@@ -1,22 +1,22 @@
-import React, { useCallback, useState } from 'react';
-import { View, KeyboardAvoidingView, Keyboard, ScrollView } from 'react-native';
+import firestore, { Timestamp } from '@react-native-firebase/firestore';
+import { useFocusEffect } from 'expo-router';
+import type { FirebaseError } from 'firebase/app';
+import Fuse from 'fuse.js';
+import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Keyboard, KeyboardAvoidingView, ScrollView, View } from 'react-native';
+import DatePicker from 'react-native-date-picker';
 import {
 	Button,
 	Divider,
-	TouchableRipple,
 	Text,
 	TextInput,
+	TouchableRipple,
 	useTheme,
 } from 'react-native-paper';
-import type { FirebaseError } from 'firebase/app';
-import firestore, { Timestamp } from '@react-native-firebase/firestore';
-import { useFocusEffect } from 'expo-router';
-import { useTranslation } from 'react-i18next';
-import Fuse from 'fuse.js';
-import DatePicker from 'react-native-date-picker';
-import SnackbarInfo from '@/components/SnackbarInfo';
-import SearchList from '@/components/SearchList';
 import DataTableOrder from '@/components/DataTableOrder';
+import SearchList from '@/components/SearchList';
+import { useSnackbar } from '@/context/SnackbarContext';
 import { globalStyles } from '@/styles/global';
 
 export default function AddOrder() {
@@ -45,14 +45,7 @@ export default function AddOrder() {
 	const [deliveryTime, setDeliveryTime] = useState(new Date(0, 0, 0));
 
 	// All the logic to implement the snackbar
-	const [snackbarVisible, setSnackbarVisible] = useState(false);
-	const [snackbarText, setSnackbarText] = useState('');
-
-	const showSnackbar = (text: string) => {
-		setSnackbarText(text);
-		setSnackbarVisible(true);
-	};
-	const onDismissSnackbar = () => setSnackbarVisible(false);
+	const { showSnackbar } = useSnackbar();
 
 	useFocusEffect(
 		useCallback(() => {
@@ -75,7 +68,7 @@ export default function AddOrder() {
 			.get()
 			.then((querySnapshot) => {
 				const clientsName = [];
-				// biome-ignore lint/complexity/noForEach:<Method that returns iterator necessary>
+
 				querySnapshot.forEach((doc) => {
 					clientsName.push({ id: doc.id, name: doc.data().name });
 				});
@@ -95,7 +88,7 @@ export default function AddOrder() {
 			.get()
 			.then((querySnapshot) => {
 				const productsName = [];
-				// biome-ignore lint/complexity/noForEach:<Method that returns iterator necessary>
+
 				querySnapshot.forEach((doc) => {
 					productsName.push({
 						id: doc.id,
@@ -421,12 +414,6 @@ export default function AddOrder() {
 
 	return (
 		<>
-			<SnackbarInfo
-				text={snackbarText}
-				visible={snackbarVisible}
-				onDismiss={onDismissSnackbar}
-			/>
-
 			<SearchList
 				style={globalStyles.searchList}
 				icon='account'
@@ -439,12 +426,19 @@ export default function AddOrder() {
 					if (input.trim()) filterClientList(input);
 					else setHintClientList([]);
 				}}
-				onEndEditing={() => {
+				/* onEndEditing={() => {
 					setHintClientList([]);
 					if (!clientId) {
 						getClient(name);
 					}
+				}} */
+				onSubmitEditing={() => {
+					if (!clientId) {
+						getClient(name);
+					}
 				}}
+				onFocus={() => filterClientList(name)}
+				onBlur={() => setHintClientList([])}
 				renderItem={renderClientHint}
 				onClearIconPress={() => {
 					setName('');
@@ -466,12 +460,19 @@ export default function AddOrder() {
 					if (input.trim()) filterProductList(input);
 					else setHintProductList([]);
 				}}
-				onEndEditing={() => {
+				/* onEndEditing={() => {
 					setHintProductList([]);
 					if (!productId) {
 						getProduct(productName);
 					}
+				}} */
+				onSubmitEditing={() => {
+					if (!productId) {
+						getProduct(productName);
+					}
 				}}
+				onFocus={() => filterProductList(productName)}
+				onBlur={() => setHintProductList([])}
 				renderItem={renderProductHint}
 				onClearIconPress={() => {
 					setProductName('');

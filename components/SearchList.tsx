@@ -1,19 +1,14 @@
-import React, {
-	type ComponentPropsWithRef,
-	useEffect,
-	useRef,
-	useState,
-} from 'react';
+import { type ComponentPropsWithRef, useEffect, useRef, useState } from 'react';
 import {
 	Animated,
 	FlatList,
-	View,
 	type GestureResponderEvent,
 	type KeyboardTypeOptions,
 	type ListRenderItem,
 	type StyleProp,
 	type TextInput,
 	type TextStyle,
+	View,
 	type ViewStyle,
 } from 'react-native';
 import { Searchbar, useTheme } from 'react-native-paper';
@@ -27,6 +22,8 @@ type SearchListProps = ComponentPropsWithRef<typeof TextInput> & {
 	onChangeText?: (query: string) => void;
 	onEndEditing?: (() => void) | undefined;
 	onSubmitEditing?: (() => void) | undefined;
+	onFocus?: (() => void) | undefined;
+	onBlur?: (() => void) | undefined;
 	autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters' | undefined;
 	keyboardType?: KeyboardTypeOptions | undefined;
 	placeholder?: string;
@@ -34,6 +31,7 @@ type SearchListProps = ComponentPropsWithRef<typeof TextInput> & {
 	data: ArrayLike<any> | null | undefined;
 	renderItem: ListRenderItem<any> | null | undefined;
 	onClearIconPress?: (e: GestureResponderEvent) => void;
+	testID?: string;
 };
 
 const SearchList = (props: SearchListProps) => {
@@ -69,11 +67,14 @@ const SearchList = (props: SearchListProps) => {
 				onChangeText={props.onChangeText}
 				onEndEditing={props.onEndEditing}
 				onSubmitEditing={props.onSubmitEditing}
+				onFocus={props.onFocus}
+				onBlur={props.onBlur}
 				autoCapitalize={props.autoCapitalize}
 				keyboardType={props.keyboardType}
 				placeholder={props.placeholder}
 				loading={props.loading}
 				onClearIconPress={props.onClearIconPress}
+				testID={props.testID || 'SearchList'}
 			/>
 			{flatlistVisible ? (
 				<Animated.View

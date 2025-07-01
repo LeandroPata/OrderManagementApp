@@ -1,14 +1,14 @@
-import React, { useCallback, useState } from 'react';
-import { Keyboard, ScrollView } from 'react-native';
-import { Divider, Text, TouchableRipple } from 'react-native-paper';
-import type { FirebaseError } from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
 import { useFocusEffect } from 'expo-router';
-import { useTranslation } from 'react-i18next';
+import type { FirebaseError } from 'firebase/app';
 import Fuse from 'fuse.js';
-import SnackbarInfo from '@/components/SnackbarInfo';
-import SearchList from '@/components/SearchList';
+import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Keyboard, ScrollView } from 'react-native';
+import { Divider, Text, TouchableRipple } from 'react-native-paper';
 import DataTableOrder from '@/components/DataTableOrder';
+import SearchList from '@/components/SearchList';
+import { useSnackbar } from '@/context/SnackbarContext';
 import { globalStyles } from '@/styles/global';
 
 export default function ShowClientOrder() {
@@ -22,14 +22,7 @@ export default function ShowClientOrder() {
 	const [clientOrders, setClientOrders] = useState([]);
 
 	// All the logic to implement the snackbar
-	const [snackbarVisible, setSnackbarVisible] = useState(false);
-	const [snackbarText, setSnackbarText] = useState('');
-
-	const showSnackbar = (text: string) => {
-		setSnackbarText(text);
-		setSnackbarVisible(true);
-	};
-	const onDismissSnackbar = () => setSnackbarVisible(false);
+	const { showSnackbar } = useSnackbar();
 
 	useFocusEffect(
 		useCallback(() => {
@@ -54,7 +47,7 @@ export default function ShowClientOrder() {
 			.get()
 			.then((querySnapshot) => {
 				const clientsName = [];
-				// biome-ignore lint/complexity/noForEach:<Method that returns iterator necessary>
+
 				querySnapshot.forEach((doc) => {
 					clientsName.push({ id: doc.id, name: doc.data().name });
 				});
@@ -114,7 +107,6 @@ export default function ShowClientOrder() {
 			.then((querySnapshot) => {
 				const orders = [];
 
-				// biome-ignore lint/complexity/noForEach:<Method that returns iterator necessary>
 				querySnapshot.forEach((doc) => {
 					//console.log(doc.data().order);
 					orders.push({
@@ -213,12 +205,6 @@ export default function ShowClientOrder() {
 
 	return (
 		<>
-			<SnackbarInfo
-				text={snackbarText}
-				visible={snackbarVisible}
-				onDismiss={onDismissSnackbar}
-			/>
-
 			<SearchList
 				style={globalStyles.searchList}
 				icon='account'
@@ -231,12 +217,19 @@ export default function ShowClientOrder() {
 					if (input.trim()) filterClientList(input);
 					else setHintClientList([]);
 				}}
-				onEndEditing={() => {
+				/* onEndEditing={() => {
 					setHintClientList([]);
 					if (!clientId) {
 						getClient(name);
 					}
+				}} */
+				onSubmitEditing={() => {
+					if (!clientId) {
+						getClient(name);
+					}
 				}}
+				onFocus={() => filterClientList(name)}
+				onBlur={() => setHintClientList([])}
 				renderItem={renderClientHint}
 				onClearIconPress={() => {
 					setName('');

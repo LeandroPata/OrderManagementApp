@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import {
@@ -9,7 +9,7 @@ import {
 	Text,
 	useTheme,
 } from 'react-native-paper';
-import DialogConfirmation from './DialogConfirmation';
+import { useDialog } from '@/context/DialogContext';
 import { globalStyles } from '@/styles/global';
 
 type DataTableOrderProps = {
@@ -34,11 +34,8 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 		numberOfItemsPerPageList[0]
 	);
 
-	// All the logic to implemet DialogConfirmation
-	const [dialogConfirmationVisible, setDialogConfirmationVisible] =
-		useState(false);
-	const [dialogText, setDialogText] = useState('');
-	const onDismissDialogConfirmation = () => setDialogConfirmationVisible(false);
+	// All the logic to implement DialogContext
+	const { showDialog, hideDialog } = useDialog();
 
 	const [data, setData] = useState(props.data);
 	//console.log('Props');
@@ -115,12 +112,29 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 	const itemStatusChange = (item: object) => {
 		setItemModal(item);
 		if (item.status === 'Incomplete')
-			setDialogText(t('dataTableOrder.orderReady'));
+			showDialog({
+				text: t('dataTableOrder.orderReady'),
+				onConfirmation: () => {
+					props.onLongPress(itemModal);
+				},
+				testID: 'ItemStatusDialog',
+			});
 		else if (item.status === 'Ready')
-			setDialogText(t('dataTableOrder.orderDelivered'));
+			showDialog({
+				text: t('dataTableOrder.orderReady'),
+				onConfirmation: () => {
+					props.onLongPress(itemModal);
+				},
+				testID: 'ItemStatusDialog',
+			});
 		else if (item.status === 'Delivered')
-			setDialogText(t('dataTableOrder.orderDelete'));
-		setDialogConfirmationVisible(true);
+			showDialog({
+				text: t('dataTableOrder.orderReady'),
+				onConfirmation: () => {
+					props.onLongPress(itemModal);
+				},
+				testID: 'ItemStatusDialog',
+			});
 	};
 
 	const translateStatus = (orderStatus: string) => {
@@ -964,16 +978,6 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 
 	return (
 		<>
-			<DialogConfirmation
-				text={dialogText}
-				visible={dialogConfirmationVisible}
-				onDismiss={onDismissDialogConfirmation}
-				onConfirmation={() => {
-					props.onLongPress(itemModal);
-					setDialogConfirmationVisible(false);
-				}}
-			/>
-
 			<Portal>
 				<Modal
 					visible={itemModalVisible}

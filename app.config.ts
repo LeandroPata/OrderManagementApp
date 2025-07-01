@@ -1,15 +1,15 @@
-import type { ExpoConfig, ConfigContext } from '@expo/config';
+import type { ConfigContext, ExpoConfig } from '@expo/config';
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
 	...config,
 	name: 'OrderManagementApp',
 	slug: 'OrderManagementApp',
-	version: '0.13.3',
+	version: '0.14.1',
 	orientation: 'default',
 	icon: './assets/images/iconReact.png',
 	scheme: 'myapp',
 	userInterfaceStyle: 'automatic',
-	newArchEnabled: false,
+	newArchEnabled: true,
 	ios: {
 		supportsTablet: true,
 		bundleIdentifier: 'com.leandropata.ordermanagementapp',

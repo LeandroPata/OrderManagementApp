@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import { KeyboardAvoidingView, View, Keyboard, Image } from 'react-native';
+import auth from '@react-native-firebase/auth';
+import type { FirebaseError } from 'firebase/app';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Image, Keyboard, KeyboardAvoidingView, View } from 'react-native';
 import {
-	Portal,
-	Modal,
-	TextInput,
 	Button,
-	useTheme,
 	HelperText,
+	Modal,
+	Portal,
+	TextInput,
+	useTheme,
 } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import type { FirebaseError } from 'firebase/app';
-import auth from '@react-native-firebase/auth';
-import { useTranslation } from 'react-i18next';
-import SnackbarInfo from '@/components/SnackbarInfo';
+import { useSnackbar } from '@/context/SnackbarContext';
 import { globalStyles } from '@/styles/global';
 
 export default function Index() {
@@ -35,14 +35,7 @@ export default function Index() {
 	const [confirmPassword, setConfirmPassword] = useState('');
 
 	// All the logic to implement the snackbar
-	const [snackbarVisible, setSnackbarVisible] = useState(false);
-	const [snackbarText, setSnackbarText] = useState('');
-
-	const showSnackbar = (text: string) => {
-		setSnackbarText(text);
-		setSnackbarVisible(true);
-	};
-	const onDismissSnackbar = () => setSnackbarVisible(false);
+	const { showSnackbar } = useSnackbar();
 
 	const emailRegex = /.+@.+\..+/g;
 
@@ -223,12 +216,6 @@ export default function Index() {
 					</View>
 				</Modal>
 			</Portal>
-
-			<SnackbarInfo
-				text={snackbarText}
-				visible={snackbarVisible}
-				onDismiss={onDismissSnackbar}
-			/>
 
 			<View style={[globalStyles.container.home, { paddingTop: insets.top }]}>
 				<KeyboardAvoidingView

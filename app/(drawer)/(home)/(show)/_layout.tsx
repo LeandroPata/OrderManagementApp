@@ -1,6 +1,5 @@
-import React from 'react';
-import { useTheme } from 'react-native-paper';
 import { Stack } from 'expo-router';
+import { useTheme } from 'react-native-paper';
 
 const ShowLayout = () => {
 	const theme = useTheme();

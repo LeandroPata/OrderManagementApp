@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 import {
-	MD3LightTheme as DefaultLightTheme,
 	MD3DarkTheme as DefaultDarkTheme,
+	MD3LightTheme as DefaultLightTheme,
 } from 'react-native-paper';
 
 export const globalTheme = {
@@ -99,7 +99,9 @@ export const globalTheme = {
 
 export const globalStyles = StyleSheet.create({
 	container: {
-		home: { flex: 1 },
+		home: {
+			flex: 1,
+		},
 		item: {
 			flexDirection: 'row',
 			justifyContent: 'space-between',

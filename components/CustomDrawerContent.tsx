@@ -1,52 +1,52 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import {
-	Platform,
-	UIManager,
-	View,
-	TouchableOpacity,
-	Image,
-	useWindowDimensions,
-} from 'react-native';
-import {
-	Dialog,
-	List,
-	Portal,
-	ProgressBar,
-	Switch,
-	useTheme,
-	Text,
-	Modal,
-	TextInput,
-	HelperText,
-	Button,
-	Divider,
-} from 'react-native-paper';
+import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import auth from '@react-native-firebase/auth';
+import storage from '@react-native-firebase/storage';
 import {
 	DrawerContentScrollView,
 	DrawerItem,
 	useDrawerStatus,
 } from '@react-navigation/drawer';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Constants from 'expo-constants';
 import { router, useFocusEffect, usePathname } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import auth from '@react-native-firebase/auth';
+import type { FirebaseError } from 'firebase/app';
+import i18next from 'i18next';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+	Image,
+	Platform,
+	TouchableOpacity,
+	UIManager,
+	useWindowDimensions,
+	View,
+} from 'react-native';
+import { EventRegister } from 'react-native-event-listeners';
+import {
+	Button,
+	Dialog,
+	Divider,
+	HelperText,
+	List,
+	Modal,
+	Portal,
+	ProgressBar,
+	Switch,
+	Text,
+	TextInput,
+	useTheme,
+} from 'react-native-paper';
 import Animated, {
-	useSharedValue,
 	useAnimatedStyle,
+	useSharedValue,
 	withTiming,
 } from 'react-native-reanimated';
-import { EventRegister } from 'react-native-event-listeners';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { FirebaseError } from 'firebase/app';
-import storage from '@react-native-firebase/storage';
-import i18next from 'i18next';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import RNFetchBlob from 'rn-fetch-blob';
-import Constants from 'expo-constants';
-import getFlagEmoji from './GetCountryFlag';
-import SnackbarInfo from './SnackbarInfo';
-import DialogConfirmation from './DialogConfirmation';
+import { useDialog } from '@/context/DialogContext';
+import { useSnackbar } from '@/context/SnackbarContext';
 import { globalStyles } from '@/styles/global';
+import { getFlagEmoji } from '@/utils/GetCountryFlag';
 
 export default function CustomDrawerContent(props: any) {
 	const theme = useTheme();
@@ -108,27 +108,10 @@ export default function CustomDrawerContent(props: any) {
 	const user = auth().currentUser;
 
 	// All the logic to implement the snackbar
-	const [snackbarVisible, setSnackbarVisible] = useState(false);
-	const [snackbarText, setSnackbarText] = useState('');
+	const { showSnackbar } = useSnackbar();
 
-	const showSnackbar = (text: string) => {
-		setSnackbarText(text);
-		setSnackbarVisible(true);
-	};
-	const onDismissSnackbar = () => setSnackbarVisible(false);
-
-	// All the logic to implemet DialogConfirmation
-	const [checkUpdateConfirmationVisible, setCheckUpdateConfirmationVisible] =
-		useState(false);
-	const [runUpdateConfirmationVisible, setRunUpdateConfirmationVisible] =
-		useState(false);
-	const [signOutConfirmationVisible, setSignOutConfirmationVisible] =
-		useState(false);
-	const onDismissDialogConfirmation = () => {
-		setCheckUpdateConfirmationVisible(false);
-		setRunUpdateConfirmationVisible(false);
-		setSignOutConfirmationVisible(false);
-	};
+	// All the logic to implement DialogContext
+	const { showDialog, hideDialog } = useDialog();
 
 	AsyncStorage.getItem('colorScheme').then((token) => {
 		token === 'dark' ? setDarkModeSwitch(true) : setDarkModeSwitch(false);
@@ -207,7 +190,6 @@ export default function CustomDrawerContent(props: any) {
 	};
 
 	const checkUpdates = async (passive = false) => {
-		setCheckUpdateConfirmationVisible(false);
 		setUpdateDownloadProgress(0);
 
 		const updatesStorageRef = storage().ref('updates');
@@ -233,7 +215,11 @@ export default function CustomDrawerContent(props: any) {
 					if (!passive) {
 						console.log('Do update?');
 
-						setRunUpdateConfirmationVisible(true);
+						showDialog({
+							text: t('dialog.runUpdate'),
+							onConfirmation: () => downloadUpdate(updateVersion),
+							testID: 'RunUpdateDialog',
+						});
 					} else {
 						console.log('Passive update check');
 						showSnackbar(t('drawer.passiveUpdateCheck'));
@@ -259,8 +245,6 @@ export default function CustomDrawerContent(props: any) {
 	};
 
 	const downloadUpdate = async (updateFolderName: string) => {
-		setRunUpdateConfirmationVisible(false);
-
 		console.log(`Downloading update: ${updateFolderName}`);
 
 		let updateFileName = '';
@@ -418,27 +402,6 @@ export default function CustomDrawerContent(props: any) {
 
 	return (
 		<>
-			<DialogConfirmation
-				text={t('drawer.checkUpdateDialog')}
-				visible={checkUpdateConfirmationVisible}
-				onDismiss={onDismissDialogConfirmation}
-				onConfirmation={() => checkUpdates()}
-			/>
-
-			<DialogConfirmation
-				text={t('drawer.runUpdateDialog')}
-				visible={runUpdateConfirmationVisible}
-				onDismiss={onDismissDialogConfirmation}
-				onConfirmation={() => downloadUpdate(updateVersion)}
-			/>
-
-			<DialogConfirmation
-				text={t('drawer.signOutDialog')}
-				visible={signOutConfirmationVisible}
-				onDismiss={onDismissDialogConfirmation}
-				onConfirmation={signOut}
-			/>
-
 			<Portal>
 				<Dialog visible={updateDownloadProgressVisible}>
 					<Dialog.Title style={{ textAlign: 'center' }}>
@@ -463,6 +426,7 @@ export default function CustomDrawerContent(props: any) {
 							minHeight: useWindowDimensions().height / 2,
 						},
 					]}
+					testID='ChangePasswordModal'
 				>
 					<View
 						style={{
@@ -487,12 +451,14 @@ export default function CustomDrawerContent(props: any) {
 								autoCapitalize='none'
 								label={t('drawer.currentPassword')}
 								secureTextEntry
+								testID='CurrentPasswordInput'
 							/>
 							{currentPasswordError ? (
 								<HelperText
 									type='error'
 									visible={currentPasswordError}
 									style={globalStyles.text.errorHelper}
+									testID='CurrentPasswordError'
 								>
 									{t('drawer.currentPasswordError')}
 								</HelperText>
@@ -515,12 +481,14 @@ export default function CustomDrawerContent(props: any) {
 								autoCapitalize='none'
 								label={t('drawer.newPassword')}
 								secureTextEntry
+								testID='NewPasswordInput'
 							/>
 							{newPasswordError ? (
 								<HelperText
 									type='error'
 									visible={newPasswordError}
 									style={globalStyles.text.errorHelper}
+									testID='NewPasswordError'
 								>
 									{t('drawer.newPasswordError')}
 								</HelperText>
@@ -545,18 +513,21 @@ export default function CustomDrawerContent(props: any) {
 								autoCapitalize='none'
 								label={t('drawer.confirmNewPassword')}
 								secureTextEntry
+								testID='ConfirmNewPasswordInput'
 							/>
 							{confirmNewPasswordError ? (
 								<HelperText
 									type='error'
 									visible={confirmNewPasswordError}
 									style={globalStyles.text.errorHelper}
+									testID='ConfirmNewPasswordError'
 								>
 									{t('drawer.confirmNewPasswordError')}
 								</HelperText>
 							) : null}
 						</View>
 					</View>
+
 					<Button
 						style={globalStyles.button}
 						contentStyle={globalStyles.buttonContent.modal}
@@ -564,17 +535,12 @@ export default function CustomDrawerContent(props: any) {
 						icon='check-bold'
 						mode='elevated'
 						onPress={changePassword}
+						testID='ChangePasswordButton'
 					>
 						{t('drawer.changePassword')}
 					</Button>
 				</Modal>
 			</Portal>
-
-			<SnackbarInfo
-				text={snackbarText}
-				visible={snackbarVisible}
-				onDismiss={onDismissSnackbar}
-			/>
 
 			<View style={{ flex: 1 }}>
 				<DrawerContentScrollView
@@ -594,6 +560,7 @@ export default function CustomDrawerContent(props: any) {
 								},
 							]}
 							source={require('@/assets/images/logoReact.png')}
+							testID='DrawerLogo'
 						/>
 
 						<Divider
@@ -637,6 +604,7 @@ export default function CustomDrawerContent(props: any) {
 							pressColor='rgba(80, 80, 80, 0.32)'
 							focused={currentRoute === '/(drawer)/(home)/(add)/addHome'}
 							onPress={() => drawerItemPress('/(drawer)/(home)/(add)/addHome')}
+							testID='SearchDrawerButton'
 						/>
 
 						<DrawerItem
@@ -658,6 +626,7 @@ export default function CustomDrawerContent(props: any) {
 							onPress={() =>
 								drawerItemPress('/(drawer)/(home)/(show)/showHome')
 							}
+							testID='UpdateDrawerButton'
 						/>
 
 						<DrawerItem
@@ -677,6 +646,7 @@ export default function CustomDrawerContent(props: any) {
 							pressColor='rgba(80, 80, 80, 0.32)'
 							focused={currentRoute === '/(drawer)/(home)/importExport'}
 							onPress={() => drawerItemPress('/(drawer)/(home)/importExport')}
+							testID='ImportExportDrawerButton'
 						/>
 					</View>
 
@@ -708,12 +678,14 @@ export default function CustomDrawerContent(props: any) {
 							<Switch
 								value={darkModeSwitch}
 								onValueChange={changeColorScheme}
+								testID='ThemeSwitch'
 							/>
 						</View>
 
 						<TouchableOpacity
 							style={{ marginLeft: -4, minHeight: 10 }}
 							onPress={toggleAccordion}
+							testID='LanguageButton'
 						>
 							<List.Item
 								title={t('drawer.language')}
@@ -749,6 +721,7 @@ export default function CustomDrawerContent(props: any) {
 										i18next.changeLanguage('en-US');
 										AsyncStorage.setItem('language', 'en-US');
 									}}
+									testID='EnButton'
 								/>
 								<List.Item
 									title={`${getFlagEmoji('PT')}     Português`}
@@ -756,6 +729,7 @@ export default function CustomDrawerContent(props: any) {
 										i18next.changeLanguage('pt-PT');
 										AsyncStorage.setItem('language', 'pt-PT');
 									}}
+									testID='PtButton'
 								/>
 							</View>
 						</Animated.View>
@@ -775,7 +749,14 @@ export default function CustomDrawerContent(props: any) {
 							activeTintColor={theme.colors.primary}
 							inactiveBackgroundColor='transparent'
 							pressColor='rgba(80, 80, 80, 0.32)'
-							onPress={() => setCheckUpdateConfirmationVisible(true)}
+							onPress={() =>
+								showDialog({
+									text: t('dialog.checkUpdate'),
+									onConfirmation: () => checkUpdates(),
+									testID: 'UpdateDialog',
+								})
+							}
+							testID='UpdateAppDrawerButton'
 						/>
 
 						<DrawerItem
@@ -794,6 +775,7 @@ export default function CustomDrawerContent(props: any) {
 							inactiveBackgroundColor='transparent'
 							pressColor='rgba(80, 80, 80, 0.32)'
 							onPress={() => setChangePasswordModal(true)}
+							testID='ChangePasswordDrawerButton'
 						/>
 
 						<DrawerItem
@@ -811,7 +793,16 @@ export default function CustomDrawerContent(props: any) {
 							activeTintColor={theme.colors.primary}
 							inactiveBackgroundColor='transparent'
 							pressColor='rgba(80, 80, 80, 0.32)'
-							onPress={() => setSignOutConfirmationVisible(true)}
+							onPress={() =>
+								showDialog({
+									text: t('account.signOutDialog'),
+									onConfirmation: () => {
+										signOut();
+									},
+									testID: 'SignOutDialog',
+								})
+							}
+							testID='SignOutDrawerButton'
 						/>
 					</View>
 					{/* <DrawerItemList {...props} /> */}
@@ -823,7 +814,10 @@ export default function CustomDrawerContent(props: any) {
 				/>
 
 				<View style={{ paddingBottom: insets.bottom + 5 }}>
-					<Text style={globalStyles.text.footer}>
+					<Text
+						style={globalStyles.text.footer}
+						testID='VersionText'
+					>
 						{t('drawer.version')}: {Constants.expoConfig?.version}
 					</Text>
 				</View>

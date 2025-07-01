@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import { View, KeyboardAvoidingView, Keyboard, ScrollView } from 'react-native';
+import firestore from '@react-native-firebase/firestore';
+import type { FirebaseError } from 'firebase/app';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Keyboard, KeyboardAvoidingView, ScrollView, View } from 'react-native';
 import {
 	Button,
-	TextInput,
-	HelperText,
 	Checkbox,
+	HelperText,
 	Text,
+	TextInput,
 } from 'react-native-paper';
-import type { FirebaseError } from 'firebase/app';
-import firestore from '@react-native-firebase/firestore';
-import { useTranslation } from 'react-i18next';
-import SnackbarInfo from '@/components/SnackbarInfo';
+import { useSnackbar } from '@/context/SnackbarContext';
 import { globalStyles } from '@/styles/global';
 
 export default function AddProduct() {
@@ -25,14 +25,7 @@ export default function AddProduct() {
 	const [priceWeightChecked, setPriceWeightChecked] = useState(false);
 
 	// All the logic to implement the snackbar
-	const [snackbarVisible, setSnackbarVisible] = useState(false);
-	const [snackbarText, setSnackbarText] = useState('');
-
-	const showSnackbar = (text: string) => {
-		setSnackbarText(text);
-		setSnackbarVisible(true);
-	};
-	const onDismissSnackbar = () => setSnackbarVisible(false);
+	const { showSnackbar } = useSnackbar();
 
 	const checkProduct = async () => {
 		let productExists = false;
@@ -41,7 +34,6 @@ export default function AddProduct() {
 			.orderBy('name', 'asc')
 			.get()
 			.then((querySnapshot) => {
-				// biome-ignore lint/complexity/noForEach:<Method that returns iterator necessary>
 				querySnapshot.forEach((doc) => {
 					if (name.trim() === doc.data().name) productExists = true;
 				});
@@ -88,90 +80,82 @@ export default function AddProduct() {
 	};
 
 	return (
-		<>
-			<SnackbarInfo
-				text={snackbarText}
-				visible={snackbarVisible}
-				onDismiss={onDismissSnackbar}
-			/>
+		<ScrollView
+			contentContainerStyle={globalStyles.scrollContainer.global}
+			keyboardShouldPersistTaps='handled'
+		>
+			<KeyboardAvoidingView style={{ paddingHorizontal: 10 }}>
+				<TextInput
+					style={globalStyles.input}
+					value={name}
+					onChangeText={setName}
+					onEndEditing={() => {
+						if (!name.trim()) {
+							setNameError(true);
+						} else setNameError(false);
+						setName(name.trim());
+					}}
+					error={nameError}
+					autoCapitalize='words'
+					keyboardType='default'
+					label={t('add.product.name')}
+				/>
+				{nameError ? (
+					<HelperText
+						type='error'
+						visible={nameError}
+						style={globalStyles.text.errorHelper}
+					>
+						{t('add.product.nameInvalid')}
+					</HelperText>
+				) : null}
 
-			<ScrollView
-				contentContainerStyle={globalStyles.scrollContainer.global}
-				keyboardShouldPersistTaps='handled'
-			>
-				<KeyboardAvoidingView style={{ paddingHorizontal: 10 }}>
+				<View
+					style={{
+						flexDirection: 'row',
+						alignItems: 'center',
+						justifyContent: 'space-between',
+					}}
+				>
 					<TextInput
-						style={globalStyles.input}
-						value={name}
-						onChangeText={setName}
+						style={[globalStyles.input, { width: '50%' }]}
+						value={price}
+						onChangeText={(input) => {
+							setPrice(input.replace(/[^0-9.,]/g, ''));
+						}}
 						onEndEditing={() => {
-							if (!name.trim()) {
-								setNameError(true);
-							} else setNameError(false);
-							setName(name.trim());
+							setPrice(Number(price.replace(',', '.').trim()).toFixed(2));
 						}}
-						error={nameError}
-						autoCapitalize='words'
-						keyboardType='default'
-						label={t('add.product.name')}
+						autoCapitalize='none'
+						inputMode='decimal'
+						keyboardType='decimal-pad'
+						label={t('add.product.price')}
 					/>
-					{nameError ? (
-						<HelperText
-							type='error'
-							visible={nameError}
-							style={globalStyles.text.errorHelper}
-						>
-							{t('add.product.nameInvalid')}
-						</HelperText>
-					) : null}
-
-					<View
-						style={{
-							flexDirection: 'row',
-							alignItems: 'center',
-							justifyContent: 'space-between',
-						}}
-					>
-						<TextInput
-							style={[globalStyles.input, { width: '50%' }]}
-							value={price}
-							onChangeText={(input) => {
-								setPrice(input.replace(/[^0-9.,]/g, ''));
-							}}
-							onEndEditing={() => {
-								setPrice(Number(price.replace(',', '.').trim()).toFixed(2));
-							}}
-							autoCapitalize='none'
-							inputMode='decimal'
-							keyboardType='decimal-pad'
-							label={t('add.product.price')}
+					<View style={{ flexDirection: 'row', marginRight: 10 }}>
+						<Checkbox
+							status={priceWeightChecked ? 'checked' : 'unchecked'}
+							onPress={() => setPriceWeightChecked(!priceWeightChecked)}
 						/>
-						<View style={{ flexDirection: 'row', marginRight: 10 }}>
-							<Checkbox
-								status={priceWeightChecked ? 'checked' : 'unchecked'}
-								onPress={() => setPriceWeightChecked(!priceWeightChecked)}
-							/>
-							<Text style={globalStyles.text.global}>
-								{t('add.product.priceWeight')}
-							</Text>
-						</View>
+						<Text style={globalStyles.text.global}>
+							{t('add.product.priceWeight')}
+						</Text>
 					</View>
-				</KeyboardAvoidingView>
-
-				<View style={globalStyles.buttonContainer.global}>
-					<Button
-						style={globalStyles.button}
-						contentStyle={globalStyles.buttonContent.global}
-						labelStyle={globalStyles.buttonText.global}
-						icon='account-plus'
-						mode='elevated'
-						loading={loading}
-						onPress={addProduct}
-					>
-						{t('add.product.add')}
-					</Button>
 				</View>
-			</ScrollView>
-		</>
+			</KeyboardAvoidingView>
+
+			<View style={globalStyles.buttonContainer.global}>
+				<Button
+					style={globalStyles.button}
+					contentStyle={globalStyles.buttonContent.global}
+					labelStyle={globalStyles.buttonText.global}
+					icon='account-plus'
+					mode='elevated'
+					loading={loading}
+					onPress={addProduct}
+				>
+					{t('add.product.add')}
+				</Button>
+			</View>
+		</ScrollView>
 	);
 }

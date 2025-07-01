@@ -1,8 +1,7 @@
-import React from 'react';
-import { View, ScrollView } from 'react-native';
-import { Button } from 'react-native-paper';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { ScrollView, View } from 'react-native';
+import { Button } from 'react-native-paper';
 import { globalStyles } from '@/styles/global';
 
 export default function AddHome() {

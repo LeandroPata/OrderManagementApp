@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react';
-import { useColorScheme, View } from 'react-native';
-import { PaperProvider, Portal, ActivityIndicator } from 'react-native-paper';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import auth, { type FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { Stack, useRouter, useSegments } from 'expo-router';
-import * as SystemUI from 'expo-system-ui';
 import { StatusBar } from 'expo-status-bar';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SystemUI from 'expo-system-ui';
+import { useEffect, useState } from 'react';
+import { useColorScheme, View } from 'react-native';
 import { EventRegister } from 'react-native-event-listeners';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { ActivityIndicator, PaperProvider, Portal } from 'react-native-paper';
 import '@/locales/i18n';
 import { globalTheme } from '@/styles/global';
 
@@ -93,21 +93,25 @@ export default function RootLayout() {
 		<PaperProvider theme={theme}>
 			<GestureHandlerRootView style={{ flex: 1 }}>
 				<Portal.Host>
-					<StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-					<Stack
-						screenOptions={{
-							contentStyle: { backgroundColor: theme.colors.background },
-						}}
-					>
-						<Stack.Screen
-							name='index'
-							options={{ headerShown: false }}
-						/>
-						<Stack.Screen
-							name='(drawer)'
-							options={{ headerShown: false }}
-						/>
-					</Stack>
+					<DialogProvider>
+						<SnackbarProvider>
+							<StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+							<Stack
+								screenOptions={{
+									contentStyle: { backgroundColor: theme.colors.background },
+								}}
+							>
+								<Stack.Screen
+									name='index'
+									options={{ headerShown: false }}
+								/>
+								<Stack.Screen
+									name='(drawer)'
+									options={{ headerShown: false }}
+								/>
+							</Stack>
+						</SnackbarProvider>
+					</DialogProvider>
 				</Portal.Host>
 			</GestureHandlerRootView>
 		</PaperProvider>

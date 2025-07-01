@@ -1,14 +1,14 @@
-import React, { useCallback, useState } from 'react';
-import { Keyboard, ScrollView } from 'react-native';
-import { Divider, Text, TouchableRipple } from 'react-native-paper';
-import type { FirebaseError } from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
 import { useFocusEffect } from 'expo-router';
-import { useTranslation } from 'react-i18next';
+import type { FirebaseError } from 'firebase/app';
 import Fuse from 'fuse.js';
-import SnackbarInfo from '@/components/SnackbarInfo';
-import SearchList from '@/components/SearchList';
+import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Keyboard, ScrollView } from 'react-native';
+import { Divider, Text, TouchableRipple } from 'react-native-paper';
 import DataTableOrder from '@/components/DataTableOrder';
+import SearchList from '@/components/SearchList';
+import { useSnackbar } from '@/context/SnackbarContext';
 import { globalStyles } from '@/styles/global';
 
 export default function ShowProductOrder() {
@@ -22,14 +22,7 @@ export default function ShowProductOrder() {
 	const [productOrders, setProductOrders] = useState([]);
 
 	// All the logic to implement the snackbar
-	const [snackbarVisible, setSnackbarVisible] = useState(false);
-	const [snackbarText, setSnackbarText] = useState('');
-
-	const showSnackbar = (text: string) => {
-		setSnackbarText(text);
-		setSnackbarVisible(true);
-	};
-	const onDismissSnackbar = () => setSnackbarVisible(false);
+	const { showSnackbar } = useSnackbar();
 
 	useFocusEffect(
 		useCallback(() => {
@@ -54,7 +47,7 @@ export default function ShowProductOrder() {
 			.get()
 			.then((querySnapshot) => {
 				const productsName = [];
-				// biome-ignore lint/complexity/noForEach:<Method that returns iterator necessary>
+
 				querySnapshot.forEach((doc) => {
 					productsName.push({
 						id: doc.id,
@@ -116,7 +109,7 @@ export default function ShowProductOrder() {
 			.get()
 			.then((querySnapshot) => {
 				const orders = [];
-				// biome-ignore lint/complexity/noForEach:<Method that returns iterator necessary>
+
 				querySnapshot.forEach((doc) => {
 					orders.push({
 						id: doc.id,
@@ -215,12 +208,6 @@ export default function ShowProductOrder() {
 
 	return (
 		<>
-			<SnackbarInfo
-				text={snackbarText}
-				visible={snackbarVisible}
-				onDismiss={onDismissSnackbar}
-			/>
-
 			<SearchList
 				style={globalStyles.searchList}
 				icon='cake-variant'
@@ -233,12 +220,19 @@ export default function ShowProductOrder() {
 					if (input.trim()) filterProductList(input);
 					else setHintProductList([]);
 				}}
-				onEndEditing={() => {
+				/* onEndEditing={() => {
 					setHintProductList([]);
 					if (!productId) {
 						getProduct(name);
 					}
+				}} */
+				onSubmitEditing={() => {
+					if (!productId) {
+						getProduct(name);
+					}
 				}}
+				onFocus={() => filterProductList(name)}
+				onBlur={() => setHintProductList([])}
 				renderItem={renderProductHint}
 				onClearIconPress={() => {
 					setName('');
