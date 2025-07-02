@@ -1,5 +1,6 @@
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useBackHandler } from '@react-native-community/hooks';
 import auth from '@react-native-firebase/auth';
 import storage from '@react-native-firebase/storage';
 import {
@@ -57,6 +58,22 @@ export default function CustomDrawerContent(props: any) {
 
 	const isDrawerOpen = useDrawerStatus() === 'open';
 
+	const path = usePathname();
+	const [currentRoute, setCurrentRoute] = useState(path);
+
+	useEffect(() => {
+		setCurrentRoute(path);
+		//console.log(path);
+	}, [path]);
+
+	useBackHandler(() => {
+		if (isDrawerOpen) {
+			props.navigation.closeDrawer();
+			return true;
+		}
+		return null;
+	});
+
 	useEffect(() => {
 		//console.log(isDrawerOpen);
 		if (!isDrawerOpen) {
@@ -84,8 +101,6 @@ export default function CustomDrawerContent(props: any) {
 			};
 		}, [])
 	);
-
-	const [currentRoute, setCurrentRoute] = useState(usePathname());
 
 	const [expanded, setExpanded] = useState(false);
 	const [darkModeSwitch, setDarkModeSwitch] = useState(false);
@@ -190,6 +205,7 @@ export default function CustomDrawerContent(props: any) {
 	};
 
 	const checkUpdates = async (passive = false) => {
+		if (!currentRoute.includes('(drawer)')) return false;
 		setUpdateDownloadProgress(0);
 
 		const updatesStorageRef = storage().ref('updates');
@@ -333,6 +349,7 @@ export default function CustomDrawerContent(props: any) {
 			.then(() => {
 				console.log('Successfull reauthentication');
 				passwordCheck = true;
+				setCurrentPasswordError(false);
 			})
 			.catch((e: any) => {
 				const err = e as FirebaseError;
@@ -343,6 +360,7 @@ export default function CustomDrawerContent(props: any) {
 				} else {
 					//showSnackbar('Sign in failed: ' + err.message);
 					console.log(`Reauthentication failed: ${err.message}`);
+					setCurrentPasswordError(true);
 				}
 				passwordCheck = false;
 			});
@@ -350,28 +368,50 @@ export default function CustomDrawerContent(props: any) {
 	};
 
 	const changePassword = async () => {
+		let errors = 0;
+
 		if (!currentPassword.trim() || currentPassword.trim().length < 6) {
 			console.log('Invalid current password');
+			errors++;
 			setCurrentPasswordError(true);
-			return;
-		} else if (!newPassword.trim() || newPassword.trim().length < 6) {
-			console.log('Invalid new password');
-			setNewPasswordError(true);
-			return;
-		} else if (
-			!confirmNewPassword.trim() ||
-			confirmNewPassword.trim().length < 6
-		) {
-			console.log('Invalid confirmed new password');
-			setConfirmNewPasswordError(true);
-			return;
-		} else if (newPassword !== confirmNewPassword) {
-			console.log('Passwords do not match');
-			setNewPasswordError(false);
-			setConfirmNewPasswordError(true);
-			return;
-		} else if (!(await checkCurrentPassword())) {
+			//return;
+		}
+
+		const passwordCheck = await checkCurrentPassword();
+		if (!passwordCheck) {
 			console.log('False');
+			errors++;
+			setCurrentPasswordError(true);
+			//return;
+		} else setCurrentPasswordError(false);
+
+		if (!newPassword.trim() || newPassword.trim().length < 6) {
+			console.log('Invalid new password');
+			errors++;
+			setNewPasswordError(true);
+			//return;
+		} else setNewPasswordError(false);
+
+		if (!confirmNewPassword.trim() || confirmNewPassword.trim().length < 6) {
+			console.log('Invalid confirmed new password');
+			errors++;
+			setConfirmNewPasswordError(true);
+			//return;
+		}
+
+		if (newPassword !== confirmNewPassword) {
+			console.log('Passwords do not match');
+			errors++;
+			setConfirmNewPasswordError(true);
+			//return;
+		} else if (
+			newPassword.trim() &&
+			confirmNewPassword.trim() &&
+			newPassword === confirmNewPassword
+		)
+			setConfirmNewPasswordError(false);
+
+		if (errors > 0) {
 			return;
 		}
 
@@ -380,6 +420,7 @@ export default function CustomDrawerContent(props: any) {
 			.then(() => {
 				console.log('Password updated');
 				showSnackbar(t('drawer.passwordUpdated'));
+				onChangePasswordModalDismiss();
 			})
 			.catch((e: any) => {
 				const err = e as FirebaseError;
@@ -389,15 +430,14 @@ export default function CustomDrawerContent(props: any) {
 	};
 
 	const signOut = () => {
-		setSignOutConfirmationVisible(false);
 		props.navigation.closeDrawer();
 		auth().signOut();
 	};
 
-	const drawerItemPress = (goToPathName: string) => {
+	const drawerItemPress = (path: string) => {
 		props.navigation.closeDrawer();
-		setCurrentRoute(goToPathName);
-		router.replace(goToPathName);
+		setCurrentRoute(path);
+		router.replace(`/(drawer)/(home)/${path}`);
 	};
 
 	return (
@@ -573,7 +613,7 @@ export default function CustomDrawerContent(props: any) {
 							label={t('drawer.home')}
 							style={globalStyles.drawerStyle}
 							icon={({ focused, size, color }) => (
-								<Ionicons
+								<MaterialCommunityIcons
 									name={focused ? 'home' : 'home-outline'}
 									size={size}
 									color={color}
@@ -583,8 +623,9 @@ export default function CustomDrawerContent(props: any) {
 							activeTintColor={theme.colors.primary}
 							inactiveBackgroundColor='transparent'
 							pressColor='rgba(80, 80, 80, 0.32)'
-							focused={currentRoute === '/(drawer)/(home)/home'}
-							onPress={() => drawerItemPress('/(drawer)/(home)/home')}
+							focused={currentRoute.includes('/home')}
+							onPress={() => drawerItemPress('/home')}
+							testID='HomeDrawerButton'
 						/>
 
 						<DrawerItem
@@ -592,8 +633,8 @@ export default function CustomDrawerContent(props: any) {
 							label={t('drawer.add')}
 							style={globalStyles.drawerStyle}
 							icon={({ focused, size, color }) => (
-								<Ionicons
-									name={focused ? 'person-add' : 'person-add-outline'}
+								<MaterialCommunityIcons
+									name={focused ? 'account-plus' : 'account-plus-outline'}
 									size={size}
 									color={color}
 								/>
@@ -602,9 +643,9 @@ export default function CustomDrawerContent(props: any) {
 							activeTintColor={theme.colors.primary}
 							inactiveBackgroundColor='transparent'
 							pressColor='rgba(80, 80, 80, 0.32)'
-							focused={currentRoute === '/(drawer)/(home)/(add)/addHome'}
-							onPress={() => drawerItemPress('/(drawer)/(home)/(add)/addHome')}
-							testID='SearchDrawerButton'
+							focused={currentRoute.includes('/addHome')}
+							onPress={() => drawerItemPress('/addHome')}
+							testID='AddHomeDrawerButton'
 						/>
 
 						<DrawerItem
@@ -612,8 +653,8 @@ export default function CustomDrawerContent(props: any) {
 							label={t('drawer.show')}
 							style={globalStyles.drawerStyle}
 							icon={({ focused, size, color }) => (
-								<Ionicons
-									name={focused ? 'search' : 'search-outline'}
+								<MaterialCommunityIcons
+									name={focused ? 'magnify' : 'magnify'}
 									size={size}
 									color={color}
 								/>
@@ -622,11 +663,9 @@ export default function CustomDrawerContent(props: any) {
 							activeTintColor={theme.colors.primary}
 							inactiveBackgroundColor='transparent'
 							pressColor='rgba(80, 80, 80, 0.32)'
-							focused={currentRoute === '/(drawer)/(home)/(show)/showHome'}
-							onPress={() =>
-								drawerItemPress('/(drawer)/(home)/(show)/showHome')
-							}
-							testID='UpdateDrawerButton'
+							focused={currentRoute.includes('/showHome')}
+							onPress={() => drawerItemPress('/showHome')}
+							testID='ShowHomeDrawerButton'
 						/>
 
 						<DrawerItem
@@ -634,8 +673,8 @@ export default function CustomDrawerContent(props: any) {
 							label={t('drawer.importExport')}
 							style={globalStyles.drawerStyle}
 							icon={({ focused, size, color }) => (
-								<Ionicons
-									name={focused ? 'server' : 'server-outline'}
+								<MaterialCommunityIcons
+									name={focused ? 'database' : 'database-outline'}
 									size={size}
 									color={color}
 								/>
@@ -644,8 +683,8 @@ export default function CustomDrawerContent(props: any) {
 							activeTintColor={theme.colors.primary}
 							inactiveBackgroundColor='transparent'
 							pressColor='rgba(80, 80, 80, 0.32)'
-							focused={currentRoute === '/(drawer)/(home)/importExport'}
-							onPress={() => drawerItemPress('/(drawer)/(home)/importExport')}
+							focused={currentRoute.includes('/importExport')}
+							onPress={() => drawerItemPress('/importExport')}
 							testID='ImportExportDrawerButton'
 						/>
 					</View>
@@ -668,9 +707,9 @@ export default function CustomDrawerContent(props: any) {
 								title={t('drawer.darkMode')}
 								titleStyle={globalStyles.text.drawer}
 								left={(props) => (
-									<Ionicons
+									<MaterialCommunityIcons
 										{...props}
-										name='moon-sharp'
+										name='theme-light-dark'
 										size={25}
 									/>
 								)}
@@ -691,14 +730,14 @@ export default function CustomDrawerContent(props: any) {
 								title={t('drawer.language')}
 								titleStyle={globalStyles.text.drawer}
 								left={(props) => (
-									<Ionicons
+									<MaterialCommunityIcons
 										{...props}
-										name='language-sharp'
+										name='translate'
 										size={32}
 									/>
 								)}
 								right={(props) => (
-									<Ionicons
+									<MaterialCommunityIcons
 										{...props}
 										name={expanded ? 'arrow-up' : 'arrow-down'}
 										size={25}
@@ -739,7 +778,7 @@ export default function CustomDrawerContent(props: any) {
 							label={t('drawer.checkUpdate')}
 							style={globalStyles.drawerStyle}
 							icon={({ color }) => (
-								<Ionicons
+								<MaterialCommunityIcons
 									name={'cloud-download-outline'}
 									color={color}
 									size={27}
@@ -764,8 +803,8 @@ export default function CustomDrawerContent(props: any) {
 							label={t('drawer.changePassword')}
 							style={globalStyles.drawerStyle}
 							icon={({ color }) => (
-								<Ionicons
-									name={'lock-open-outline'}
+								<MaterialCommunityIcons
+									name={'lock-open-variant-outline'}
 									color={color}
 									size={28}
 								/>
@@ -783,8 +822,8 @@ export default function CustomDrawerContent(props: any) {
 							label={t('drawer.signOut')}
 							style={globalStyles.drawerStyle}
 							icon={({ color }) => (
-								<Ionicons
-									name={'log-out-outline'}
+								<MaterialCommunityIcons
+									name={'logout'}
 									color={color}
 									size={32}
 								/>
