@@ -6,6 +6,7 @@ import { Keyboard, KeyboardAvoidingView, ScrollView, View } from 'react-native';
 import { Button, HelperText, TextInput } from 'react-native-paper';
 import { useSnackbar } from '@/context/SnackbarContext';
 import { globalStyles } from '@/styles/global';
+import { checkClientByName } from '@/utils/Firebase';
 
 export default function AddClient() {
 	const { t } = useTranslation();
@@ -20,7 +21,7 @@ export default function AddClient() {
 	// All the logic to implement the snackbar
 	const { showSnackbar } = useSnackbar();
 
-	const checkClient = async () => {
+	/* 	const checkClient = async () => {
 		let clientExists = false;
 		await firestore()
 			.collection('clients')
@@ -37,13 +38,15 @@ export default function AddClient() {
 				setLoading(false);
 			});
 		return clientExists;
-	};
+	}; */
 
 	const addClient = async () => {
 		setLoading(true);
 		Keyboard.dismiss();
 
-		if (!name.trim() || Boolean(await checkClient())) {
+		const clientCheck = await checkClientByName(name.trim());
+
+		if (!name.trim() || clientCheck) {
 			showSnackbar(t('add.client.nameError'));
 			setNameError(true);
 			setLoading(false);

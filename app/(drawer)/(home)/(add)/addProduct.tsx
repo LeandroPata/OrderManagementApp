@@ -12,6 +12,7 @@ import {
 } from 'react-native-paper';
 import { useSnackbar } from '@/context/SnackbarContext';
 import { globalStyles } from '@/styles/global';
+import { checkProductByName } from '@/utils/Firebase';
 
 export default function AddProduct() {
 	const { t } = useTranslation();
@@ -22,12 +23,12 @@ export default function AddProduct() {
 
 	const [name, setName] = useState('');
 	const [price, setPrice] = useState('');
-	const [priceWeightChecked, setPriceWeightChecked] = useState(false);
+	const [priceByWeightChecked, setpriceByWeightChecked] = useState(false);
 
 	// All the logic to implement the snackbar
 	const { showSnackbar } = useSnackbar();
 
-	const checkProduct = async () => {
+	/* const checkProduct = async () => {
 		let productExists = false;
 		await firestore()
 			.collection('products')
@@ -40,13 +41,15 @@ export default function AddProduct() {
 			});
 		console.log(`Product exists: ${productExists}`);
 		return productExists;
-	};
+	}; */
 
 	const addProduct = async () => {
 		setLoading(true);
 		Keyboard.dismiss();
 
-		if (!name.trim() || Boolean(await checkProduct())) {
+		const productCheck = await checkProductByName(name.trim());
+
+		if (!name.trim() || productCheck) {
 			showSnackbar(t('add.product.nameError'));
 			setNameError(true);
 			setLoading(false);
@@ -59,14 +62,14 @@ export default function AddProduct() {
 			.set({
 				name: name.trim(),
 				price: Number(price.replace(',', '.').trim()).toFixed(2),
-				priceByWeight: priceWeightChecked,
+				priceByWeight: priceByWeightChecked,
 			})
 			.then(() => {
 				console.log('Added');
 				showSnackbar(t('add.product.added'));
 				setName('');
 				setPrice('');
-				setPriceWeightChecked(false);
+				setpriceByWeightChecked(false);
 			})
 			.catch((e: any) => {
 				const err = e as FirebaseError;
@@ -133,11 +136,11 @@ export default function AddProduct() {
 					/>
 					<View style={{ flexDirection: 'row', marginRight: 10 }}>
 						<Checkbox
-							status={priceWeightChecked ? 'checked' : 'unchecked'}
-							onPress={() => setPriceWeightChecked(!priceWeightChecked)}
+							status={priceByWeightChecked ? 'checked' : 'unchecked'}
+							onPress={() => setpriceByWeightChecked(!priceByWeightChecked)}
 						/>
 						<Text style={globalStyles.text.global}>
-							{t('add.product.priceWeight')}
+							{t('add.product.priceByWeight')}
 						</Text>
 					</View>
 				</View>
