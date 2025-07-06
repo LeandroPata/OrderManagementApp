@@ -9,6 +9,8 @@ import { EventRegister } from 'react-native-event-listeners';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ActivityIndicator, PaperProvider, Portal } from 'react-native-paper';
 import '@/locales/i18n';
+import { DialogProvider } from '@/context/DialogContext';
+import { SnackbarProvider } from '@/context/SnackbarContext';
 import { globalTheme } from '@/styles/global';
 
 export default function RootLayout() {
