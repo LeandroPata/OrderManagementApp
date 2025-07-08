@@ -39,7 +39,7 @@ export const getSingleClient = async (id: string) => {
 		});
 	//console.log(docSnapshot.data());
 	//console.log(docSnapshot.exists);
-	return docSnapshot.exists ? docSnapshot : false;
+	return docSnapshot.exists ? docSnapshot.data() : false;
 };
 
 export const getSingleClientByName = async (name: string) => {
@@ -81,7 +81,7 @@ export const getSingleClientID = async (name: string) => {
 		});
 
 	querySnapshot.forEach((docSnapshot) => {
-		clientID = docSnapshot.id;
+		clientID = docSnapshot.id.trim();
 	});
 
 	//console.log(clientID);
@@ -116,8 +116,6 @@ export const checkClient = async (id: string) => {
 	await docRef
 		.get()
 		.then((doc) => {
-			console.log(doc.data());
-			console.log(doc.exists);
 			if (doc.exists) docCheck = true;
 		})
 		.catch((e: any) => {
@@ -147,7 +145,7 @@ export const checkClientByName = async (name: string) => {
 	return docCheck;
 };
 
-export const deleteClient = async (id: string) => {
+export const deleteClientDoc = async (id: string) => {
 	await firestore()
 		.collection('clients')
 		.doc(id)
@@ -195,8 +193,8 @@ export const getSingleProduct = async (id: string) => {
 			//showSnackbar('Getting product failed: ' + err.message);
 			console.log(`Getting product failed: ${err.message}`);
 		});
-	console.log(docSnapshot.data());
-	console.log(docSnapshot.exists);
+	//console.log(docSnapshot.data());
+	//console.log(docSnapshot.exists);
 
 	return docSnapshot.exists ? docSnapshot.data() : false;
 };
@@ -238,7 +236,7 @@ export const getSingleProductID = async (name: string) => {
 		});
 
 	querySnapshot.forEach((docSnapshot) => {
-		productID = docSnapshot.id;
+		productID = docSnapshot.id.trim();
 	});
 
 	//console.log(productID);
@@ -304,7 +302,7 @@ export const checkProductByName = async (name: string) => {
 	return docCheck;
 };
 
-export const deleteProduct = async (id: string) => {
+export const deleteProductDoc = async (id: string) => {
 	await firestore()
 		.collection('products')
 		.doc(id)
@@ -318,7 +316,7 @@ export const deleteProduct = async (id: string) => {
 	return true;
 };
 
-export const deleteOrder = async (id: string) => {
+export const deleteOrderDoc = async (id: string) => {
 	await firestore()
 		.collection('order')
 		.doc(id)
