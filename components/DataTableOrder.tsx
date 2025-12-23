@@ -11,10 +11,11 @@ import {
 } from 'react-native-paper';
 import { useDialog } from '@/context/DialogContext';
 import { globalStyles } from '@/styles/global';
+import { isEmpty } from '@/utils/Utils';
 
 type DataTableOrderProps = {
 	data: ArrayLike<any> | null | undefined;
-	dataType: 'newOrder' | 'clientOrder' | 'productOrder' | 'productQuantity';
+	dataType: 'newOrder' | 'clientOrder' | 'productOrder' | 'productCount';
 	defaultSort: 'product.name' | 'client.name' | 'name';
 	numberofItemsPerPageList: Array<number>;
 	onLongPress: (item: object) => void;
@@ -71,6 +72,13 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 			setSortedColumn(column);
 		}
 
+		//console.log(unsortedData);
+
+		if (!unsortedData?.length) {
+			setData([]);
+			return;
+		}
+
 		const sortedData = [...unsortedData].sort((a, b) => {
 			if (column === 'product.name') {
 				if (newSortDirection === 'ascending') {
@@ -115,7 +123,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 			showDialog({
 				text: t('dataTableOrder.orderReady'),
 				onConfirmation: () => {
-					props.onLongPress(itemModal);
+					props.onLongPress(item);
 				},
 				testID: 'ItemStatusDialog',
 			});
@@ -123,7 +131,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 			showDialog({
 				text: t('dataTableOrder.orderReady'),
 				onConfirmation: () => {
-					props.onLongPress(itemModal);
+					props.onLongPress(item);
 				},
 				testID: 'ItemStatusDialog',
 			});
@@ -131,7 +139,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 			showDialog({
 				text: t('dataTableOrder.orderReady'),
 				onConfirmation: () => {
-					props.onLongPress(itemModal);
+					props.onLongPress(item);
 				},
 				testID: 'ItemStatusDialog',
 			});
@@ -217,58 +225,63 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 							</DataTable.Title>
 						</DataTable.Header>
 
-						{data.slice(from, to).map((item) => (
-							<DataTable.Row
-								key={item.id}
-								onLongPress={() => {
-									itemStatusChange(item);
-								}}
-								onPress={() => {
-									//console.log(item);
-									showItemModal(item);
-								}}
-							>
-								<DataTable.Cell style={{ justifyContent: 'center', flex: 2 }}>
-									{item.product.name}
-								</DataTable.Cell>
-								<DataTable.Cell
-									style={{
-										justifyContent: 'center',
+						{!data?.length ? (
+							data.slice(from, to).map((item) => (
+								<DataTable.Row
+									key={item.id}
+									onLongPress={() => {
+										itemStatusChange(item);
+									}}
+									onPress={() => {
+										//console.log(item);
+										showItemModal(item);
 									}}
 								>
-									{item.quantity}
-								</DataTable.Cell>
-								<DataTable.Cell
-									style={{
-										justifyContent: 'center',
-									}}
-								>
-									{item.weight.toFixed(2)}
-								</DataTable.Cell>
-								<DataTable.Cell
-									style={{
-										justifyContent: 'center',
-										flex: 2,
-									}}
-								>
-									{(item.weight * item.quantity).toFixed(2)}
-								</DataTable.Cell>
-								<DataTable.Cell
-									style={{
-										justifyContent: 'center',
-									}}
-								>
-									{item.price.toFixed(2)}
-								</DataTable.Cell>
-								<DataTable.Cell
-									style={{
-										justifyContent: 'center',
-									}}
-								>
-									{item.notes}
-								</DataTable.Cell>
-							</DataTable.Row>
-						))}
+									<DataTable.Cell style={{ justifyContent: 'center', flex: 2 }}>
+										{item.product.name}
+									</DataTable.Cell>
+									<DataTable.Cell
+										style={{
+											justifyContent: 'center',
+										}}
+									>
+										{item.quantity}
+									</DataTable.Cell>
+									<DataTable.Cell
+										style={{
+											justifyContent: 'center',
+										}}
+									>
+										{item.weight.toFixed(2)}
+									</DataTable.Cell>
+									<DataTable.Cell
+										style={{
+											justifyContent: 'center',
+											flex: 2,
+										}}
+									>
+										{(item.weight * item.quantity).toFixed(2)}
+									</DataTable.Cell>
+									<DataTable.Cell
+										style={{
+											justifyContent: 'center',
+										}}
+									>
+										{item.price.toFixed(2)}
+									</DataTable.Cell>
+									<DataTable.Cell
+										style={{
+											justifyContent: 'center',
+										}}
+									>
+										{item.notes}
+									</DataTable.Cell>
+								</DataTable.Row>
+							))
+						) : (
+							<Text>Nothing to show</Text>
+						)}
+
 						<DataTable.Pagination
 							page={page}
 							numberOfPages={Math.ceil(data.length / itemsPerPage)}
@@ -354,36 +367,41 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								{t('dataTableOrder.status')}
 							</DataTable.Title>
 						</DataTable.Header>
-						{data.slice(from, to).map((item) => (
-							<DataTable.Row
-								key={item.id}
-								onLongPress={() => {
-									itemStatusChange(item);
-								}}
-								onPress={() => {
-									showItemModal(item);
-								}}
-							>
-								<DataTable.Cell style={{ justifyContent: 'center', flex: 2 }}>
-									{item.product.name}
-								</DataTable.Cell>
-								<DataTable.Cell style={{ justifyContent: 'center' }}>
-									{item.quantity}
-								</DataTable.Cell>
-								<DataTable.Cell style={{ justifyContent: 'center' }}>
-									{item.weight.toFixed(2)}
-								</DataTable.Cell>
-								<DataTable.Cell style={{ justifyContent: 'center' }}>
-									{item.price.toFixed(2)}
-								</DataTable.Cell>
-								<DataTable.Cell style={{ justifyContent: 'center', flex: 2 }}>
-									{item.deliveryDateTime.toLocaleString('pt-pt')}
-								</DataTable.Cell>
-								<DataTable.Cell style={{ justifyContent: 'center' }}>
-									{translateStatus(item.status)}
-								</DataTable.Cell>
-							</DataTable.Row>
-						))}
+						{data?.length ? (
+							data.slice(from, to).map((item) => (
+								<DataTable.Row
+									key={item.id}
+									onLongPress={() => {
+										itemStatusChange(item);
+									}}
+									onPress={() => {
+										showItemModal(item);
+									}}
+								>
+									<DataTable.Cell style={{ justifyContent: 'center', flex: 2 }}>
+										{item.product.name}
+									</DataTable.Cell>
+									<DataTable.Cell style={{ justifyContent: 'center' }}>
+										{item.quantity}
+									</DataTable.Cell>
+									<DataTable.Cell style={{ justifyContent: 'center' }}>
+										{item.weight.toFixed(2)}
+									</DataTable.Cell>
+									<DataTable.Cell style={{ justifyContent: 'center' }}>
+										{item.price.toFixed(2)}
+									</DataTable.Cell>
+									<DataTable.Cell style={{ justifyContent: 'center', flex: 2 }}>
+										{item.deliveryDateTime.toLocaleString('pt-pt')}
+									</DataTable.Cell>
+									<DataTable.Cell style={{ justifyContent: 'center' }}>
+										{translateStatus(item.status)}
+									</DataTable.Cell>
+								</DataTable.Row>
+							))
+						) : (
+							<Text>Nothing to show</Text>
+						)}
+
 						<DataTable.Pagination
 							page={page}
 							numberOfPages={Math.ceil(data.length / itemsPerPage)}
@@ -469,36 +487,41 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								{t('dataTableOrder.status')}
 							</DataTable.Title>
 						</DataTable.Header>
-						{data.slice(from, to).map((item) => (
-							<DataTable.Row
-								key={item.id}
-								onLongPress={() => {
-									itemStatusChange(item);
-								}}
-								onPress={() => {
-									showItemModal(item);
-								}}
-							>
-								<DataTable.Cell style={{ justifyContent: 'center', flex: 2 }}>
-									{item.client.name}
-								</DataTable.Cell>
-								<DataTable.Cell style={{ justifyContent: 'center' }}>
-									{item.quantity}
-								</DataTable.Cell>
-								<DataTable.Cell style={{ justifyContent: 'center' }}>
-									{item.weight.toFixed(2)}
-								</DataTable.Cell>
-								<DataTable.Cell style={{ justifyContent: 'center' }}>
-									{item.price.toFixed(2)}
-								</DataTable.Cell>
-								<DataTable.Cell style={{ justifyContent: 'center', flex: 2 }}>
-									{item.deliveryDateTime.toLocaleString('pt-pt')}
-								</DataTable.Cell>
-								<DataTable.Cell style={{ justifyContent: 'center' }}>
-									{translateStatus(item.status)}
-								</DataTable.Cell>
-							</DataTable.Row>
-						))}
+						{data?.length ? (
+							data.slice(from, to).map((item) => (
+								<DataTable.Row
+									key={item.id}
+									onLongPress={() => {
+										itemStatusChange(item);
+									}}
+									onPress={() => {
+										showItemModal(item);
+									}}
+								>
+									<DataTable.Cell style={{ justifyContent: 'center', flex: 2 }}>
+										{item.client.name}
+									</DataTable.Cell>
+									<DataTable.Cell style={{ justifyContent: 'center' }}>
+										{item.quantity}
+									</DataTable.Cell>
+									<DataTable.Cell style={{ justifyContent: 'center' }}>
+										{item.weight.toFixed(2)}
+									</DataTable.Cell>
+									<DataTable.Cell style={{ justifyContent: 'center' }}>
+										{item.price.toFixed(2)}
+									</DataTable.Cell>
+									<DataTable.Cell style={{ justifyContent: 'center', flex: 2 }}>
+										{item.deliveryDateTime.toLocaleString('pt-pt')}
+									</DataTable.Cell>
+									<DataTable.Cell style={{ justifyContent: 'center' }}>
+										{translateStatus(item.status)}
+									</DataTable.Cell>
+								</DataTable.Row>
+							))
+						) : (
+							<Text>Nothing to show</Text>
+						)}
+
 						<DataTable.Pagination
 							page={page}
 							numberOfPages={Math.ceil(data.length / itemsPerPage)}
@@ -515,7 +538,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 					</DataTable>
 				);
 			}
-			case 'productQuantity': {
+			case 'productCount': {
 				return (
 					<DataTable>
 						<DataTable.Header>
@@ -572,30 +595,35 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								{t('dataTableOrder.status')}
 							</DataTable.Title>
 						</DataTable.Header>
-						{data.slice(from, to).map((item) => (
-							<DataTable.Row
-								key={item.key}
-								onPress={() => {
-									showItemModal(item);
-								}}
-							>
-								<DataTable.Cell style={{ justifyContent: 'center' }}>
-									{item.name}
-								</DataTable.Cell>
-								<DataTable.Cell style={{ justifyContent: 'center' }}>
-									{item.quantity}
-								</DataTable.Cell>
-								<DataTable.Cell style={{ justifyContent: 'center' }}>
-									{item.weight.toFixed(2)}
-								</DataTable.Cell>
-								<DataTable.Cell style={{ justifyContent: 'center' }}>
-									{item.weightTotal.toFixed(2)}
-								</DataTable.Cell>
-								<DataTable.Cell style={{ justifyContent: 'center' }}>
-									{translateStatus(item.status)}
-								</DataTable.Cell>
-							</DataTable.Row>
-						))}
+						{data?.length ? (
+							data.slice(from, to).map((item) => (
+								<DataTable.Row
+									key={item.key}
+									onPress={() => {
+										showItemModal(item);
+									}}
+								>
+									<DataTable.Cell style={{ justifyContent: 'center' }}>
+										{item.name}
+									</DataTable.Cell>
+									<DataTable.Cell style={{ justifyContent: 'center' }}>
+										{item.quantity}
+									</DataTable.Cell>
+									<DataTable.Cell style={{ justifyContent: 'center' }}>
+										{item.weight.toFixed(2)}
+									</DataTable.Cell>
+									<DataTable.Cell style={{ justifyContent: 'center' }}>
+										{item.weightTotal.toFixed(2)}
+									</DataTable.Cell>
+									<DataTable.Cell style={{ justifyContent: 'center' }}>
+										{translateStatus(item.status)}
+									</DataTable.Cell>
+								</DataTable.Row>
+							))
+						) : (
+							<Text style={{ fontSize: 12 }}>Nothing to show</Text>
+						)}
+
 						<DataTable.Pagination
 							page={page}
 							numberOfPages={Math.ceil(data.length / itemsPerPage)}
@@ -618,6 +646,8 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 	};
 
 	const renderRow = (item: object) => {
+		if (isEmpty(item)) return;
+
 		switch (props.dataType) {
 			case 'newOrder': {
 				//console.log(item);
@@ -906,7 +936,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 					</>
 				);
 			}
-			case 'productQuantity': {
+			case 'productCount': {
 				//console.log(item);
 				return (
 					<>
@@ -983,6 +1013,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 					visible={itemModalVisible}
 					onDismiss={() => {
 						setItemModalVisible(false);
+						//setItemModal([]);
 					}}
 					style={globalStyles.modalContainer.dataTable}
 					contentContainerStyle={[

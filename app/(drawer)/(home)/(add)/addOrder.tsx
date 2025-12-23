@@ -52,7 +52,7 @@ export default function AddOrder() {
 	const [productId, setProductId] = useState('');
 	const [orders, setOrders] = useState([]);
 	const [deliveryDate, setDeliveryDate] = useState(new Date());
-	const [deliveryTime, setDeliveryTime] = useState(new Date(0, 0, 0));
+	const [deliveryTime, setDeliveryTime] = useState(new Date());
 
 	// All the logic to implement the snackbar
 	const { showSnackbar } = useSnackbar();
@@ -150,6 +150,7 @@ export default function AddOrder() {
 	};
 
 	const getProduct = async (nameProduct: string) => {
+		//console.log(`${nameProduct} : ${productId}`);
 		if (productId) return;
 
 		try {
@@ -168,7 +169,7 @@ export default function AddOrder() {
 		Keyboard.dismiss();
 
 		const productCheck = await checkProductByName(productName);
-		console.log(`${productName} : ${productId} : ${productCheck}`);
+		//console.log(`${productName} : ${productId} : ${productCheck}`);
 
 		try {
 			if (!productName) {
@@ -191,7 +192,7 @@ export default function AddOrder() {
 				IDProduct = await getProduct(productName);
 			}
 
-			if (!product || !IDProduct) {
+			if (!product || (!IDProduct && !productId)) {
 				showSnackbar(t('add.order.productNameInvalid'));
 				console.error('Product invalid');
 				return;
@@ -254,7 +255,7 @@ export default function AddOrder() {
 		Keyboard.dismiss();
 
 		const clientCheck = await checkClientByName(name.trim());
-		console.log(`${name.trim()} : ${clientId} : ${clientCheck}`);
+		//console.log(`${name.trim()} : ${clientId} : ${clientCheck}`);
 
 		if (!name.trim() && !clientId) {
 			showSnackbar(t('add.order.clientNameEmpty'));
@@ -278,20 +279,21 @@ export default function AddOrder() {
 		let IDClient = '';
 		if (!clientId) IDClient = getClient(name);
 
-		if (!IDClient) {
+		if (!IDClient && !clientId) {
 			console.error('Error getting client ID');
+			setLoading(false);
 			return;
 		}
 
 		try {
 			const batch = firestore().batch();
-			console.log(`${Boolean(clientId)} : ${clientId} : ${IDClient}`);
+
 			for (const order of orders) {
 				//console.log(order);
 				const orderRef = firestore()
 					.collection('orders')
 					.doc(clientId ? clientId : IDClient);
-				console.log(orderRef);
+				//console.log(orderRef);
 				const orderDB = {
 					client: { id: clientId, name: name.trim() },
 					order: order,
@@ -632,7 +634,15 @@ export default function AddOrder() {
 							labelStyle={globalStyles.text.date}
 							onPress={() => setDeliveryTimeModal(true)}
 						>
-							{deliveryTime.toLocaleTimeString('pt-pt')}
+							{`${
+								deliveryTime.getHours() > 9
+									? deliveryTime.getHours()
+									: `0${deliveryTime.getHours()}`
+							}:${
+								deliveryTime.getMinutes() > 9
+									? deliveryTime.getMinutes()
+									: `0${deliveryTime.getMinutes()}`
+							}`}
 						</Button>
 						<DatePicker
 							modal

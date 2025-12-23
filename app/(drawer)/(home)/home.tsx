@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Image, ScrollView, useWindowDimensions, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { globalStyles } from '@/styles/global';
+import { getSingleClientByName } from '@/utils/Firebase';
 
 export default function Home() {
 	const { t } = useTranslation();
@@ -64,6 +65,25 @@ export default function Home() {
 					onPress={() => router.push('/(drawer)/(home)/importExport')}
 				>
 					{t('home.importExport')}
+				</Button>
+
+				<Button
+					style={globalStyles.button}
+					contentStyle={globalStyles.buttonContent.global}
+					labelStyle={globalStyles.buttonText.global}
+					icon='database'
+					mode='elevated'
+					//loading={loginLoading}
+					onPress={async () => {
+						let test = '     sldajlasj   dlkajsl          ';
+						console.log(test);
+						console.log(test.length);
+						test = test.trim();
+						console.log(test);
+						console.log(test.length);
+					}}
+				>
+					{t('home.test')}
 				</Button>
 			</View>
 		</ScrollView>

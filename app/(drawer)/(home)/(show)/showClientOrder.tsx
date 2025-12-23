@@ -1,4 +1,3 @@
-import firestore from '@react-native-firebase/firestore';
 import { useFocusEffect } from 'expo-router';
 import type { FirebaseError } from 'firebase/app';
 import Fuse from 'fuse.js';
@@ -10,6 +9,12 @@ import DataTableOrder from '@/components/DataTableOrder';
 import SearchList from '@/components/SearchList';
 import { useSnackbar } from '@/context/SnackbarContext';
 import { globalStyles } from '@/styles/global';
+import {
+	getClientNames,
+	getSingleClientID,
+	getSingleClientOrders,
+} from '@/utils/Firebase';
+import { handleOrderStatus } from '@/utils/Utils';
 
 export default function ShowClientOrder() {
 	const { t } = useTranslation();
@@ -41,23 +46,14 @@ export default function ShowClientOrder() {
 	);
 
 	const getClientList = async () => {
-		await firestore()
-			.collection('clients')
-			.orderBy('name', 'asc')
-			.get()
-			.then((querySnapshot) => {
-				const clientsName = [];
-
-				querySnapshot.forEach((doc) => {
-					clientsName.push({ id: doc.id, name: doc.data().name });
-				});
-				//console.log(clientsName);
-				setClientList(clientsName);
-			})
-			.catch((e: any) => {
-				const err = e as FirebaseError;
-				console.log(`Error getting client list: ${err.message}`);
-			});
+		try {
+			const clientNames = await getClientNames();
+			//console.log(clientNames);
+			setClientList(clientNames);
+		} catch (e: any) {
+			const err = e as FirebaseError;
+			console.error(`Error getting client list: ${err.message}`);
+		}
 	};
 
 	const filterClientList = async (input: string) => {
@@ -68,117 +64,68 @@ export default function ShowClientOrder() {
 			threshold: 0.3,
 			limit: 5,
 		};
-		const fuse = new Fuse(clientList, fuseOptions);
 
-		const results = fuse.search(input);
-		setHintClientList(results);
-		//console.log(results);
+		try {
+			const fuse = new Fuse(clientList, fuseOptions);
+
+			const results = fuse.search(input);
+			setHintClientList(results);
+			//console.log(results);
+		} catch (e: any) {
+			console.error(`Error filtering client list: ${e.message}`);
+		}
 	};
 
-	const getClient = (clientName: string) => {
+	const getClient = async (nameClient: string) => {
 		if (clientId) return;
 
-		firestore()
-			.collection('clients')
-			.where('name', '==', clientName)
-			.get()
-			.then((snapshot) => {
-				if (!snapshot.docs.length)
-					if (name) showSnackbar(t('show.clientOrder.clientNameInvalid'));
-					else showSnackbar(t('show.clientOrder.clientNameEmpty'));
-				//console.log(snapshot.docs[0].id);
-				//console.log(snapshot.docs[0].data());
-				setClientId(snapshot.docs[0].id);
-				getClientOrders(snapshot.docs[0].id);
-			})
-			.catch((e: any) => {
-				const err = e as FirebaseError;
-				console.log(`Error getting client: ${err.message}`);
-			});
+		try {
+			const IDClient = await getSingleClientID(nameClient);
+			if (!IDClient)
+				if (name) showSnackbar(t('show.clientOrder.clientNameInvalid'));
+				else showSnackbar(t('show.clientOrder.clientNameEmpty'));
+			else {
+				setClientId(IDClient);
+				getClientOrders(IDClient);
+			}
+			return IDClient ? IDClient : false;
+		} catch (e: any) {
+			console.error(`Error getting client: ${e.message}`);
+		}
 	};
 
 	const getClientOrders = async (currentClientId: string) => {
 		//console.log(currentClientId);
-		await firestore()
-			.collection('orders')
-			.orderBy('order.product.name', 'asc')
-			.where('client.id', '==', currentClientId)
-			.get()
-			.then((querySnapshot) => {
-				const orders = [];
 
-				querySnapshot.forEach((doc) => {
-					//console.log(doc.data().order);
-					orders.push({
-						id: doc.id,
-						product: doc.data().order.product,
-						quantity: doc.data().order.quantity,
-						weight: doc.data().order.weight,
-						price: doc.data().order.price,
-						notes: doc.data().order.notes,
-						deliveryDateTime: new Date(doc.data().deliveryDateTime.toDate()),
-						status: doc.data().order.status,
-					});
-				});
-				setClientOrders(orders);
-				//console.log(orders);
-			})
-			.catch((e: any) => {
-				const err = e as FirebaseError;
-				console.log(`Error getting client orders: ${err.message}`);
-			});
+		try {
+			const orders = await getSingleClientOrders(currentClientId);
+			setClientOrders(orders);
+			//console.log(orders);
+		} catch (e: any) {
+			const err = e as FirebaseError;
+			console.log(`Error getting client orders: ${err.message}`);
+		}
 	};
 
-	// Because of the database changes, directly changing the
-	// status variable of the order is now possible
-	const updateOrderDatabase = async (item: object) => {
-		firestore()
-			.collection('orders')
-			.doc(item.id)
-			.update({ 'order.status': item.status })
-			.then(() => {
-				//console.log('Updated status');
-				showSnackbar(t('show.clientOrder.updatedStatus'));
-			})
-			.catch((e: any) => {
-				const err = e as FirebaseError;
-				console.log(`Error updating order: ${err.message}`);
-			});
-	};
-
-	const deleteOrder = async (item: object) => {
-		firestore()
-			.collection('orders')
-			.doc(item.id)
-			.delete()
-			.then(() => {
-				//console.log('Order deleted');
-				showSnackbar(t('show.clientOrder.DeletedOrder'));
-				getClientOrders(clientId);
-			})
-			.catch((e: any) => {
-				const err = e as FirebaseError;
-				console.log(`Error deleting order: ${err.message}`);
-			});
-	};
-
-	const updateOrderStatus = (item: object) => {
+	const updateOrderStatus = async (item: object) => {
 		//console.log(item);
-		// Mark as Ready if Incomplete
-		if (item.status === 'Incomplete') {
-			item.status = 'Ready';
+		console.log(`Original: ${item.status}`);
+
+		const orderStatus = await handleOrderStatus(item);
+		console.log(`Updated: ${orderStatus}`);
+
+		switch (orderStatus) {
+			case 'Ready':
+			case 'Delivered':
+				showSnackbar(t('show.clientOrder.updatedStatus'));
+				break;
+			case 'Deleted':
+				showSnackbar(t('show.clientOrder.deletedOrder'));
+				getClientOrders(clientId);
+				break;
+			default:
+				return;
 		}
-		// Mark as Delivered if Ready
-		else if (item.status === 'Ready') {
-			item.status = 'Delivered';
-		}
-		// Delete if Delivered
-		else if (item.status === 'Delivered') {
-			deleteOrder(item);
-			return;
-		}
-		// Update in Firestore
-		updateOrderDatabase(item);
 	};
 
 	const renderClientHint = ({ item }) => {
@@ -217,12 +164,6 @@ export default function ShowClientOrder() {
 					if (input.trim()) filterClientList(input);
 					else setHintClientList([]);
 				}}
-				/* onEndEditing={() => {
-					setHintClientList([]);
-					if (!clientId) {
-						getClient(name);
-					}
-				}} */
 				onSubmitEditing={() => {
 					if (!clientId) {
 						getClient(name);
@@ -248,7 +189,7 @@ export default function ShowClientOrder() {
 					dataType='clientOrder'
 					defaultSort='product.name'
 					numberofItemsPerPageList={[8, 9, 10]}
-					onLongPress={(item: object) => {
+					onLongPress={async (item: object) => {
 						updateOrderStatus(item);
 					}}
 				/>

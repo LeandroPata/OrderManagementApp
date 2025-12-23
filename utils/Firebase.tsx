@@ -1,6 +1,6 @@
 import firestore from '@react-native-firebase/firestore';
 import type { FirebaseError } from 'firebase/app';
-import { isEmpty } from './Utils';
+import { isEmpty } from '@/utils/Utils';
 
 export const getClients = async () => {
 	const querySnapshot = await firestore()
@@ -10,7 +10,7 @@ export const getClients = async () => {
 		.catch((e: any) => {
 			const err = e as FirebaseError;
 			//showSnackbar('Error getting all clients list: ' + err.message);
-			console.log(`Error getting all clients list: ${err.message}`);
+			console.error(`Error getting all clients list: ${err.message}`);
 		});
 	const clientsAll = [];
 
@@ -35,7 +35,7 @@ export const getSingleClient = async (id: string) => {
 		.catch((e: any) => {
 			const err = e as FirebaseError;
 			//showSnackbar('Getting client failed: ' + err.message);
-			console.log(`Getting client failed: ${err.message}`);
+			console.error(`Getting client failed: ${err.message}`);
 		});
 	//console.log(docSnapshot.data());
 	//console.log(docSnapshot.exists);
@@ -54,7 +54,7 @@ export const getSingleClientByName = async (name: string) => {
 		.catch((e: any) => {
 			const err = e as FirebaseError;
 			//showSnackbar('Error getting client: ' + err.message);
-			console.log(`Error getting client: ${err.message}`);
+			console.error(`Error getting client: ${err.message}`);
 		});
 
 	querySnapshot.forEach((docSnapshot) => {
@@ -77,7 +77,7 @@ export const getSingleClientID = async (name: string) => {
 		.catch((e: any) => {
 			const err = e as FirebaseError;
 			//showSnackbar('Error getting client ID: ' + err.message);
-			console.log(`Error getting client ID: ${err.message}`);
+			console.error(`Error getting client ID: ${err.message}`);
 		});
 
 	querySnapshot.forEach((docSnapshot) => {
@@ -96,7 +96,7 @@ export const getClientNames = async () => {
 		.catch((e: any) => {
 			const err = e as FirebaseError;
 			//showSnackbar('Error getting client names: ' + err.message);
-			console.log(`Error getting client names: ${err.message}`);
+			console.error(`Error getting client names: ${err.message}`);
 		});
 	const clientNames = [];
 
@@ -106,6 +106,36 @@ export const getClientNames = async () => {
 	});
 	//console.log(clientNames);
 	return clientNames.length ? clientNames : false;
+};
+
+export const getSingleClientOrders = async (id: string) => {
+	const orders = [];
+	await firestore()
+		.collection('orders')
+		.orderBy('order.product.name', 'asc')
+		.where('client.id', '==', id)
+		.get()
+		.then((querySnapshot) => {
+			querySnapshot.forEach((doc) => {
+				//console.log(doc.data().order);
+				orders.push({
+					id: doc.id,
+					product: doc.data().order.product,
+					quantity: doc.data().order.quantity,
+					weight: doc.data().order.weight,
+					price: doc.data().order.price,
+					notes: doc.data().order.notes,
+					deliveryDateTime: new Date(doc.data().deliveryDateTime.toDate()),
+					status: doc.data().order.status,
+				});
+			});
+		})
+		.catch((e: any) => {
+			const err = e as FirebaseError;
+			console.error(`Error getting client orders: ${err.message}`);
+		});
+	//console.log(orders);
+	return orders.length ? orders : false;
 };
 
 export const checkClient = async (id: string) => {
@@ -121,7 +151,7 @@ export const checkClient = async (id: string) => {
 		.catch((e: any) => {
 			const err = e as FirebaseError;
 			//showSnackbar('Checking client failed: ' + err.message);
-			console.log(`Checking client failed: ${err.message}`);
+			console.error(`Checking client failed: ${err.message}`);
 		});
 	return docCheck;
 };
@@ -139,7 +169,7 @@ export const checkClientByName = async (name: string) => {
 		if (!querySnapshot.empty) docCheck = true;
 	} catch (e: any) {
 		const err = e as FirebaseError;
-		console.log(`Checking client name failed: ${err.message}`);
+		console.error(`Checking client name failed: ${err.message}`);
 		return docCheck;
 	}
 	return docCheck;
@@ -153,7 +183,7 @@ export const deleteClientDoc = async (id: string) => {
 		.catch((e: any) => {
 			const err = e as FirebaseError;
 			//showSnackbar('Client deletion failed: ' + err.message);
-			console.log(`Client deletion failed: ${err.message}`);
+			console.error(`Client deletion failed: ${err.message}`);
 			return false;
 		});
 	return true;
@@ -167,7 +197,7 @@ export const getProducts = async () => {
 		.catch((e: any) => {
 			const err = e as FirebaseError;
 			//showSnackbar('Error getting all products list: ' + err.message);
-			console.log(`Error getting all products list: ${err.message}`);
+			console.error(`Error getting all products list: ${err.message}`);
 		});
 	const clientsAll = [];
 
@@ -191,7 +221,7 @@ export const getSingleProduct = async (id: string) => {
 		.catch((e: any) => {
 			const err = e as FirebaseError;
 			//showSnackbar('Getting product failed: ' + err.message);
-			console.log(`Getting product failed: ${err.message}`);
+			console.error(`Getting product failed: ${err.message}`);
 		});
 	//console.log(docSnapshot.data());
 	//console.log(docSnapshot.exists);
@@ -209,7 +239,7 @@ export const getSingleProductByName = async (name: string) => {
 		.catch((e: any) => {
 			const err = e as FirebaseError;
 			//showSnackbar('Getting product failed: ' + err.message);
-			console.log(`Getting product failed: ${err.message}`);
+			console.error(`Getting product failed: ${err.message}`);
 		});
 
 	querySnapshot.forEach((docSnapshot) => {
@@ -232,7 +262,7 @@ export const getSingleProductID = async (name: string) => {
 		.catch((e: any) => {
 			const err = e as FirebaseError;
 			//showSnackbar('Error getting product ID: ' + err.message);
-			console.log(`Error getting product ID: ${err.message}`);
+			console.error(`Error getting product ID: ${err.message}`);
 		});
 
 	querySnapshot.forEach((docSnapshot) => {
@@ -251,7 +281,7 @@ export const getProductNames = async () => {
 		.catch((e: any) => {
 			const err = e as FirebaseError;
 			//showSnackbar('Error getting product names: ' + err.message);
-			console.log(`Error getting product names: ${err.message}`);
+			console.error(`Error getting product names: ${err.message}`);
 		});
 	const productNames = [];
 
@@ -264,22 +294,111 @@ export const getProductNames = async () => {
 	return productNames.length ? productNames : false;
 };
 
+export const getSingleProductOrders = async (id: string) => {
+	const orders = [];
+	await firestore()
+		.collection('orders')
+		.orderBy('client.name', 'asc')
+		.where('order.product.id', '==', id)
+		.get()
+		.then((querySnapshot) => {
+			querySnapshot.forEach((doc) => {
+				orders.push({
+					id: doc.id,
+					client: doc.data().client,
+					quantity: doc.data().order.quantity,
+					weight: doc.data().order.weight,
+					price: doc.data().order.price,
+					status: doc.data().order.status,
+					notes: doc.data().order.notes,
+					deliveryDateTime: new Date(doc.data().deliveryDateTime.toDate()),
+				});
+			});
+		})
+		.catch((e: any) => {
+			const err = e as FirebaseError;
+			console.error(`Error getting product orders: ${err.message}`);
+		});
+
+	//console.log(orders);
+	return orders.length ? orders : false;
+};
+
+export const getProductsCount = async () => {
+	const currentCount = [];
+
+	await firestore()
+		.collection('orders')
+		.orderBy('client.name', 'asc')
+		.get()
+		.then((querySnapshot) => {
+			const productQuantity = {};
+			let i = 0;
+
+			querySnapshot.forEach((doc) => {
+				//console.log(doc.data().order);
+				const existingProduct = currentCount.find(
+					(product) =>
+						doc.data().order.product.id === product.id &&
+						doc.data().order.weight === product.weight
+				);
+
+				if (existingProduct) {
+					existingProduct.quantity += doc.data().order.quantity;
+					if (productQuantity[existingProduct.id] && doc.data().order.weight) {
+						productQuantity[existingProduct.id] +=
+							doc.data().order.quantity * doc.data().order.weight;
+						existingProduct.weightTotal = productQuantity[existingProduct.id];
+					}
+				} else {
+					if (!productQuantity[doc.data().order.product.id])
+						productQuantity[doc.data().order.product.id] =
+							doc.data().order.weight * doc.data().order.quantity;
+					else {
+						productQuantity[doc.data().order.product.id] +=
+							doc.data().order.weight * doc.data().order.quantity;
+					}
+					currentCount.push({
+						key: i,
+						id: doc.data().order.product.id,
+						name: doc.data().order.product.name,
+						quantity: doc.data().order.quantity,
+						weight: doc.data().order.weight,
+						weightTotal: productQuantity[doc.data().order.product.id],
+						status: doc.data().order.status,
+					});
+					i++;
+				}
+			});
+			for (const count of currentCount) {
+				count.weightTotal = productQuantity[count.id];
+			}
+			//console.log(currentCount);
+		})
+		.catch((e: any) => {
+			const err = e as FirebaseError;
+			console.log(`Error getting product count: ${err.message}`);
+		});
+
+	return currentCount;
+};
+
 export const checkProduct = async (id: string) => {
 	//console.log(id);
 	let docCheck = false;
-	const docRef = firestore().collection('product').doc(id);
+	const docRef = firestore().collection('products').doc(id);
 
 	await docRef
 		.get()
 		.then((doc) => {
-			console.log(doc.data());
-			console.log(doc.exists);
+			//console.log(doc.data());
+			//console.log(doc.exists);
 			if (doc.exists) docCheck = true;
 		})
 		.catch((e: any) => {
 			const err = e as FirebaseError;
 			//showSnackbar('Checking product failed: ' + err.message);
-			console.log(`Checking product failed: ${err.message}`);
+			console.error(`Checking product failed: ${err.message}`);
 		});
 	return docCheck;
 };
@@ -296,7 +415,7 @@ export const checkProductByName = async (name: string) => {
 		if (!querySnapshot.empty) docCheck = true;
 	} catch (e: any) {
 		const err = e as FirebaseError;
-		console.log(`Checking product name failed: ${err.message}`);
+		console.error(`Checking product name failed: ${err.message}`);
 		return docCheck;
 	}
 	return docCheck;
@@ -310,21 +429,63 @@ export const deleteProductDoc = async (id: string) => {
 		.catch((e: any) => {
 			const err = e as FirebaseError;
 			//showSnackbar('Product deletion failed: ' + err.message);
-			console.log(`Product deletion failed: ${err.message}`);
+			console.error(`Product deletion failed: ${err.message}`);
+			return false;
+		});
+	return true;
+};
+
+export const checkOrder = async (id: string) => {
+	//console.log(id);
+
+	let docCheck = false;
+	const docRef = firestore().collection('orders').doc(id);
+
+	await docRef
+		.get()
+		.then((doc) => {
+			//console.log(doc.data());
+			//console.log(doc.exists);
+			if (doc.exists) docCheck = true;
+		})
+		.catch((e: any) => {
+			const err = e as FirebaseError;
+			//showSnackbar('Checking product failed: ' + err.message);
+			console.error(`Checking product failed: ${err.message}`);
+		});
+	return docCheck;
+};
+
+export const updateSingleOrderStatus = async (order: object) => {
+	//console.log(order);
+
+	const docCheck = await checkOrder(order.id);
+	if (!order.id || !order.status || !docCheck) return false;
+
+	await firestore()
+		.collection('orders')
+		.doc(order.id)
+		.update({ 'order.status': order.status })
+		.catch((e: any) => {
+			const err = e as FirebaseError;
+			console.error(`Error updating order: ${err.message}`);
 			return false;
 		});
 	return true;
 };
 
 export const deleteOrderDoc = async (id: string) => {
+	const docCheck = await checkOrder(id);
+	if (!docCheck) return false;
+
 	await firestore()
-		.collection('order')
+		.collection('orders')
 		.doc(id)
 		.delete()
 		.catch((e: any) => {
 			const err = e as FirebaseError;
-			//showSnackbar('Order deletion failed: ' + err.message);
-			console.log(`Order deletion failed: ${err.message}`);
+			//showSnackbar('Error deleting order: ' + err.message);
+			console.error(`Error deleting order: ${err.message}`);
 			return false;
 		});
 	return true;

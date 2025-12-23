@@ -1,4 +1,3 @@
-import firestore from '@react-native-firebase/firestore';
 import { useFocusEffect } from 'expo-router';
 import type { FirebaseError } from 'firebase/app';
 import Fuse from 'fuse.js';
@@ -10,6 +9,12 @@ import DataTableOrder from '@/components/DataTableOrder';
 import SearchList from '@/components/SearchList';
 import { useSnackbar } from '@/context/SnackbarContext';
 import { globalStyles } from '@/styles/global';
+import {
+	getProductNames,
+	getSingleProductID,
+	getSingleProductOrders,
+} from '@/utils/Firebase';
+import { handleOrderStatus } from '@/utils/Utils';
 
 export default function ShowProductOrder() {
 	const { t } = useTranslation();
@@ -41,26 +46,14 @@ export default function ShowProductOrder() {
 	);
 
 	const getProductList = async () => {
-		await firestore()
-			.collection('products')
-			.orderBy('name', 'asc')
-			.get()
-			.then((querySnapshot) => {
-				const productsName = [];
-
-				querySnapshot.forEach((doc) => {
-					productsName.push({
-						id: doc.id,
-						name: doc.data().name,
-					});
-				});
-				//console.log(productsName);
-				setProductList(productsName);
-			})
-			.catch((e: any) => {
-				const err = e as FirebaseError;
-				console.log(`Error getting product list: ${err.message}`);
-			});
+		try {
+			const productNames = await getProductNames();
+			//console.log(productNames);
+			setProductList(productNames);
+		} catch (e: any) {
+			const err = e as FirebaseError;
+			console.error(`Error getting product list: ${err.message}`);
+		}
 	};
 
 	const filterProductList = async (input: string) => {
@@ -71,117 +64,68 @@ export default function ShowProductOrder() {
 			threshold: 0.3,
 			limit: 5,
 		};
-		const fuse = new Fuse(productList, fuseOptions);
 
-		const results = fuse.search(input);
-		setHintProductList(results);
-		//console.log(results);
+		try {
+			const fuse = new Fuse(productList, fuseOptions);
+
+			const results = fuse.search(input);
+			setHintProductList(results);
+			//console.log(results);
+		} catch (e: any) {
+			console.error(`Error filtering product list: ${e.message}`);
+		}
 	};
 
-	const getProduct = (productName: string) => {
+	const getProduct = async (nameProduct: string) => {
 		if (productId) return;
 
-		firestore()
-			.collection('products')
-			.where('name', '==', productName)
-			.get()
-			.then((snapshot) => {
-				if (!snapshot.docs.length)
-					if (name) showSnackbar(t('show.productOrder.productNameInvalid'));
-					else showSnackbar(t('show.productOrder.productNameEmpty'));
-				//console.log(snapshot.docs[0].id);
-				//console.log(snapshot.docs[0].data());
-				setProductId(snapshot.docs[0].id);
-				getProductOrders(snapshot.docs[0].id);
-			})
-			.catch((e: any) => {
-				const err = e as FirebaseError;
-				console.log(`Error getting product: ${err.message}`);
-			});
+		try {
+			const IDProduct = await getSingleProductID(nameProduct);
+			if (!IDProduct)
+				if (name) showSnackbar(t('show.productOrder.productNameInvalid'));
+				else showSnackbar(t('show.productOrder.productNameEmpty'));
+			else {
+				setProductId(IDProduct);
+				getProductOrders(IDProduct);
+			}
+			return IDProduct ? IDProduct : false;
+		} catch (e: any) {
+			console.error(`Error getting product: ${e.message}`);
+		}
 	};
 
 	const getProductOrders = async (currentProductId: string) => {
 		//console.log(currentProductId);
-		await firestore()
-			.collection('orders')
-			.orderBy('client.name', 'asc')
-			.where('order.product.id', '==', currentProductId)
-			.get()
-			.then((querySnapshot) => {
-				const orders = [];
 
-				querySnapshot.forEach((doc) => {
-					orders.push({
-						id: doc.id,
-						client: doc.data().client,
-						quantity: doc.data().order.quantity,
-						weight: doc.data().order.weight,
-						price: doc.data().order.price,
-						status: doc.data().order.status,
-						notes: doc.data().order.notes,
-						deliveryDateTime: new Date(doc.data().deliveryDateTime.toDate()),
-					});
-				});
-
-				setProductOrders(orders);
-				//console.log(orders);
-			})
-			.catch((e: any) => {
-				const err = e as FirebaseError;
-				console.log(`Error getting product orders: ${err.message}`);
-			});
+		try {
+			const orders = await getSingleProductOrders(currentProductId);
+			setProductOrders(orders);
+			//console.log(orders);
+		} catch (e: any) {
+			const err = e as FirebaseError;
+			console.log(`Error getting product orders: ${err.message}`);
+		}
 	};
 
-	// Because of the database changes, directly changing the
-	// status variable of the order is now possible
-	const updateOrderDatabase = (item: object) => {
-		firestore()
-			.collection('orders')
-			.doc(item.id)
-			.update({ 'order.status': item.status })
-			.then(() => {
-				//console.log('Updated');
-				showSnackbar(t('show.productOrder.updatedStatus'));
-			})
-			.catch((e: any) => {
-				const err = e as FirebaseError;
-				console.log(`Error updating order: ${err.message}`);
-			});
-	};
-
-	const deleteOrder = (item: object) => {
-		firestore()
-			.collection('orders')
-			.doc(item.id)
-			.delete()
-			.then(() => {
-				//console.log('Order entry deleted because order is empty');
-				showSnackbar(t('show.productOrder.deletedOrder'));
-				getProductOrders(productId);
-			})
-			.catch((e: any) => {
-				const err = e as FirebaseError;
-				console.log(`Error deleting order: ${err.message}`);
-			});
-	};
-
-	const updateOrderStatus = (item: object) => {
+	const updateOrderStatus = async (item: object) => {
 		//console.log(item);
-		// Mark as Ready if Incomplete
-		if (item.status === 'Incomplete') {
-			item.status = 'Ready';
+		console.log(`Original: ${item.status}`);
+
+		const orderStatus = await handleOrderStatus(item);
+		console.log(`Updated: ${orderStatus}`);
+
+		switch (orderStatus) {
+			case 'Ready':
+			case 'Delivered':
+				showSnackbar(t('show.clientOrder.updatedStatus'));
+				break;
+			case 'Deleted':
+				showSnackbar(t('show.clientOrder.deletedOrder'));
+				getProductOrders(productId);
+				break;
+			default:
+				return;
 		}
-		// Mark as Delivered if Ready
-		else if (item.status === 'Ready') {
-			item.status = 'Delivered';
-		}
-		// Delete if Delivered
-		else if (item.status === 'Delivered') {
-			deleteOrder(item);
-			return;
-		}
-		// Update in Firestore
-		updateOrderDatabase(item);
 	};
 
 	const renderProductHint = ({ item }) => {
@@ -220,12 +164,6 @@ export default function ShowProductOrder() {
 					if (input.trim()) filterProductList(input);
 					else setHintProductList([]);
 				}}
-				/* onEndEditing={() => {
-					setHintProductList([]);
-					if (!productId) {
-						getProduct(name);
-					}
-				}} */
 				onSubmitEditing={() => {
 					if (!productId) {
 						getProduct(name);
