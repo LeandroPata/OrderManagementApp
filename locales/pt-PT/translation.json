@@ -87,7 +87,7 @@
 			"nameError": "Nome do produto é mandatório!",
 			"nameInvalid": "Nome é inválido!",
 			"price": "Preço",
-			"priceWeight": "Preço/Peso",
+			"priceByWeight": "Preço/Peso",
 			"add": "Adicionar Produto",
 			"added": "Produto adicionado!"
 		},
