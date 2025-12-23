@@ -220,6 +220,8 @@ export default function AddOrder() {
 					: Number(productQuantity) * product.price;
 			//console.log(price);
 
+			//console.log(orders)
+
 			const newOrder = orders;
 
 			const newOrderRef = firestore().collection('orders').doc();
@@ -235,6 +237,7 @@ export default function AddOrder() {
 			});
 			//console.log(newOrder);
 			setOrders(newOrder);
+			//console.log(newOrder)
 			showSnackbar(t('add.order.addedToOrder'));
 			console.log('Added to order');
 		} catch {
@@ -276,15 +279,6 @@ export default function AddOrder() {
 			return;
 		}
 
-		let IDClient = '';
-		if (!clientId) IDClient = getClient(name);
-
-		if (!IDClient && !clientId) {
-			console.error('Error getting client ID');
-			setLoading(false);
-			return;
-		}
-
 		try {
 			const batch = firestore().batch();
 
@@ -292,7 +286,7 @@ export default function AddOrder() {
 				//console.log(order);
 				const orderRef = firestore()
 					.collection('orders')
-					.doc(clientId ? clientId : IDClient);
+					.doc(order.id);
 				//console.log(orderRef);
 				const orderDB = {
 					client: { id: clientId, name: name.trim() },
