@@ -93,7 +93,7 @@ export default function AddClient() {
 						setName(name.trim());
 					}}
 					error={nameError}
-					autoCapitalize='words'
+					autoCapitalize='sentences'
 					keyboardType='default'
 					label={t('add.client.name')}
 				/>

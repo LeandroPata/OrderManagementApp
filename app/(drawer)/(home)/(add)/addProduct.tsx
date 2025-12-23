@@ -99,7 +99,7 @@ export default function AddProduct() {
 						setName(name.trim());
 					}}
 					error={nameError}
-					autoCapitalize='words'
+					autoCapitalize='sentences'
 					keyboardType='default'
 					label={t('add.product.name')}
 				/>
