@@ -226,6 +226,8 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 						</DataTable.Header>
 
 						{!data?.length ? (
+							<Text>Nothing to show</Text>
+						) : (
 							data.slice(from, to).map((item) => (
 								<DataTable.Row
 									key={item.id}
@@ -278,8 +280,6 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 									</DataTable.Cell>
 								</DataTable.Row>
 							))
-						) : (
-							<Text>Nothing to show</Text>
 						)}
 
 						<DataTable.Pagination
