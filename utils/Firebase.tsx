@@ -340,7 +340,8 @@ export const getProductsCount = async () => {
 				const existingProduct = currentCount.find(
 					(product) =>
 						doc.data().order.product.id === product.id &&
-						doc.data().order.weight === product.weight
+						doc.data().order.weight === product.weight &&
+						doc.data().order.status === product.status
 				);
 
 				if (existingProduct) {
