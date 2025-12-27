@@ -50,6 +50,7 @@
 		"orderReady": "Order is ready to deliver?",
 		"orderDelivered": "Order was delivered?",
 		"orderDelete": "Delete order?",
+		"orderUndo": "Undo order?",
 		"name": "Name",
 		"product": "Product",
 		"client": "Client",

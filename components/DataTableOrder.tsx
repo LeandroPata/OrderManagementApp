@@ -117,7 +117,20 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 		//console.log(item);
 	};
 
+	const itemDelete = (item: object) => {
+		console.log(item)
+		setItemModal(item);
+		showDialog({
+			text: t('dataTableOrder.orderUndo'),
+			onConfirmation: () => {
+				props.onLongPress(item);
+			},
+			testID: 'ItemStatusDialog',
+		});
+	};
+
 	const itemStatusChange = (item: object) => {
+		//console.log(item)
 		setItemModal(item);
 		if (item.status === 'Incomplete')
 			showDialog({
@@ -129,7 +142,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 			});
 		else if (item.status === 'Ready')
 			showDialog({
-				text: t('dataTableOrder.orderReady'),
+				text: t('dataTableOrder.orderDelivered'),
 				onConfirmation: () => {
 					props.onLongPress(item);
 				},
@@ -137,7 +150,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 			});
 		else if (item.status === 'Delivered')
 			showDialog({
-				text: t('dataTableOrder.orderReady'),
+				text: t('dataTableOrder.orderDelete'),
 				onConfirmation: () => {
 					props.onLongPress(item);
 				},
@@ -232,7 +245,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								<DataTable.Row
 									key={item.id}
 									onLongPress={() => {
-										itemStatusChange(item);
+										itemDelete(item);
 									}}
 									onPress={() => {
 										//console.log(item);

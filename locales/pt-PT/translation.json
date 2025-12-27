@@ -50,6 +50,7 @@
 		"orderReady": "A encomenda está pronta para entrega?",
 		"orderDelivered": "A encomenda foi entregue?",
 		"orderDelete": "Apagar encomenda?",
+		"orderUndo": "Anular encomenda?",
 		"name": "Nome",
 		"product": "Produto",
 		"client": "Cliente",
