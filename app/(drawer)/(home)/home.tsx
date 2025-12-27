@@ -66,25 +66,6 @@ export default function Home() {
 				>
 					{t('home.importExport')}
 				</Button>
-
-				<Button
-					style={globalStyles.button}
-					contentStyle={globalStyles.buttonContent.global}
-					labelStyle={globalStyles.buttonText.global}
-					icon='database'
-					mode='elevated'
-					//loading={loginLoading}
-					onPress={async () => {
-						let test = '     sldajlasj   dlkajsl          ';
-						console.log(test);
-						console.log(test.length);
-						test = test.trim();
-						console.log(test);
-						console.log(test.length);
-					}}
-				>
-					{t('home.test')}
-				</Button>
 			</View>
 		</ScrollView>
 	);
