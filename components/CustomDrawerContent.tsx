@@ -405,9 +405,9 @@ export default function CustomDrawerContent(props: any) {
 			setConfirmNewPasswordError(true);
 			//return;
 		} else if (
-			newPassword.trim() &&
-			confirmNewPassword.trim() &&
-			newPassword === confirmNewPassword
+			newPassword.trim()
+			&& confirmNewPassword.trim()
+			&& newPassword === confirmNewPassword
 		)
 			setConfirmNewPasswordError(false);
 
@@ -481,8 +481,8 @@ export default function CustomDrawerContent(props: any) {
 								onChangeText={setCurrentPassword}
 								onEndEditing={() => {
 									if (
-										currentPassword.trim() === '' ||
-										currentPassword.trim().length < 6
+										currentPassword.trim() === ''
+										|| currentPassword.trim().length < 6
 									)
 										setCurrentPasswordError(true);
 									else setCurrentPasswordError(false);
@@ -493,7 +493,7 @@ export default function CustomDrawerContent(props: any) {
 								secureTextEntry
 								testID='CurrentPasswordInput'
 							/>
-							{currentPasswordError ? (
+							{currentPasswordError ?
 								<HelperText
 									type='error'
 									visible={currentPasswordError}
@@ -502,7 +502,7 @@ export default function CustomDrawerContent(props: any) {
 								>
 									{t('drawer.currentPasswordError')}
 								</HelperText>
-							) : null}
+							:	null}
 						</View>
 						<View>
 							<TextInput
@@ -511,8 +511,8 @@ export default function CustomDrawerContent(props: any) {
 								onChangeText={setNewPassword}
 								onEndEditing={() => {
 									if (
-										newPassword.trim() === '' ||
-										newPassword.trim().length < 6
+										newPassword.trim() === ''
+										|| newPassword.trim().length < 6
 									)
 										setNewPasswordError(true);
 									else setNewPasswordError(false);
@@ -523,7 +523,7 @@ export default function CustomDrawerContent(props: any) {
 								secureTextEntry
 								testID='NewPasswordInput'
 							/>
-							{newPasswordError ? (
+							{newPasswordError ?
 								<HelperText
 									type='error'
 									visible={newPasswordError}
@@ -532,7 +532,7 @@ export default function CustomDrawerContent(props: any) {
 								>
 									{t('drawer.newPasswordError')}
 								</HelperText>
-							) : null}
+							:	null}
 						</View>
 						<View>
 							<TextInput
@@ -541,10 +541,10 @@ export default function CustomDrawerContent(props: any) {
 								onChangeText={setConfirmNewPassword}
 								onEndEditing={() => {
 									if (
-										newPassword.trim() !== '' &&
-										(confirmNewPassword.trim() === '' ||
-											confirmNewPassword.trim().length < 6 ||
-											newPassword !== confirmNewPassword)
+										newPassword.trim() !== ''
+										&& (confirmNewPassword.trim() === ''
+											|| confirmNewPassword.trim().length < 6
+											|| newPassword !== confirmNewPassword)
 									)
 										setConfirmNewPasswordError(true);
 									else setConfirmNewPasswordError(false);
@@ -555,7 +555,7 @@ export default function CustomDrawerContent(props: any) {
 								secureTextEntry
 								testID='ConfirmNewPasswordInput'
 							/>
-							{confirmNewPasswordError ? (
+							{confirmNewPasswordError ?
 								<HelperText
 									type='error'
 									visible={confirmNewPasswordError}
@@ -564,7 +564,7 @@ export default function CustomDrawerContent(props: any) {
 								>
 									{t('drawer.confirmNewPasswordError')}
 								</HelperText>
-							) : null}
+							:	null}
 						</View>
 					</View>
 

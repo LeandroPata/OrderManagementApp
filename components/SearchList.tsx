@@ -76,7 +76,7 @@ const SearchList = (props: SearchListProps) => {
 				onClearIconPress={props.onClearIconPress}
 				testID={props.testID || 'SearchList'}
 			/>
-			{flatlistVisible ? (
+			{flatlistVisible ?
 				<Animated.View
 					style={{
 						//overflow: 'hidden',
@@ -105,7 +105,7 @@ const SearchList = (props: SearchListProps) => {
 						numColumns={1}
 					/>
 				</Animated.View>
-			) : null}
+			:	null}
 		</View>
 	);
 };

@@ -189,7 +189,7 @@ export default function Index() {
 						label={t('index.confirmPassword')}
 						secureTextEntry
 					/>
-					{confirmPasswordError ? (
+					{confirmPasswordError ?
 						<HelperText
 							type='error'
 							visible={confirmPasswordError}
@@ -197,7 +197,7 @@ export default function Index() {
 						>
 							{t('index.confirmPasswordError')}
 						</HelperText>
-					) : null}
+					:	null}
 
 					<View
 						style={[globalStyles.buttonContainer.global, { marginTop: 15 }]}
@@ -248,7 +248,7 @@ export default function Index() {
 							keyboardType='email-address'
 							label={t('index.email')}
 						/>
-						{emailError ? (
+						{emailError ?
 							<HelperText
 								type='error'
 								visible={emailError}
@@ -256,7 +256,7 @@ export default function Index() {
 							>
 								{t('index.emailError')}
 							</HelperText>
-						) : null}
+						:	null}
 						<TextInput
 							style={globalStyles.input}
 							value={password}
@@ -273,7 +273,7 @@ export default function Index() {
 							label={t('index.password')}
 							secureTextEntry
 						/>
-						{passwordError ? (
+						{passwordError ?
 							<HelperText
 								type='error'
 								visible={passwordError}
@@ -281,7 +281,7 @@ export default function Index() {
 							>
 								{t('index.passwordError')}
 							</HelperText>
-						) : null}
+						:	null}
 					</View>
 				</KeyboardAvoidingView>
 

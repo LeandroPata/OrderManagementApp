@@ -103,7 +103,7 @@ export default function AddProduct() {
 					keyboardType='default'
 					label={t('add.product.name')}
 				/>
-				{nameError ? (
+				{nameError ?
 					<HelperText
 						type='error'
 						visible={nameError}
@@ -111,7 +111,7 @@ export default function AddProduct() {
 					>
 						{t('add.product.nameInvalid')}
 					</HelperText>
-				) : null}
+				:	null}
 
 				<View
 					style={{

@@ -97,7 +97,7 @@ export default function AddClient() {
 					keyboardType='default'
 					label={t('add.client.name')}
 				/>
-				{nameError ? (
+				{nameError ?
 					<HelperText
 						type='error'
 						visible={nameError}
@@ -105,7 +105,7 @@ export default function AddClient() {
 					>
 						{t('add.client.nameInvalid')}
 					</HelperText>
-				) : null}
+				:	null}
 
 				<TextInput
 					style={globalStyles.input}
