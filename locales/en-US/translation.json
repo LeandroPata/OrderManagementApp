@@ -152,9 +152,11 @@
 		"exportClients": "Export Clients",
 		"exportProducts": "Export Products",
 		"exportOrders": "Export Orders",
+		"exportQuantities": "Export Quantities",
 		"exportClientsSuccess": "Exporting clients successfull!",
 		"exportProductsSuccess": "Exporting products successfull!",
 		"exportOrdersSuccess": "Exporting orders successfull!",
+		"exportQuantitiesSuccess": "Exporting quantities successfull!",
 		"storagePermission": "Storage permissions are necessary to import/export data!"
 	}
 }

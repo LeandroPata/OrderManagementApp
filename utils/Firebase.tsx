@@ -329,7 +329,7 @@ export const getProductsCount = async () => {
 
 	await firestore()
 		.collection('orders')
-		.orderBy('client.name', 'asc')
+		.orderBy('order.product.name', 'asc')
 		.get()
 		.then((querySnapshot) => {
 			const productQuantity = {};
@@ -339,9 +339,70 @@ export const getProductsCount = async () => {
 				//console.log(doc.data().order);
 				const existingProduct = currentCount.find(
 					(product) =>
-						doc.data().order.product.id === product.id &&
-						doc.data().order.weight === product.weight &&
-						doc.data().order.status === product.status
+						doc.data().order.product.id === product.id
+						&& doc.data().order.weight === product.weight
+						&& doc.data().order.status === product.status
+				);
+
+				if (existingProduct) {
+					existingProduct.quantity += doc.data().order.quantity;
+					if (productQuantity[existingProduct.id] && doc.data().order.weight) {
+						productQuantity[existingProduct.id] +=
+							doc.data().order.quantity * doc.data().order.weight;
+						existingProduct.weightTotal = productQuantity[existingProduct.id];
+					}
+				} else {
+					if (!productQuantity[doc.data().order.product.id])
+						productQuantity[doc.data().order.product.id] =
+							doc.data().order.weight * doc.data().order.quantity;
+					else {
+						productQuantity[doc.data().order.product.id] +=
+							doc.data().order.weight * doc.data().order.quantity;
+					}
+					currentCount.push({
+						key: i,
+						id: doc.data().order.product.id,
+						name: doc.data().order.product.name,
+						quantity: doc.data().order.quantity,
+						weight: doc.data().order.weight,
+						weightTotal: productQuantity[doc.data().order.product.id],
+						status: doc.data().order.status,
+					});
+					i++;
+				}
+			});
+			for (const count of currentCount) {
+				count.weightTotal = productQuantity[count.id];
+			}
+			//console.log(currentCount);
+		})
+		.catch((e: any) => {
+			const err = e as FirebaseError;
+			console.log(`Error getting product count: ${err.message}`);
+		});
+
+	return currentCount;
+};
+
+export const getIncompleteProductsCount = async () => {
+	const currentCount = [];
+
+	await firestore()
+		.collection('orders')
+		.where('order.status', '==', 'Incomplete')
+		.orderBy('order.product.name', 'asc')
+		.get()
+		.then((querySnapshot) => {
+			const productQuantity = {};
+			let i = 0;
+
+			querySnapshot.forEach((doc) => {
+				//console.log(doc.data().order);
+				const existingProduct = currentCount.find(
+					(product) =>
+						doc.data().order.product.id === product.id
+						&& doc.data().order.weight === product.weight
+						&& doc.data().order.status === product.status
 				);
 
 				if (existingProduct) {

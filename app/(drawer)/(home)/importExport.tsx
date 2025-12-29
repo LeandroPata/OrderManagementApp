@@ -11,6 +11,7 @@ import { Button } from 'react-native-paper';
 import RNFetchBlob from 'rn-fetch-blob';
 import { useSnackbar } from '@/context/SnackbarContext';
 import { globalStyles } from '@/styles/global';
+import { getIncompleteProductsCount } from '@/utils/Firebase';
 
 export default function importExport() {
 	const { t } = useTranslation();
@@ -21,6 +22,7 @@ export default function importExport() {
 	const [exportClientLoading, setExportClientLoading] = useState(false);
 	const [exportProductLoading, setExportProductLoading] = useState(false);
 	const [exportOrderLoading, setExportOrderLoading] = useState(false);
+	const [exportQuantityLoading, setExportQuantityLoading] = useState(false);
 
 	// All the logic to implement the snackbar
 	const { showSnackbar } = useSnackbar();
@@ -253,6 +255,21 @@ export default function importExport() {
 		}
 	};
 
+	const convertDataToTXT = (data) => {
+		const rows = data
+			.map((row) => {
+				console.log(row);
+				if (row.weight > 0) {
+					return `${row.name}(${row.weight}kg) - ${row.quantity}`;
+				} else {
+					return `${row.name} - ${row.quantity}`;
+				}
+			})
+			.join('\n');
+
+		return rows;
+	};
+
 	const uploadFile = async (
 		storageReference: FirebaseStorageTypes.Reference,
 		filePath: string
@@ -285,9 +302,9 @@ export default function importExport() {
 		try {
 			const doc = await DocumentPicker.getDocumentAsync({
 				type:
-					Platform.OS === 'android'
-						? 'text/comma-separated-values'
-						: 'text/csv',
+					Platform.OS === 'android' ?
+						'text/comma-separated-values'
+					:	'text/csv',
 				copyToCacheDirectory: false,
 			});
 
@@ -391,8 +408,8 @@ export default function importExport() {
 			console.log(grantedWrite);
 
 			if (
-				!(grantedRead === PermissionsAndroid.RESULTS.GRANTED) ||
-				!(grantedWrite === PermissionsAndroid.RESULTS.GRANTED)
+				!(grantedRead === PermissionsAndroid.RESULTS.GRANTED)
+				|| !(grantedWrite === PermissionsAndroid.RESULTS.GRANTED)
 			) {
 				showSnackbar(t('importExport.storagePermission'));
 				return false;
@@ -849,6 +866,77 @@ export default function importExport() {
 		}
 	};
 
+	const exportQuantities = async () => {
+		setExportQuantityLoading(true);
+
+		if (Number(Platform.Version) < 33) {
+			const permissionsCheck = await checkPermissions();
+
+			if (!permissionsCheck) {
+				setExportQuantityLoading(false);
+				return;
+			}
+		}
+
+		try {
+			const productCount = await getIncompleteProductsCount();
+			//console.log(productCount)
+
+			const file = convertDataToTXT(productCount);
+			//console.log(file);
+
+			const filePath = `${RNFetchBlob.fs.dirs.CacheDir}/quantitiesData.txt`;
+			//console.log(filePath);
+
+			const reference = storage().ref('data/quantitiesData.txt');
+
+			await RNFetchBlob.fs.writeFile(filePath, file);
+
+			await uploadFile(reference, filePath);
+
+			let docPath = `${RNFetchBlob.fs.dirs.DownloadDir}/quantitiesData.txt`;
+			//console.log(docPath);
+
+			let i = 1;
+
+			while (await RNFetchBlob.fs.exists(docPath)) {
+				docPath = `${
+					RNFetchBlob.fs.dirs.DownloadDir
+				}/quantitiesData${i.toString()}.txt`;
+				//console.log(docPath);
+				i++;
+			}
+
+			const task = reference.writeToFile(docPath);
+
+			task.on('state_changed', (taskSnapshot) => {
+				console.log(
+					`${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`
+				);
+			});
+
+			await task
+				.then(() => {
+					showSnackbar(t('importExport.exportQuantitiesSuccess'));
+					console.log('Exporting quantities successfull');
+				})
+				.catch((e: any) => {
+					const err = e as FirebaseError;
+					//showSnackbar('Data download failed: ' + err.message);
+					console.log(`Data download failed: ${err.message}`);
+					setExportQuantityLoading(false);
+				});
+		} catch (e: any) {
+			const err = e as FirebaseError;
+			console.log(`Exporting quantities failed: ${err.message}`);
+			//showSnackbar('Exporting quantities failed: ' + err.message);
+			setExportQuantityLoading(false);
+			return;
+		} finally {
+			setExportQuantityLoading(false);
+		}
+	};
+
 	return (
 		<ScrollView
 			contentContainerStyle={globalStyles.scrollContainer.global}
@@ -920,6 +1008,17 @@ export default function importExport() {
 					onPress={exportOrders}
 				>
 					{t('importExport.exportOrders')}
+				</Button>
+				<Button
+					style={globalStyles.button}
+					contentStyle={globalStyles.buttonContent.global}
+					labelStyle={globalStyles.buttonText.global}
+					icon='database-export'
+					mode='elevated'
+					loading={exportQuantityLoading}
+					onPress={exportQuantities}
+				>
+					{t('importExport.exportQuantities')}
 				</Button>
 			</View>
 		</ScrollView>

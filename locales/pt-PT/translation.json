@@ -146,9 +146,11 @@
 		"exportClients": "Exportar Clientes",
 		"exportProducts": "Exportar Produtos",
 		"exportOrders": "Exportar Encomendas",
+		"exportQuantities": "Exportar Quantidades",
 		"exportClientsSuccess": "Exportação de clientes com sucesso!",
 		"exportProductsSuccess": "Exportação de produtos com sucesso!",
 		"exportOrdersSuccess": "Exportação de encomendas com sucesso!",
+		"exportQuantitiesSuccess": "Exportação de quantidades com sucesso!",
 		"storagePermission": "Permissões de armazenamento são necessárias para importar/exportar dados!"
 	}
 }
