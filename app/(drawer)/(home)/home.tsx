@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { Image, ScrollView, useWindowDimensions, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { globalStyles } from '@/styles/global';
-import { getSingleClientByName } from '@/utils/Firebase';
 
 export default function Home() {
 	const { t } = useTranslation();
