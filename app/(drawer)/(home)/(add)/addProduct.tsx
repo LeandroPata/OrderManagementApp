@@ -23,7 +23,7 @@ export default function AddProduct() {
 
 	const [name, setName] = useState('');
 	const [price, setPrice] = useState('');
-	const [priceByWeightChecked, setpriceByWeightChecked] = useState(false);
+	const [priceByWeightChecked, setPriceByWeightChecked] = useState(false);
 
 	// All the logic to implement the snackbar
 	const { showSnackbar } = useSnackbar();
@@ -69,7 +69,7 @@ export default function AddProduct() {
 				showSnackbar(t('add.product.added'));
 				setName('');
 				setPrice('');
-				setpriceByWeightChecked(false);
+				setPriceByWeightChecked(false);
 			})
 			.catch((e: any) => {
 				const err = e as FirebaseError;
@@ -137,7 +137,7 @@ export default function AddProduct() {
 					<View style={{ flexDirection: 'row', marginRight: 10 }}>
 						<Checkbox
 							status={priceByWeightChecked ? 'checked' : 'unchecked'}
-							onPress={() => setpriceByWeightChecked(!priceByWeightChecked)}
+							onPress={() => setPriceByWeightChecked(!priceByWeightChecked)}
 						/>
 						<Text style={globalStyles.text.global}>
 							{t('add.product.priceByWeight')}
