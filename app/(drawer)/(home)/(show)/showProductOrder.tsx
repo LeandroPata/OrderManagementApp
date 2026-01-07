@@ -19,12 +19,12 @@ import { handleOrderStatus } from '@/utils/Utils';
 export default function ShowProductOrder() {
 	const { t } = useTranslation();
 
-	const [productList, setProductList] = useState([]);
-	const [hintProductList, setHintProductList] = useState([]);
+	const [productList, setProductList] = useState(Array<object>);
+	const [hintProductList, setHintProductList] = useState(Array<object>);
 
 	const [name, setName] = useState('');
 	const [productId, setProductId] = useState('');
-	const [productOrders, setProductOrders] = useState([]);
+	const [productOrders, setProductOrders] = useState(Array<object>);
 
 	// All the logic to implement the snackbar
 	const { showSnackbar } = useSnackbar();
@@ -49,7 +49,7 @@ export default function ShowProductOrder() {
 		try {
 			const productNames = await getProductNames();
 			//console.log(productNames);
-			setProductList(productNames);
+			if (productNames) setProductList(productNames);
 		} catch (e: any) {
 			const err = e as FirebaseError;
 			console.error(`Error getting product list: ${err.message}`);
@@ -99,7 +99,7 @@ export default function ShowProductOrder() {
 
 		try {
 			const orders = await getSingleProductOrders(currentProductId);
-			setProductOrders(orders);
+			if (orders) setProductOrders(orders);
 			//console.log(orders);
 		} catch (e: any) {
 			const err = e as FirebaseError;
@@ -128,7 +128,7 @@ export default function ShowProductOrder() {
 		}
 	};
 
-	const renderProductHint = ({ item }) => {
+	const renderProductHint = ({ item }: object) => {
 		//console.log(item.item.name + ' : ' + item.score);
 		return (
 			<>

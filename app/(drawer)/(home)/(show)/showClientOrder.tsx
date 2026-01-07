@@ -19,12 +19,12 @@ import { handleOrderStatus } from '@/utils/Utils';
 export default function ShowClientOrder() {
 	const { t } = useTranslation();
 
-	const [clientList, setClientList] = useState([]);
-	const [hintClientList, setHintClientList] = useState([]);
+	const [clientList, setClientList] = useState(Array<object>);
+	const [hintClientList, setHintClientList] = useState(Array<object>);
 
 	const [name, setName] = useState('');
 	const [clientId, setClientId] = useState('');
-	const [clientOrders, setClientOrders] = useState([]);
+	const [clientOrders, setClientOrders] = useState(Array<object>);
 
 	// All the logic to implement the snackbar
 	const { showSnackbar } = useSnackbar();
@@ -49,7 +49,7 @@ export default function ShowClientOrder() {
 		try {
 			const clientNames = await getClientNames();
 			//console.log(clientNames);
-			setClientList(clientNames);
+			if (clientNames) setClientList(clientNames);
 		} catch (e: any) {
 			const err = e as FirebaseError;
 			console.error(`Error getting client list: ${err.message}`);
@@ -99,7 +99,7 @@ export default function ShowClientOrder() {
 
 		try {
 			const orders = await getSingleClientOrders(currentClientId);
-			setClientOrders(orders);
+			if (orders) setClientOrders(orders);
 			//console.log(orders);
 		} catch (e: any) {
 			const err = e as FirebaseError;
@@ -128,7 +128,7 @@ export default function ShowClientOrder() {
 		}
 	};
 
-	const renderClientHint = ({ item }) => {
+	const renderClientHint = ({ item }: object) => {
 		//console.log(item.item.name + ' : ' + item.score);
 		return (
 			<>

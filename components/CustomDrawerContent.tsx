@@ -71,7 +71,7 @@ export default function CustomDrawerContent(props: any) {
 			props.navigation.closeDrawer();
 			return true;
 		}
-		return null;
+		return false;
 	});
 
 	useEffect(() => {
@@ -347,7 +347,7 @@ export default function CustomDrawerContent(props: any) {
 		await user
 			?.reauthenticateWithCredential(credential)
 			.then(() => {
-				console.log('Successfull reauthentication');
+				console.log('Successful reauthentication');
 				passwordCheck = true;
 				setCurrentPasswordError(false);
 			})
@@ -437,7 +437,11 @@ export default function CustomDrawerContent(props: any) {
 	const drawerItemPress = (path: string) => {
 		props.navigation.closeDrawer();
 		setCurrentRoute(path);
-		router.replace(`/(drawer)/(home)/${path}`);
+		router.replace(`/(drawer)/(home)${path}`);
+		/* router.replace({
+			pathname: '/(drawer)/(home)/[slug]',
+			params: { slug: path },
+		}); */
 	};
 
 	return (

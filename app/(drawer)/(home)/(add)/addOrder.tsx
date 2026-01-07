@@ -37,10 +37,10 @@ export default function AddOrder() {
 	const [deliveryDateModal, setDeliveryDateModal] = useState(false);
 	const [deliveryTimeModal, setDeliveryTimeModal] = useState(false);
 
-	const [clientList, setClientList] = useState([]);
-	const [hintClientList, setHintClientList] = useState([]);
-	const [productList, setProductList] = useState([]);
-	const [hintProductList, setHintProductList] = useState([]);
+	const [clientList, setClientList] = useState(Array<object>);
+	const [hintClientList, setHintClientList] = useState(Array<object>);
+	const [productList, setProductList] = useState(Array<object>);
+	const [hintProductList, setHintProductList] = useState(Array<object>);
 
 	const [name, setName] = useState('');
 	const [productName, setProductName] = useState('');
@@ -50,7 +50,7 @@ export default function AddOrder() {
 
 	const [clientId, setClientId] = useState('');
 	const [productId, setProductId] = useState('');
-	const [orders, setOrders] = useState([]);
+	const [orders, setOrders] = useState(Array<object>);
 	const [deliveryDate, setDeliveryDate] = useState(new Date());
 	const [deliveryTime, setDeliveryTime] = useState(new Date());
 
@@ -75,7 +75,7 @@ export default function AddOrder() {
 		try {
 			const clientNames = await getClientNames();
 			//console.log(clientNames);
-			setClientList(clientNames);
+			if (clientNames) setClientList(clientNames);
 		} catch (e: any) {
 			const err = e as FirebaseError;
 			console.error(`Error getting client list: ${err.message}`);
@@ -86,7 +86,7 @@ export default function AddOrder() {
 		try {
 			const productNames = await getProductNames();
 			//console.log(productNames);
-			setProductList(productNames);
+			if (productNames) setProductList(productNames);
 		} catch (e: any) {
 			const err = e as FirebaseError;
 			console.error(`Error getting product list: ${err.message}`);
@@ -189,7 +189,7 @@ export default function AddOrder() {
 				product = await getSingleProduct(productId);
 			} else if (!productId && productName) {
 				product = await getSingleProductByName(productName);
-				IDProduct = await getProduct(productName);
+				IDProduct = (await getProduct(productName)) || '';
 			}
 
 			if (!product || (!IDProduct && !productId)) {
@@ -209,15 +209,15 @@ export default function AddOrder() {
 			}
 
 			const weight =
-				product.priceByWeight && productByWeight.trim()
-					? Number(Number.parseFloat(productByWeight).toFixed(2))
-					: Number(Number.parseFloat('0.00').toFixed(2));
+				product.priceByWeight && productByWeight.trim() ?
+					Number(Number.parseFloat(productByWeight).toFixed(2))
+				:	Number(Number.parseFloat('0.00').toFixed(2));
 			//console.log(weight);
 
 			const price =
-				product.priceByWeight && weight > 0
-					? Number(productQuantity) * (product.price * weight)
-					: Number(productQuantity) * product.price;
+				product.priceByWeight && weight > 0 ?
+					Number(productQuantity) * (product.price * weight)
+				:	Number(productQuantity) * product.price;
 			//console.log(price);
 
 			//console.log(orders)
@@ -284,9 +284,7 @@ export default function AddOrder() {
 
 			for (const order of orders) {
 				//console.log(order);
-				const orderRef = firestore()
-					.collection('orders')
-					.doc(order.id);
+				const orderRef = firestore().collection('orders').doc(order.id);
 				//console.log(orderRef);
 				const orderDB = {
 					client: { id: clientId, name: name.trim() },
@@ -346,7 +344,7 @@ export default function AddOrder() {
 		}
 	};
 
-	const renderClientHint = ({ item }) => {
+	const renderClientHint = ({ item }: object) => {
 		//console.log(item.item.name + ' : ' + item.score);
 
 		return (
@@ -368,7 +366,7 @@ export default function AddOrder() {
 		);
 	};
 
-	const renderProductHint = ({ item }) => {
+	const renderProductHint = ({ item }: object) => {
 		//console.log(item.item.name + ' : ' + item.score);
 
 		return (
@@ -629,13 +627,13 @@ export default function AddOrder() {
 							onPress={() => setDeliveryTimeModal(true)}
 						>
 							{`${
-								deliveryTime.getHours() > 9
-									? deliveryTime.getHours()
-									: `0${deliveryTime.getHours()}`
+								deliveryTime.getHours() > 9 ?
+									deliveryTime.getHours()
+								:	`0${deliveryTime.getHours()}`
 							}:${
-								deliveryTime.getMinutes() > 9
-									? deliveryTime.getMinutes()
-									: `0${deliveryTime.getMinutes()}`
+								deliveryTime.getMinutes() > 9 ?
+									deliveryTime.getMinutes()
+								:	`0${deliveryTime.getMinutes()}`
 							}`}
 						</Button>
 						<DatePicker

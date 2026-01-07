@@ -14,9 +14,9 @@ import { globalStyles } from '@/styles/global';
 import { isEmpty } from '@/utils/Utils';
 
 type DataTableOrderProps = {
-	data: ArrayLike<any> | null | undefined;
+	data: object[];
 	dataType: 'newOrder' | 'clientOrder' | 'productOrder' | 'productCount';
-	defaultSort: 'product.name' | 'client.name' | 'name';
+	defaultSort: 'product.name' | 'client.name' | 'name' | string;
 	numberofItemsPerPageList: Array<number>;
 	onLongPress: (item: object) => void;
 };
@@ -39,31 +39,31 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 	const { showDialog, hideDialog } = useDialog();
 
 	const [data, setData] = useState(props.data);
-	//console.log('Props');
-	//console.log(props.data);
-	//console.log('Data');
-	//console.log(data);
+	/* console.log('Props');
+	console.log(props.data);
+	console.log('Data');
+	console.log(data); */
 
 	const from = page * itemsPerPage;
-	const to = Math.min((page + 1) * itemsPerPage, data.length);
+	const to = Math.min((page + 1) * itemsPerPage, data?.length);
 
 	const [sortDirection, setSortDirection] = useState<
 		'ascending' | 'descending'
 	>('ascending');
 	const [sortedColumn, setSortedColumn] = useState(props.defaultSort);
 
-	const changeSortDirection = (column: string) => {
+	const changeSortDirection = (column: DataTableOrderProps['defaultSort']) => {
 		const newSortDirection =
-			sortedColumn === column && sortDirection === 'ascending'
-				? 'descending'
-				: 'ascending';
+			sortedColumn === column && sortDirection === 'ascending' ?
+				'descending'
+			:	'ascending';
 		setSortDirection(newSortDirection);
 		return newSortDirection;
 	};
 
 	const handleSort = (
-		column: string,
-		unsortedData: ArrayLike<any> | null | undefined,
+		column: DataTableOrderProps['defaultSort'],
+		unsortedData: object[],
 		changeSort: boolean
 	) => {
 		let newSortDirection = sortDirection;
@@ -118,7 +118,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 	};
 
 	const itemDelete = (item: object) => {
-		console.log(item)
+		console.log(item);
 		setItemModal(item);
 		showDialog({
 			text: t('dataTableOrder.orderUndo'),
@@ -238,10 +238,9 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 							</DataTable.Title>
 						</DataTable.Header>
 
-						{!data?.length ? (
+						{!data?.length ?
 							<Text>Nothing to show</Text>
-						) : (
-							data.slice(from, to).map((item) => (
+						:	data.slice(from, to).map((item) => (
 								<DataTable.Row
 									key={item.id}
 									onLongPress={() => {
@@ -293,7 +292,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 									</DataTable.Cell>
 								</DataTable.Row>
 							))
-						)}
+						}
 
 						<DataTable.Pagination
 							page={page}
@@ -365,9 +364,9 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								}}
 								textStyle={globalStyles.text.dataTable.title}
 								sortDirection={
-									sortedColumn === 'deliveryDateTime'
-										? sortDirection
-										: undefined
+									sortedColumn === 'deliveryDateTime' ? sortDirection : (
+										undefined
+									)
 								}
 								onPress={() => handleSort('deliveryDateTime', data, true)}
 							>
@@ -376,11 +375,15 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 							<DataTable.Title
 								style={{ justifyContent: 'center' }}
 								textStyle={globalStyles.text.dataTable.title}
+								sortDirection={
+									sortedColumn === 'status' ? sortDirection : undefined
+								}
+								onPress={() => handleSort('status', data, true)}
 							>
 								{t('dataTableOrder.status')}
 							</DataTable.Title>
 						</DataTable.Header>
-						{data?.length ? (
+						{data?.length ?
 							data.slice(from, to).map((item) => (
 								<DataTable.Row
 									key={item.id}
@@ -411,9 +414,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 									</DataTable.Cell>
 								</DataTable.Row>
 							))
-						) : (
-							<Text>Nothing to show</Text>
-						)}
+						:	<Text>Nothing to show</Text>}
 
 						<DataTable.Pagination
 							page={page}
@@ -485,9 +486,9 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								}}
 								textStyle={globalStyles.text.dataTable.title}
 								sortDirection={
-									sortedColumn === 'deliveryDateTime'
-										? sortDirection
-										: undefined
+									sortedColumn === 'deliveryDateTime' ? sortDirection : (
+										undefined
+									)
 								}
 								onPress={() => handleSort('deliveryDateTime', data, true)}
 							>
@@ -496,11 +497,15 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 							<DataTable.Title
 								style={{ justifyContent: 'center' }}
 								textStyle={globalStyles.text.dataTable.title}
+								sortDirection={
+									sortedColumn === 'status' ? sortDirection : undefined
+								}
+								onPress={() => handleSort('status', data, true)}
 							>
 								{t('dataTableOrder.status')}
 							</DataTable.Title>
 						</DataTable.Header>
-						{data?.length ? (
+						{data?.length ?
 							data.slice(from, to).map((item) => (
 								<DataTable.Row
 									key={item.id}
@@ -531,9 +536,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 									</DataTable.Cell>
 								</DataTable.Row>
 							))
-						) : (
-							<Text>Nothing to show</Text>
-						)}
+						:	<Text>Nothing to show</Text>}
 
 						<DataTable.Pagination
 							page={page}
@@ -608,7 +611,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								{t('dataTableOrder.status')}
 							</DataTable.Title>
 						</DataTable.Header>
-						{data?.length ? (
+						{data?.length ?
 							data.slice(from, to).map((item) => (
 								<DataTable.Row
 									key={item.key}
@@ -633,9 +636,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 									</DataTable.Cell>
 								</DataTable.Row>
 							))
-						) : (
-							<Text style={{ fontSize: 12 }}>Nothing to show</Text>
-						)}
+						:	<Text style={{ fontSize: 12 }}>Nothing to show</Text>}
 
 						<DataTable.Pagination
 							page={page}
@@ -666,7 +667,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 				//console.log(item);
 				return (
 					<>
-						{Object.keys(item).length !== 0 ? (
+						{Object.keys(item).length !== 0 ?
 							<View style={globalStyles.container.item}>
 								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.name')}:
@@ -745,7 +746,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								</Text>
 								<Text style={globalStyles.item}>{item.notes}</Text>
 							</View>
-						) : null}
+						:	null}
 					</>
 				);
 			}
@@ -753,7 +754,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 				//console.log(item);
 				return (
 					<>
-						{Object.keys(item).length !== 0 ? (
+						{Object.keys(item).length !== 0 ?
 							<View style={globalStyles.container.item}>
 								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.name')}:
@@ -845,7 +846,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								</Text>
 								<Text style={globalStyles.item}>{item.notes}</Text>
 							</View>
-						) : null}
+						:	null}
 					</>
 				);
 			}
@@ -853,7 +854,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 				//console.log(item);
 				return (
 					<>
-						{Object.keys(item).length !== 0 ? (
+						{Object.keys(item).length !== 0 ?
 							<View style={globalStyles.container.item}>
 								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.name')}:
@@ -945,7 +946,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 								</Text>
 								<Text style={globalStyles.item}>{item.notes}</Text>
 							</View>
-						) : null}
+						:	null}
 					</>
 				);
 			}
@@ -953,7 +954,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 				//console.log(item);
 				return (
 					<>
-						{Object.keys(item).length !== 0 ? (
+						{Object.keys(item).length !== 0 ?
 							<View style={globalStyles.container.item}>
 								<Text style={globalStyles.text.dataTable.row}>
 									{t('dataTableOrder.name')}:
@@ -1010,7 +1011,7 @@ const DataTableOrder = (props: DataTableOrderProps) => {
 									{translateStatus(item.status)}
 								</Text>
 							</View>
-						) : null}
+						:	null}
 					</>
 				);
 			}

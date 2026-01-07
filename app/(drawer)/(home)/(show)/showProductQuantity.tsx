@@ -19,12 +19,12 @@ import { countProduct } from '@/utils/Utils';
 export default function ShowProductQuantity() {
 	const { t } = useTranslation();
 
-	const [productList, setProductList] = useState([]);
-	const [hintProductList, setHintProductList] = useState([]);
+	const [productList, setProductList] = useState(Array<object>);
+	const [hintProductList, setHintProductList] = useState(Array<object>);
 
 	const [name, setName] = useState('');
 	const [productId, setProductId] = useState('');
-	const [productCount, setProductCount] = useState([]);
+	const [productCount, setProductCount] = useState(Array<object>);
 
 	// All the logic to implement the snackbar
 	const { showSnackbar } = useSnackbar();
@@ -49,7 +49,7 @@ export default function ShowProductQuantity() {
 		try {
 			const productNames = await getProductNames();
 			//console.log(productNames);
-			setProductList(productNames);
+			if (productNames) setProductList(productNames);
 		} catch (e: any) {
 			const err = e as FirebaseError;
 			console.error(`Error getting product list: ${err.message}`);
@@ -86,7 +86,7 @@ export default function ShowProductQuantity() {
 				else showSnackbar(t('show.productOrder.productNameEmpty'));
 			else {
 				setProductId(IDProduct);
-				getProductOrders(IDProduct);
+				getProductCount(IDProduct);
 			}
 			return IDProduct ? IDProduct : false;
 		} catch (e: any) {
@@ -113,7 +113,7 @@ export default function ShowProductQuantity() {
 		}
 	};
 
-	const renderProductHint = ({ item }) => {
+	const renderProductHint = ({ item }: object) => {
 		//console.log(item.item.name + ' : ' + item.score);
 		return (
 			<>

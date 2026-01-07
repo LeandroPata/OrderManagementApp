@@ -1,5 +1,7 @@
 import { deleteOrderDoc, updateSingleOrderStatus } from '@/utils/Firebase';
 
+type OrderStatus = 'Ready' | 'Delivered' | 'Deleted';
+
 export function isEmpty(obj: object) {
 	for (const prop in obj) {
 		if (Object.hasOwn(obj, prop)) {
@@ -9,8 +11,6 @@ export function isEmpty(obj: object) {
 
 	return true;
 }
-
-type OrderStatus = 'Ready' | 'Delivered' | 'Deleted';
 
 export const handleOrderStatus = async (
 	order: object
@@ -49,9 +49,10 @@ export const handleOrderStatus = async (
 	}
 };
 
-export const countProduct = (productId: string, productsQuantity) => {
+export const countProduct = (productId: string, productsQuantity: object[]) => {
 	//console.log(productId);
 	const filteredCount = [];
+
 	for (const count of productsQuantity) {
 		if (count.id === productId) {
 			filteredCount.push(count);

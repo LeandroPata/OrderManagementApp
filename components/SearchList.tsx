@@ -28,7 +28,7 @@ type SearchListProps = ComponentPropsWithRef<typeof TextInput> & {
 	keyboardType?: KeyboardTypeOptions | undefined;
 	placeholder?: string;
 	loading?: boolean;
-	data: ArrayLike<any> | null | undefined;
+	data: ArrayLike<object> | null | undefined;
 	renderItem: ListRenderItem<any> | null | undefined;
 	onClearIconPress?: (e: GestureResponderEvent) => void;
 	testID?: string;

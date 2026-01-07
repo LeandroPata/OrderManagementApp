@@ -30,7 +30,7 @@ export default function importExport() {
 	// converts date format from pt-PT locale (23/01/2024) to ISO date format (2024-01-23T00:00:00.000Z)
 	// and then converts to Firestore Timestamp format
 	const convertToTimestamp = (date: Date) => {
-		const [day, month, year] = date.split('/').map(Number);
+		const [day, month, year] = date.toString().split('/').map(Number);
 		const convertedDate = new Date(year, month - 1, day);
 		/* console.log(
       date + ' : ' + Timestamp.fromDate(new Date(convertedDate.toISOString()))
@@ -39,10 +39,14 @@ export default function importExport() {
 	};
 
 	// formats data from database to be ordered in a specific way
-	const formatDataOrder = (data, dataType: string, operationType: string) => {
+	const formatDataOrder = (
+		data: object[],
+		dataType: string,
+		operationType: string
+	) => {
 		try {
 			//console.log(data);
-			const orderedKeys = [];
+			const orderedKeys: Array<string> = [];
 
 			switch (dataType) {
 				case 'client':
@@ -81,20 +85,20 @@ export default function importExport() {
 							const client = {};
 							const product = {};
 							const order = {};
-							client['id'] = doc['client.id'];
-							client['name'] = doc['client.name'];
-							product['id'] = doc['product.id'];
-							product['name'] = doc['product.name'];
-							order['id'] = doc['order.id'];
-							order['notes'] = doc['notes'];
-							order['price'] = Number(doc['price']);
-							order['quantity'] = Number(doc['quantity']);
-							order['status'] = doc['status'];
-							order['weight'] = Number(doc['weight']);
-							order['product'] = product;
-							orderedDoc['client'] = client;
-							orderedDoc['deliveryDateTime'] = doc['deliveryDateTime'];
-							orderedDoc['order'] = order;
+							client.id = doc.client.id;
+							client.name = doc.client.name;
+							product.id = doc.product.id;
+							product.name = doc.product.name;
+							order.id = doc.order.id;
+							order.notes = doc.notes;
+							order.price = Number(doc.price);
+							order.quantity = Number(doc.quantity);
+							order.status = doc.status;
+							order.weight = Number(doc.weight);
+							order.product = product;
+							orderedDoc.client = client;
+							orderedDoc.deliveryDateTime = doc.deliveryDateTime;
+							orderedDoc.order = order;
 
 							//console.log(orderedDoc);
 							return orderedDoc;
@@ -104,17 +108,17 @@ export default function importExport() {
 						return data.map((doc) => {
 							//console.log(doc);
 							const orderedDoc = {};
-							orderedDoc['client.id'] = doc.client.id || '';
-							orderedDoc['client.name'] = doc.client.name || '';
-							orderedDoc['order.id'] = doc.order.id || '';
-							orderedDoc['product.id'] = doc.order.product.id || '';
-							orderedDoc['product.name'] = doc.order.product.name || '';
-							orderedDoc['quantity'] = doc.order.quantity || '';
-							orderedDoc['price'] = doc.order.price || '';
-							orderedDoc['weight'] = doc.order.weight || '';
-							orderedDoc['notes'] = doc.order.notes || '';
-							orderedDoc['deliveryDateTime'] = doc.deliveryDateTime || '';
-							orderedDoc['status'] = doc.order.status || '';
+							orderedDoc.client.id = doc.client.id || '';
+							orderedDoc.client.name = doc.client.name || '';
+							orderedDoc.order.id = doc.order.id || '';
+							orderedDoc.product.id = doc.order.product.id || '';
+							orderedDoc.product.name = doc.order.product.name || '';
+							orderedDoc.quantity = doc.order.quantity || '';
+							orderedDoc.price = doc.order.price || '';
+							orderedDoc.weight = doc.order.weight || '';
+							orderedDoc.notes = doc.order.notes || '';
+							orderedDoc.deliveryDateTime = doc.deliveryDateTime || '';
+							orderedDoc.status = doc.order.status || '';
 
 							//console.log(orderedDoc);
 							return orderedDoc;
@@ -134,7 +138,7 @@ export default function importExport() {
 
 					for (const key of Object.keys(doc)) {
 						if (!orderedKeys.includes(key)) {
-							orderedDoc[key] = doc[key];
+							orderedDoc[key] = doc[key] || '';
 						}
 					}
 					//console.log(orderedDoc);
@@ -156,7 +160,7 @@ export default function importExport() {
 
 	// formats data in order to be properly imported to the firestore database
 	// (date types, strings to number type)
-	const formatDataToImport = (data) => {
+	const formatDataToImport = (data: object[]) => {
 		for (const doc of data) {
 			for (const key of Object.keys(doc)) {
 				const regex = /^([0-2][0-9]|3[0-1])\/(0[1-9]|1[0-2])\/\d{4}$/;
@@ -172,7 +176,7 @@ export default function importExport() {
 
 	// formats data in order to be more user friendly when exported
 	// (readable date types)
-	const formatDataToExport = (data) => {
+	const formatDataToExport = (data: object[]) => {
 		for (const doc of data) {
 			for (const key of Object.keys(doc)) {
 				if (doc[key] instanceof Timestamp) {
@@ -186,14 +190,14 @@ export default function importExport() {
 	};
 
 	// splits a row from a csv file into their separate values
-	const splitCSVRow = (row) => {
+	const splitCSVRow = (row: string) => {
 		// regex identifies if expression is enclosed by double quotes (".*?") which = value, or
 		// if expression is unquoted and delimited by commas but has spaces ([^",]+(?=\s*,|$)) which = value, or
 		// if expression is unquoted, has no spaces and is delimited by commas ([^",\s]+) which = value
 		const regex = /(".*?"|[^",]+(?=\s*,|$)|[^",\s]+)/g;
 		const values = row.match(regex);
 
-		return values.map((value) => {
+		return values?.map((value) => {
 			// remove enclosing quotes and unescape inner quotes if the value is quoted
 			if (value.startsWith('"') && value.endsWith('"')) {
 				return value.slice(1, -1).replace(/""/g, '"');
@@ -204,15 +208,17 @@ export default function importExport() {
 
 	// converts imported csv file to json in order to be properly imported to
 	// the firestore database
-	const convertCSVtoJSON = (fileContent) => {
+	const convertCSVtoJSON = (fileContent: string) => {
 		try {
-			const rows = fileContent.split('\n').filter((row) => row.trim() !== '');
+			const rows = fileContent
+				.split('\n')
+				.filter((row: string) => row.trim() !== '');
 			const headers = splitCSVRow(rows[0]);
 
-			const data = rows.slice(1).map((row) => {
-				const values = splitCSVRow(row);
+			const data = rows.slice(1).map((row: string) => {
+				const values = splitCSVRow(row) || [];
 				const doc = {};
-				headers.forEach((header, index) => {
+				headers?.forEach((header, index) => {
 					doc[header] = values[index] || '';
 				});
 				return doc;
@@ -231,7 +237,7 @@ export default function importExport() {
 
 	// converts received data from the firestore database in the json format
 	// to a csv format for more readability and ease of editing if necessary
-	const convertJSONToCSV = (data) => {
+	const convertJSONToCSV = (data: object[]) => {
 		//console.log(data);
 		try {
 			const headers = Object.keys(data[0])
@@ -255,7 +261,7 @@ export default function importExport() {
 		}
 	};
 
-	const convertDataToTXT = (data) => {
+	const convertDataToTXT = (data: object[]) => {
 		const rows = data
 			.map((row) => {
 				console.log(row);
@@ -318,7 +324,7 @@ export default function importExport() {
 		}
 	};
 
-	const readFile = async (fileUri) => {
+	const readFile = async (fileUri: string) => {
 		try {
 			const fileContent = await RNFetchBlob.fs.readFile(fileUri, 'utf8');
 			return fileContent;
@@ -332,7 +338,7 @@ export default function importExport() {
 		}
 	};
 
-	const checkData = async (data, dataType: string) => {
+	const checkData = async (data: object | object[], dataType: string) => {
 		let check = 0;
 		switch (dataType) {
 			case 'client':
@@ -443,12 +449,11 @@ export default function importExport() {
 		}
 
 		const fileContent = await readFile(file.assets[0].uri);
-		//console.log(fileContent);
 
-		const data = await convertCSVtoJSON(fileContent);
+		const data = convertCSVtoJSON(fileContent) || [];
 		//console.log(data);
 
-		const clientsData = await formatDataOrder(data, 'client', 'import');
+		const clientsData = formatDataOrder(data, 'client', 'import') || [];
 		//console.log(clientsData);
 
 		// to ensure proper import
@@ -512,10 +517,10 @@ export default function importExport() {
 		const fileContent = await readFile(file.assets[0].uri);
 		//console.log(fileContent);
 
-		const data = await convertCSVtoJSON(fileContent);
+		const data = convertCSVtoJSON(fileContent) || [];
 		//console.log(data);
 
-		const productsData = await formatDataOrder(data, 'product', 'import');
+		const productsData = formatDataOrder(data, 'product', 'import') || [];
 		//console.log(productsData);
 
 		// to ensure proper import
@@ -579,10 +584,10 @@ export default function importExport() {
 		const fileContent = await readFile(file.assets[0].uri);
 		//console.log(fileContent);
 
-		const data = await convertCSVtoJSON(fileContent);
+		const data = convertCSVtoJSON(fileContent) || [];
 		//console.log(data);
 
-		const ordersData = await formatDataOrder(data, 'order', 'import');
+		const ordersData = formatDataOrder(data, 'order', 'import') || [];
 		//console.log(ordersData);
 
 		// to ensure proper import
@@ -643,12 +648,12 @@ export default function importExport() {
 			const rawData = snapshot.docs.map((doc) => doc.data());
 			//console.log(rawData);
 
-			const clientsData = formatDataOrder(rawData, 'client', 'export');
+			const clientsData = formatDataOrder(rawData, 'client', 'export') || [];
 
 			// to ensure proper export
 			formatDataToExport(clientsData);
 
-			const file = convertJSONToCSV(clientsData);
+			const file = convertJSONToCSV(clientsData) || '';
 			//console.log(file);
 
 			const filePath = `${RNFetchBlob.fs.dirs.CacheDir}/clientsData.csv`;
@@ -684,7 +689,7 @@ export default function importExport() {
 			await task
 				.then(() => {
 					showSnackbar(t('importExport.exportClientsSuccess'));
-					console.log('Exporting clients successfull');
+					console.log('Exporting clients successful');
 				})
 				.catch((e: any) => {
 					const err = e as FirebaseError;
@@ -724,12 +729,12 @@ export default function importExport() {
 			const rawData = snapshot.docs.map((doc) => doc.data());
 			//console.log(rawData);
 
-			const productsData = formatDataOrder(rawData, 'product', 'export');
+			const productsData = formatDataOrder(rawData, 'product', 'export') || [];
 
 			// to ensure proper export
 			formatDataToExport(productsData);
 
-			const file = convertJSONToCSV(productsData);
+			const file = convertJSONToCSV(productsData) || '';
 			//console.log(file);
 
 			const filePath = `${RNFetchBlob.fs.dirs.CacheDir}/productsData.csv`;
@@ -765,7 +770,7 @@ export default function importExport() {
 			await task
 				.then(() => {
 					showSnackbar(t('importExport.exportProductsSuccess'));
-					console.log('Exporting products successfull');
+					console.log('Exporting products successful');
 				})
 				.catch((e: any) => {
 					const err = e as FirebaseError;
@@ -805,13 +810,13 @@ export default function importExport() {
 			const rawData = snapshot.docs.map((doc) => doc.data());
 			//console.log(rawData);
 
-			const ordersData = formatDataOrder(rawData, 'order', 'export');
+			const ordersData = formatDataOrder(rawData, 'order', 'export') || [];
 			//console.log(ordersData);
 
 			// to ensure proper export
 			formatDataToExport(ordersData);
 
-			const file = convertJSONToCSV(ordersData);
+			const file = convertJSONToCSV(ordersData) || '';
 			//console.log(file);
 
 			const filePath = `${RNFetchBlob.fs.dirs.CacheDir}/ordersData.csv`;
@@ -847,7 +852,7 @@ export default function importExport() {
 			await task
 				.then(() => {
 					showSnackbar(t('importExport.exportOrdersSuccess'));
-					console.log('Exporting orders successfull');
+					console.log('Exporting orders successful');
 				})
 				.catch((e: any) => {
 					const err = e as FirebaseError;
@@ -918,7 +923,7 @@ export default function importExport() {
 			await task
 				.then(() => {
 					showSnackbar(t('importExport.exportQuantitiesSuccess'));
-					console.log('Exporting quantities successfull');
+					console.log('Exporting quantities successful');
 				})
 				.catch((e: any) => {
 					const err = e as FirebaseError;
